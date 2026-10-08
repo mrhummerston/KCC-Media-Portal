@@ -11,6 +11,7 @@ async function init(db) {
   if (ready) return;
   await db.prepare("CREATE TABLE IF NOT EXISTS docs (path TEXT PRIMARY KEY, json TEXT NOT NULL, updated INTEGER NOT NULL)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v INTEGER NOT NULL)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS attempts (ip TEXT PRIMARY KEY, fails INTEGER NOT NULL, since INTEGER NOT NULL)").run();
   const seeded = await db.prepare("SELECT v FROM meta WHERE k='seeded'").first();
   if (!seeded) {
     const now = Date.now();
@@ -25,6 +26,8 @@ async function init(db) {
 
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), {
   status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+const normName = s => String(s || "").trim().replace(/\s+/g, " ").toLowerCase();
+const anon = b => { const c = { ...b }; delete c.email; delete c.name; delete c.year; return c; };
 const PATH_OK = p => /^[a-z-]+\/[A-Za-z0-9_.:~@+\-]{1,200}$/.test(String(p));
 
 export async function onRequest({ request, env, params }) {
@@ -36,12 +39,24 @@ export async function onRequest({ request, env, params }) {
   const route = [].concat(params.path || []).join("/");
   const url = new URL(request.url);
   const body = request.method === "POST" ? await request.json().catch(() => ({})) : {};
-  const code = body.code ?? url.searchParams.get("code") ?? "";
-  const teacher = String(code) === String(env.TEACHER_CODE);
+  const code = body.code ?? request.headers.get("x-teacher-code") ?? "";
+  // Password guessing protection: 5 wrong tries from one network locks password checks for 1 minute.
+  const ip = request.headers.get("cf-connecting-ip") || "local";
+  const now = Date.now(), WINDOW = 60000, MAX_FAILS = 5;
+  let att = await db.prepare("SELECT fails, since FROM attempts WHERE ip=?").bind(ip).first();
+  if (att && now - att.since > WINDOW) { att = null; await db.prepare("DELETE FROM attempts WHERE ip=?").bind(ip).run(); }
+  const locked = !!att && att.fails >= MAX_FAILS;
+  let teacher = false;
+  if (code !== "" && code != null) {
+    if (!locked && String(code) === String(env.TEACHER_CODE)) teacher = true;
+    else if (!locked) {
+      await db.prepare("INSERT INTO attempts (ip, fails, since) VALUES (?, 1, ?) ON CONFLICT(ip) DO UPDATE SET fails = fails + 1").bind(ip, now).run();
+    }
+  }
   const studentsAllowed = String(env.STUDENT_ACCESS || "on").toLowerCase() !== "off";
 
-  if (route === "config") return json({ studentAccess: studentsAllowed, codeLength: String(env.TEACHER_CODE).length });
-  if (route === "verify") return json({ ok: teacher });
+  if (route === "config") return json({ studentAccess: studentsAllowed });
+  if (route === "verify") return json({ ok: teacher, locked, wait: locked ? Math.ceil((WINDOW - (now - att.since)) / 1000) : 0 });
   if (!studentsAllowed && !teacher) return json({ error: "not_teacher" }, 403);
 
   if (route === "state") {
@@ -54,12 +69,25 @@ export async function onRequest({ request, env, params }) {
       const col = r.path.split("/")[0];
       if (!teacher && HIDDEN.includes(col)) continue;
       let d = JSON.parse(r.json);
-      if (!teacher && col === "loans" && Array.isArray(d.bookings)) {          // students never see emails
-        d = { bookings: d.bookings.map(b => { const c = { ...b }; delete c.email; return c; }) };
+      if (!teacher && col === "loans" && Array.isArray(d.bookings)) {          // students never see who borrowed what
+        d = { bookings: d.bookings.map(anon) };
       }
       docs[r.path] = d;
     }
     return json({ v: tag, docs });
+  }
+
+  if (route === "mine") {
+    const want = normName(url.searchParams.get("name"));
+    if (want.split(" ").length < 2) return json({ error: "need_full_name" }, 400);
+    const { results } = await db.prepare("SELECT path, json FROM docs WHERE path LIKE 'loans/%'").all();
+    const out = [];
+    for (const r of results) {
+      for (const b of (JSON.parse(r.json).bookings || [])) {
+        if (normName(b.name) === want) { const c = { ...b }; delete c.email; out.push({ ...c, owner: r.path.slice(6) }); }
+      }
+    }
+    return json({ bookings: out });
   }
 
   if (route === "write" && request.method === "POST") {
@@ -76,9 +104,17 @@ export async function onRequest({ request, env, params }) {
       await db.batch([db.prepare("DELETE FROM docs WHERE path=?").bind(path), bump]);
     } else {
       const doc = op === "update" && old ? { ...old, ...data } : (data || {});
-      if (col === "loans" && old && Array.isArray(old.bookings) && Array.isArray(doc.bookings)) {
-        const emails = {}; old.bookings.forEach(b => { if (b.email) emails[b.id] = b.email; });
-        doc.bookings.forEach(b => { if (!b.email && emails[b.id]) b.email = emails[b.id]; });
+      if (col === "loans" && Array.isArray(doc.bookings)) {
+        const prev = (old && Array.isArray(old.bookings)) ? old.bookings : [];
+        if (!teacher) {
+          // keep every existing booking exactly as stored; only accept brand-new ones
+          const known = new Set(prev.map(b => b.id));
+          doc.bookings = [...prev, ...doc.bookings.filter(b => b && b.id && !known.has(b.id))];
+        } else {
+          // teacher saves: put back any personal details the page didn't have
+          const byId = {}; prev.forEach(b => byId[b.id] = b);
+          doc.bookings.forEach(b => { const o = byId[b.id]; if (o) for (const k of ["name", "year", "email"]) if (!b[k] && o[k]) b[k] = o[k]; });
+        }
       }
       const text = JSON.stringify(doc);
       if (text.length > 900000) return json({ error: "too_large" }, 413);
