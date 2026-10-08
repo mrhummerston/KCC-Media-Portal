@@ -80,28 +80,35 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y7),var(--y1
 .tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
 
 /* the big booking button */
-.book{display:flex;align-items:center;gap:22px;margin:30px auto 10px;max-width:880px;text-decoration:none;
-  background:var(--brand);color:#fff;border-radius:28px;padding:26px 30px;min-height:120px;
-  box-shadow:0 14px 0 var(--brand-dark),0 24px 40px rgba(216,52,58,.28);transition:transform .12s, box-shadow .12s;position:relative}
-.book:hover{transform:translateY(-2px)}
-.book:active{transform:translateY(10px);box-shadow:0 4px 0 var(--brand-dark),0 8px 16px rgba(216,52,58,.25)}
+.book{display:flex;align-items:center;gap:14px;margin:30px auto 10px;max-width:900px;
+  background:var(--brand);border-radius:28px;padding:16px;
+  box-shadow:0 14px 0 var(--brand-dark),0 24px 40px rgba(216,52,58,.28)}
+.book a{text-decoration:none;color:#fff}
+.book-main{flex:1;display:flex;align-items:center;gap:22px;padding:14px 16px;border-radius:20px;min-height:110px;transition:background .12s, transform .12s}
+.book-main:hover{background:rgba(255,255,255,.08)}
+.book-main:active{transform:translateY(3px)}
 .book .ic{width:76px;height:76px;flex:none;border-radius:20px;background:rgba(255,255,255,.18);display:grid;place-items:center}
 .book .ic svg{width:48px;height:48px}
 .book .txt{flex:1;text-align:left}
 .book b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,4.4vw,40px);line-height:1.05}
 .book small{display:block;font-size:17px;opacity:.95;margin-top:4px}
 .book .go{font-size:40px;font-weight:800;flex:none}
-.book:focus-visible{outline:5px solid var(--ink);outline-offset:5px}
+.book-return{flex:none;align-self:center;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:var(--brand-dark)!important;font-weight:800;font-size:19px;border-radius:20px;padding:0 26px;min-height:64px;box-shadow:0 5px 0 var(--brand-dark);transition:transform .12s, box-shadow .12s}
+.book-return span{font-size:22px}
+.book-return:hover{transform:translateY(-1px)}
+.book-return:active{transform:translateY(4px);box-shadow:0 1px 0 var(--brand-dark)}
+.book a:focus-visible{outline:4px solid #fff;outline-offset:3px}
 .quick{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 0}
 .quick a{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:12px 20px;text-decoration:none;font-weight:700;min-height:50px}
 .quick a:hover{border-color:var(--ink)}
 
 /* years */
 section{padding:46px 0 0}
+.big-h{font-size:clamp(34px,5.5vw,56px)!important}
 h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:0 0 6px;text-align:center}
 .sub{color:var(--muted);text-align:center;margin:0 auto 22px;max-width:46ch}
 .years{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-@media (min-width:980px){.years{grid-template-columns:repeat(7,1fr)}.yr .lbl small{font-size:13px}}
+@media (min-width:980px){.years{grid-template-columns:repeat(6,1fr)}}
 .yr{appearance:none;border:0;cursor:pointer;font:inherit;text-align:left;border-radius:24px;padding:18px 18px 16px;min-height:150px;
   background:var(--c);color:#fff;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;
   box-shadow:0 8px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
@@ -109,7 +116,7 @@ h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);let
 .yr:hover{transform:translateY(-3px) rotate(-.6deg)}
 .yr:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .yr .num{font-family:var(--display);font-weight:800;font-size:64px;line-height:.9}
-.yr .lbl{font-weight:700;font-size:18px}
+.yr .lbl{font-weight:700;font-size:19px}
 .yr .lbl small{display:block;font-weight:400;font-size:14px;opacity:.95}
 .yr[aria-pressed="true"]{outline:5px solid var(--ink);outline-offset:4px}
 
@@ -123,7 +130,8 @@ h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);let
 .panel h3 small{display:block;font-family:var(--body);font-weight:400;font-size:16px;color:var(--muted);margin-top:4px}
 .panel .book-yr{margin-left:auto;display:inline-flex;align-items:center;gap:10px;background:var(--panel-c);color:#fff;text-decoration:none;font-weight:700;border-radius:16px;padding:14px 22px;min-height:56px;font-size:18px;box-shadow:0 6px 0 rgba(0,0,0,.2)}
 .panel .book-yr:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:22px}
+.sec{font-family:var(--display);font-size:20px;margin:22px 0 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:10px}
 .card{background:var(--surface);border-radius:20px;padding:18px;border:2px solid var(--line);text-decoration:none;display:block}
 a.card:hover{border-color:var(--panel-c)}
 .card .k{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--panel-c)}
@@ -135,7 +143,9 @@ a.card:hover{border-color:var(--panel-c)}
 footer{margin:56px 0 30px;padding-top:20px;border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:15px}
 footer a{font-weight:700}
 @media (max-width:560px){
-  .book{flex-wrap:wrap;padding:22px;gap:14px}
+  .book{flex-direction:column;padding:12px;gap:10px}
+  .book-main{gap:14px;padding:10px;min-height:0;width:100%}
+  .book-return{align-self:stretch}
   .book .go{display:none}
   .book .ic{width:60px;height:60px}
   .panel{padding:18px}
@@ -155,24 +165,23 @@ footer a{font-weight:700}
   <div class="hero">
     <div class="logo"><img src="/kcc-logo.png" alt="Kingsway Christian College logo" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'fallback',textContent:'KCC',ariaHidden:'true'}))"></div>
     <h1>Media <span class="pop">Portal</span></h1>
-    <p class="tag">Borrow cameras, mics, lights and more, and find everything for your media class.</p>
+    <p class="tag">Borrow equipment and find everything for your media class.</p>
   </div>
 </header>
 
 <main id="main" class="wrap">
-  <a class="book" id="bookBtn" href="/book/">
-    <span class="ic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="14" width="38" height="26" rx="5"/><path d="M15 14l3-6h12l3 6"/><circle cx="24" cy="27" r="8"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg></span>
-    <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
-    <span class="go" aria-hidden="true">→</span>
-  </a>
-  <div class="quick">
-    <a href="/book/#return"><span aria-hidden="true">↩️</span> Return gear</a>
-    <a href="#years"><span aria-hidden="true">🎬</span> Find my year</a>
+  <div class="book">
+    <a class="book-main" href="/book/">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="14" width="38" height="26" rx="5"/><path d="M15 14l3-6h12l3 6"/><circle cx="24" cy="27" r="8"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg></span>
+      <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
+    <a class="book-return" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
   </div>
 
   <section id="years" aria-labelledby="yearsTitle">
-    <h2 id="yearsTitle">Which year are you in?</h2>
-    <p class="sub">Tap your year to see your camera kit and class links. We'll remember it on this device.</p>
+    <h2 id="yearsTitle" class="big-h">Media Class Information</h2>
+    <p class="sub">Tap your year to find your assignments, resources and class web page.</p>
     <div class="years" id="yearGrid"></div>
     <div class="panel" id="yearPanel" aria-live="polite"></div>
   </section>
@@ -189,39 +198,39 @@ footer a{font-weight:700}
    Each link:  { title:"...", text:"...", url:"https://..." }
    ================================================================= */
 const YEARS = {
-  "7":  { kit:"Handycams",               note:"Studio 2", links:[] },
-  "8":  { kit:"Canon EOS 1100D kits",    note:"Studio 1", links:[] },
-  "9":  { kit:"Canon EOS 1500D kits",    note:"Studio 1", links:[] },
-  "10": { kit:"Canon EOS 600D kits",     note:"Studio 1", links:[] },
-  "11": { kit:"Canon EOS 750D & 800D kits", note:"Studio 1", links:[] },
-  "12": { kit:"Canon EOS 70D, 80D & 90D kits", note:"Studio 1", links:[] },
-  "Staff": { kit:"All equipment", note:"", links:[] }
+  "7":  { assignments:[], resources:[], page:"" },
+  "8":  { assignments:[], resources:[], page:"" },
+  "9":  { assignments:[], resources:[], page:"" },
+  "10": { assignments:[], resources:[], page:"" },
+  "11": { assignments:[], resources:[], page:"" },
+  "12": { assignments:[], resources:[], page:"" }
 };
-const ORDER=["7","8","9","10","11","12","Staff"];
-const col=y=>y==="Staff"?"staff":"y"+y;
+/* Example of filling one in:
+   "10": { assignments:[{title:"Short film task", text:"Due Week 6", url:"https://..."}],
+           resources:[{title:"Camera basics", text:"Slides", url:"https://..."}],
+           page:"https://..." },                                                     */
+const ORDER=["7","8","9","10","11","12"];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 
-$("#yearGrid").innerHTML=ORDER.map(y=>`<button class="yr" style="--c:var(--${col(y)})" data-y="${y}" aria-pressed="false">
-  <span class="num">${y==="Staff"?"★":y}</span><span class="lbl">${y==="Staff"?"Staff":"Year "+y}<small>${esc(YEARS[y].kit)}</small></span></button>`).join("");
+$("#yearGrid").innerHTML=ORDER.map(y=>`<button class="yr" style="--c:var(--y${y})" data-y="${y}" aria-pressed="false"><span class="num">${y}</span><span class="lbl">Year ${y}</span></button>`).join("");
 
+function linkCards(kind,list){
+  if(!list.length) return `<div class="card empty-card"><span class="k">${kind}s</span><b>Coming soon</b><p>Your teacher will add these here.</p></div>`;
+  return list.map(l=>`<a class="card" href="${esc(l.url)}" target="_blank" rel="noopener"><span class="k">${kind}</span><b>${esc(l.title)}</b><p>${esc(l.text||"")}</p></a>`).join("");
+}
 function showYear(y,scroll){
   const Y=YEARS[y]; if(!Y) return;
   store.set("kcc-portal-year",y);
   document.querySelectorAll(".yr").forEach(b=>b.setAttribute("aria-pressed",b.dataset.y===y));
   const p=$("#yearPanel");
-  p.style.setProperty("--panel-c",`var(--${col(y)})`); p.style.setProperty("--panel-soft",`var(--${col(y)}-soft)`);
-  const label=y==="Staff"?"Staff":"Year "+y;
-  const links=Y.links.length?Y.links.map(l=>`<a class="card" href="${esc(l.url)}" target="_blank" rel="noopener"><span class="k">Link</span><b>${esc(l.title)}</b><p>${esc(l.text||"")}</p></a>`).join("")
-    :`<div class="card empty-card"><span class="k">Class links</span><b>Coming soon</b><p>Your teacher will add assignment and resource links here.</p></div>`;
-  p.innerHTML=`<div class="panel-head"><span class="badge" aria-hidden="true">${y==="Staff"?"★":y}</span>
-      <h3>${label} Media<small>${y==="Staff"?"Everything in the media room":"Your camera kit: "+esc(Y.kit)+(Y.note?" · "+esc(Y.note):"")}</small></h3>
-      <a class="book-yr" href="/book/?year=${encodeURIComponent(y)}">Book gear for ${label} <span aria-hidden="true">→</span></a></div>
-    <div class="cards">${links}</div>`;
+  p.style.setProperty("--panel-c",`var(--y${y})`); p.style.setProperty("--panel-soft",`var(--y${y}-soft)`);
+  p.innerHTML=`<div class="panel-head"><span class="badge" aria-hidden="true">${y}</span><h3>Year ${y} Media</h3>
+      ${Y.page?`<a class="book-yr" href="${esc(Y.page)}" target="_blank" rel="noopener">Open class web page <span aria-hidden="true">→</span></a>`:""}</div>
+    <h4 class="sec">Assignments</h4><div class="cards">${linkCards("Assignment",Y.assignments)}</div>
+    <h4 class="sec">Resources</h4><div class="cards">${linkCards("Resource",Y.resources)}</div>`;
   p.classList.add("show");
-  /* the big button remembers the year too */
-  $("#bookBtn").href="/book/?year="+encodeURIComponent(y);
   if(scroll) p.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"nearest"});
 }
 document.querySelectorAll(".yr").forEach(b=>b.onclick=()=>showYear(b.dataset.y,true));
