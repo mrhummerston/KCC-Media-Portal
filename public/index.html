@@ -80,23 +80,26 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y
 .tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
 
 /* the big booking button */
-.book{display:grid;grid-template-columns:4fr 1fr;align-items:stretch;gap:14px;margin:30px auto 10px;max-width:900px;
-  background:var(--brand);border-radius:28px;padding:16px;
-  box-shadow:0 14px 0 var(--brand-dark),0 24px 40px rgba(216,52,58,.28)}
+.book{display:grid;grid-template-columns:4fr 1fr;gap:12px;margin:30px auto 10px;max-width:900px;
+  background:linear-gradient(135deg,#E2464C,var(--brand) 55%,#C42A31);border-radius:30px;padding:14px;
+  box-shadow:0 12px 0 var(--brand-dark),0 26px 44px rgba(216,52,58,.30)}
 .book a{text-decoration:none;color:#fff}
-.book-main{flex:1;display:flex;align-items:center;gap:22px;padding:14px 16px;border-radius:20px;min-height:110px;transition:background .12s, transform .12s}
-.book-main:hover{background:rgba(255,255,255,.08)}
+.book-main{display:flex;align-items:center;gap:20px;padding:20px 24px;border-radius:20px;min-height:116px;
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+  transition:background .15s, transform .12s}
+.book-main:hover{background:rgba(255,255,255,.2)}
 .book-main:active{transform:translateY(3px)}
-.book .ic{width:76px;height:76px;flex:none;border-radius:20px;background:rgba(255,255,255,.18);display:grid;place-items:center}
-.book .ic svg{width:48px;height:48px}
+.book .ic{width:72px;height:72px;flex:none;border-radius:18px;background:#fff;display:grid;place-items:center;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.book .ic svg{width:44px;height:44px}
+.book .ic svg *{stroke:var(--brand)}
+.book .ic svg circle:last-child{fill:var(--brand)}
 .book .txt{flex:1;text-align:left}
-.book b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,4.4vw,40px);line-height:1.05}
-.book small{display:block;font-size:17px;opacity:.95;margin-top:4px}
-.book .go{font-size:40px;font-weight:800;flex:none}
-.book-return{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;color:var(--brand-dark)!important;font-weight:800;font-size:19px;line-height:1.15;border-radius:20px;padding:12px 10px;min-height:64px;box-shadow:0 5px 0 var(--brand-dark);transition:transform .12s, box-shadow .12s}
+.book b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,4.2vw,38px);line-height:1.05;letter-spacing:-.01em}
+.book small{display:block;font-size:17px;opacity:.95;margin-top:6px}
+.book-return{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;color:var(--brand-dark)!important;font-weight:800;font-size:19px;line-height:1.15;border-radius:20px;padding:12px 10px;min-height:64px;box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
 .book-return span{font-size:30px;line-height:1}
-.book-return:hover{transform:translateY(-1px)}
-.book-return:active{transform:translateY(4px);box-shadow:0 1px 0 var(--brand-dark)}
+.book-return:hover{transform:translateY(-2px)}
+.book-return:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
 .book a:focus-visible{outline:4px solid #fff;outline-offset:3px}
 .quick{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 0}
 .quick a{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:12px 20px;text-decoration:none;font-weight:700;min-height:50px}
@@ -138,6 +141,8 @@ a.card:hover{border-color:var(--panel-c)}
 :root[data-theme="dark"] .card .k{color:var(--ink)}
 .card b{display:block;font-family:var(--display);font-size:20px;margin:4px 0 2px}
 .card p{margin:0;color:var(--muted);font-size:16px}
+.card.has-img{padding-top:0;overflow:hidden}
+.card-img{display:block;width:calc(100% + 36px);margin:0 -18px 14px;aspect-ratio:16/9;object-fit:cover;background:var(--line)}
 .empty-card{border-style:dashed;background:transparent}
 
 footer{margin:56px 0 30px;padding-top:20px;border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:15px}
@@ -147,7 +152,6 @@ footer a{font-weight:700}
   .book-main{gap:14px;padding:10px;min-height:0;width:100%}
   .book-return{flex-direction:row;gap:10px;min-height:60px}
   .book-return span{font-size:22px}
-  .book .go{display:none}
   .book .ic{width:60px;height:60px}
   .panel{padding:18px}
   .panel .book-yr{margin-left:0;width:100%;justify-content:center}
@@ -175,7 +179,6 @@ footer a{font-weight:700}
     <a class="book-main" href="/book/">
       <span class="ic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="14" width="38" height="26" rx="5"/><path d="M15 14l3-6h12l3 6"/><circle cx="24" cy="27" r="8"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg></span>
       <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
-      <span class="go" aria-hidden="true">→</span>
     </a>
     <a class="book-return" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
   </div>
@@ -193,23 +196,14 @@ footer a{font-weight:700}
   <a href="/book/#teacher">Teacher login</a>
 </footer>
 
+<script src="/content.js"></script>
 <script>
 /* =================================================================
    YEAR GROUPS – edit the text and links here.
    Each link:  { title:"...", text:"...", url:"https://..." }
    ================================================================= */
-const YEARS = {
-  "8":  { assignments:[], resources:[], page:"" },
-  "9":  { assignments:[], resources:[], page:"" },
-  "10": { assignments:[], resources:[], page:"" },
-  "11": { assignments:[], resources:[], page:"" },
-  "12": { assignments:[], resources:[], page:"" }
-};
-/* Example of filling one in:
-   "10": { assignments:[{title:"Short film task", text:"Due Week 6", url:"https://..."}],
-           resources:[{title:"Camera basics", text:"Slides", url:"https://..."}],
-           page:"https://..." },                                                     */
-const ORDER=["8","9","10","11","12"];
+const YEARS = (window.PORTAL&&window.PORTAL.years)||{};   /* edit content.js to change these */
+const ORDER=["8","9","10","11","12"].filter(y=>YEARS[y]);
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
@@ -218,10 +212,10 @@ $("#yearGrid").innerHTML=ORDER.map(y=>`<button class="yr" style="--c:var(--y${y}
 
 function linkCards(kind,list){
   if(!list.length) return `<div class="card empty-card"><span class="k">${kind}s</span><b>Coming soon</b><p>Your teacher will add these here.</p></div>`;
-  return list.map(l=>`<a class="card" href="${esc(l.url)}" target="_blank" rel="noopener"><span class="k">${kind}</span><b>${esc(l.title)}</b><p>${esc(l.text||"")}</p></a>`).join("");
+  return list.map(l=>`<a class="card${l.image?" has-img":""}" href="${esc(l.url)}"${/^https?:/.test(l.url||"")?' target="_blank" rel="noopener"':""}>${l.image?`<img class="card-img" src="${esc(l.image)}" alt="" loading="lazy">`:""}<span class="k">${kind}</span><b>${esc(l.title)}</b><p>${esc(l.text||"")}</p></a>`).join("");
 }
 function showYear(y,scroll){
-  const Y=YEARS[y]; if(!Y) return;
+  const Y=YEARS[y]; if(!Y) return; Y.assignments=Y.assignments||[]; Y.resources=Y.resources||[];
   store.set("kcc-portal-year",y);
   document.querySelectorAll(".yr").forEach(b=>b.setAttribute("aria-pressed",b.dataset.y===y));
   const p=$("#yearPanel");
