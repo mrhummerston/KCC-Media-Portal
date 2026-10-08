@@ -80,7 +80,7 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y7),var(--y1
 .tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
 
 /* the big booking button */
-.book{display:flex;align-items:center;gap:14px;margin:30px auto 10px;max-width:900px;
+.book{display:grid;grid-template-columns:4fr 1fr;align-items:stretch;gap:14px;margin:30px auto 10px;max-width:900px;
   background:var(--brand);border-radius:28px;padding:16px;
   box-shadow:0 14px 0 var(--brand-dark),0 24px 40px rgba(216,52,58,.28)}
 .book a{text-decoration:none;color:#fff}
@@ -93,8 +93,8 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y7),var(--y1
 .book b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,4.4vw,40px);line-height:1.05}
 .book small{display:block;font-size:17px;opacity:.95;margin-top:4px}
 .book .go{font-size:40px;font-weight:800;flex:none}
-.book-return{flex:none;align-self:center;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:var(--brand-dark)!important;font-weight:800;font-size:19px;border-radius:20px;padding:0 26px;min-height:64px;box-shadow:0 5px 0 var(--brand-dark);transition:transform .12s, box-shadow .12s}
-.book-return span{font-size:22px}
+.book-return{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;color:var(--brand-dark)!important;font-weight:800;font-size:19px;line-height:1.15;border-radius:20px;padding:12px 10px;min-height:64px;box-shadow:0 5px 0 var(--brand-dark);transition:transform .12s, box-shadow .12s}
+.book-return span{font-size:30px;line-height:1}
 .book-return:hover{transform:translateY(-1px)}
 .book-return:active{transform:translateY(4px);box-shadow:0 1px 0 var(--brand-dark)}
 .book a:focus-visible{outline:4px solid #fff;outline-offset:3px}
@@ -143,9 +143,10 @@ a.card:hover{border-color:var(--panel-c)}
 footer{margin:56px 0 30px;padding-top:20px;border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:15px}
 footer a{font-weight:700}
 @media (max-width:560px){
-  .book{flex-direction:column;padding:12px;gap:10px}
+  .book{grid-template-columns:1fr;padding:12px;gap:10px}
   .book-main{gap:14px;padding:10px;min-height:0;width:100%}
-  .book-return{align-self:stretch}
+  .book-return{flex-direction:row;gap:10px;min-height:60px}
+  .book-return span{font-size:22px}
   .book .go{display:none}
   .book .ic{width:60px;height:60px}
   .panel{padding:18px}
