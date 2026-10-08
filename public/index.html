@@ -18,10 +18,10 @@
    ================================================================= */
 :root{
   --y7:#A21CAF; --y7-soft:#FBE8FD;   /* magenta  */
-  --y8:#A16207; --y8-soft:#FEF6D8;   /* gold     */
+  --y8:#1D4ED8; --y8-soft:#E4ECFE;   /* blue     */
   --y9:#C2410C; --y9-soft:#FFEDE3;   /* orange   */
   --y10:#BE185D; --y10-soft:#FDE7F1; /* pink     */
-  --y11:#1D4ED8; --y11-soft:#E4ECFE; /* blue     */
+  --y11:#6D28D9; --y11-soft:#EEE7FD; /* purple   */
   --y12:#B91C1C; --y12-soft:#FDE6E6; /* red      */
   --staff:#334155; --staff-soft:#E8ECF2;
 
@@ -36,13 +36,13 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#12141C; --surface:#1C2030; --ink:#F3F4F8; --muted:#B5BCCB; --line:#2E3447;
-    --y7-soft:#3A1840; --y8-soft:#3A2E10; --y9-soft:#3F2010; --y10-soft:#3E1528; --y11-soft:#172649; --y12-soft:#3E1616; --staff-soft:#283042;
+    --y7-soft:#3A1840; --y8-soft:#172649; --y9-soft:#3F2010; --y10-soft:#3E1528; --y11-soft:#2B1A4A; --y12-soft:#3E1616; --staff-soft:#283042;
     --accent-soft:#3A1E21;
   }
 }
 :root[data-theme="dark"]{
   --bg:#12141C; --surface:#1C2030; --ink:#F3F4F8; --muted:#B5BCCB; --line:#2E3447;
-  --y7-soft:#3A1840; --y8-soft:#3A2E10; --y9-soft:#3F2010; --y10-soft:#3E1528; --y11-soft:#172649; --y12-soft:#3E1616; --staff-soft:#283042;
+  --y7-soft:#3A1840; --y8-soft:#172649; --y9-soft:#3F2010; --y10-soft:#3E1528; --y11-soft:#2B1A4A; --y12-soft:#3E1616; --staff-soft:#283042;
   --accent-soft:#3A1E21;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -56,9 +56,9 @@ a{color:inherit}
 /* playful background shapes */
 .bg-shapes{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
 .bg-shapes span{position:absolute;border-radius:50%;opacity:.16;filter:blur(2px)}
-.bg-shapes .s1{width:380px;height:380px;background:var(--y7);top:-120px;left:-110px}
-.bg-shapes .s2{width:260px;height:260px;background:var(--y11);top:120px;right:-90px}
-.bg-shapes .s3{width:220px;height:220px;background:var(--y8);bottom:-60px;left:12%}
+.bg-shapes .s1{width:380px;height:380px;background:var(--y11);top:-120px;left:-110px}
+.bg-shapes .s2{width:260px;height:260px;background:var(--y8);top:120px;right:-90px}
+.bg-shapes .s3{width:220px;height:220px;background:var(--y9);bottom:-60px;left:12%}
 .bg-shapes .s4{width:300px;height:300px;background:var(--y10);bottom:-140px;right:8%}
 .bg-shapes .s5{width:120px;height:120px;background:var(--y9);top:46%;left:46%}
 
@@ -76,7 +76,7 @@ header.top{padding:22px 0 0}
 .logo .fallback{font-family:var(--display);font-weight:800;font-size:34px;color:var(--brand)}
 .school{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:14px;color:var(--muted);margin:0}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(42px,8vw,84px);line-height:.98;letter-spacing:-.03em;margin:6px 0 12px}
-h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y7),var(--y10),var(--y9),var(--y8));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.04em}
+h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y10),var(--y9),var(--y12));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.04em}
 .tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
 
 /* the big booking button */
@@ -108,7 +108,7 @@ section{padding:46px 0 0}
 h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:0 0 6px;text-align:center}
 .sub{color:var(--muted);text-align:center;margin:0 auto 22px;max-width:46ch}
 .years{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-@media (min-width:980px){.years{grid-template-columns:repeat(6,1fr)}}
+@media (min-width:980px){.years{grid-template-columns:repeat(5,1fr)}}
 .yr{appearance:none;border:0;cursor:pointer;font:inherit;text-align:center;align-items:center;border-radius:24px;padding:18px 18px 16px;min-height:150px;
   background:var(--c);color:#fff;display:flex;flex-direction:column;justify-content:center;gap:6px;position:relative;overflow:hidden;
   box-shadow:0 8px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
@@ -199,7 +199,6 @@ footer a{font-weight:700}
    Each link:  { title:"...", text:"...", url:"https://..." }
    ================================================================= */
 const YEARS = {
-  "7":  { assignments:[], resources:[], page:"" },
   "8":  { assignments:[], resources:[], page:"" },
   "9":  { assignments:[], resources:[], page:"" },
   "10": { assignments:[], resources:[], page:"" },
@@ -210,7 +209,7 @@ const YEARS = {
    "10": { assignments:[{title:"Short film task", text:"Due Week 6", url:"https://..."}],
            resources:[{title:"Camera basics", text:"Slides", url:"https://..."}],
            page:"https://..." },                                                     */
-const ORDER=["7","8","9","10","11","12"];
+const ORDER=["8","9","10","11","12"];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
