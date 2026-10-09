@@ -413,7 +413,7 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
     <span class="msg" id="msg"></span>
     <button class="btn" id="btnClear" type="button">Clear</button>
     <button class="btn" id="btnCopy" type="button">Copy answers</button>
-    <button class="btn go" id="btnSave" type="button">Save as file</button>
+    <button class="btn go" id="btnSave" type="button">Save as PDF</button>
   </div>
 </div>
 
@@ -853,14 +853,55 @@ var dl=null;
 if(window.claude&&typeof window.claude.use==="function"){
   window.claude.use("downloads").then(function(d){dl=d;},function(){dl=null;});
 }
+/* ---------- tiny PDF maker (no internet or add-ons needed) ---------- */
+function makePDF(text,title){
+  var W=595,H=842,M=50,FS=10.5,LH=14.5,maxChars=96;
+  var clean=function(s){ return String(s)
+    .replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/[\u2013\u2014]/g,"-")
+    .replace(/\u2026/g,"...").replace(/[\u2022\u00B7]/g,"-").replace(/\u00D7/g,"x").replace(/\u2192/g,"->")
+    .replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\u00FF]/g,""); };
+  var lines=[];
+  clean(text).split("\n").forEach(function(raw){
+    var bold=/^(===|---)/.test(raw)||(/^[A-Z0-9 &:—\-'.()]{6,}$/.test(raw.trim())&&raw.trim()===raw.trim().toUpperCase())||/^\d+\. [A-Z]/.test(raw);
+    var ind=(raw.match(/^\s*/)||[""])[0].length, words=raw.trim().split(/\s+/), cur="";
+    if(!raw.trim()){ lines.push({t:"",b:false}); return; }
+    words.forEach(function(w){
+      if((cur+" "+w).trim().length>maxChars-ind){ lines.push({t:cur,b:bold,i:ind}); cur=w; ind=ind||0; }
+      else cur=(cur?cur+" ":"")+w;
+    });
+    if(cur) lines.push({t:cur,b:bold,i:ind});
+  });
+  var perPage=Math.floor((H-2*M-30)/LH), pages=[];
+  for(var i=0;i<lines.length;i+=perPage) pages.push(lines.slice(i,i+perPage));
+  if(!pages.length) pages.push([]);
+  var esc=function(s){ return s.replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)"); };
+  var objs=[], add=function(s){ objs.push(s); return objs.length; };
+  var cat=add(""), pgs=add(""), f1=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>"), f2=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+  var kids=[];
+  pages.forEach(function(pl,pi){
+    var c="BT\n/F2 9 Tf\n"+M+" "+(H-32)+" Td\n("+esc(clean(title))+"   -   page "+(pi+1)+" of "+pages.length+") Tj\nET\n";
+    var y=H-M-20;
+    pl.forEach(function(l){ if(l.t){ c+="BT\n/"+(l.b?"F2":"F1")+" "+FS+" Tf\n"+(M+(l.i||0)*4)+" "+y+" Td\n("+esc(l.t)+") Tj\nET\n"; } y-=LH; });
+    var cs=add("<< /Length "+c.length+" >>\nstream\n"+c+"endstream");
+    kids.push(add("<< /Type /Page /Parent "+pgs+" 0 R /MediaBox [0 0 "+W+" "+H+"] /Resources << /Font << /F1 "+f1+" 0 R /F2 "+f2+" 0 R >> >> /Contents "+cs+" 0 R >>"));
+  });
+  objs[cat-1]="<< /Type /Catalog /Pages "+pgs+" 0 R >>";
+  objs[pgs-1]="<< /Type /Pages /Kids ["+kids.map(function(k){return k+" 0 R";}).join(" ")+"] /Count "+kids.length+" >>";
+  var out="%PDF-1.4\n", offs=[];
+  objs.forEach(function(o,i){ offs.push(out.length); out+=(i+1)+" 0 obj\n"+o+"\nendobj\n"; });
+  var xref=out.length;
+  out+="xref\n0 "+(objs.length+1)+"\n0000000000 65535 f \n"+offs.map(function(o){return ("0000000000"+o).slice(-10)+" 00000 n \n";}).join("");
+  out+="trailer\n<< /Size "+(objs.length+1)+" /Root "+cat+" 0 R >>\nstartxref\n"+xref+"\n%%EOF";
+  var bytes=new Uint8Array(out.length); for(var j=0;j<out.length;j++) bytes[j]=out.charCodeAt(j)&255;
+  return new Blob([bytes],{type:"application/pdf"});
+}
 document.getElementById("btnSave").addEventListener("click",function(){
-  var t=build();
-  if(dl&&typeof dl.save==="function"){
-    dl.save({filename:fname(),data:t}).then(function(){flash("Saved");},function(){flash("Declined — use Copy answers");});
-  } else {
-    try{ var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([t],{type:"text/plain"})); a.download=fname(); document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500); flash("Saved to your downloads"); }
-    catch(e){ flash("Couldn't save — use Copy answers"); }
-  }
+  try{
+    var blob=makePDF(build(),"Genre and Structure in Film Trailers - Year 11 General Media");
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fname().replace(/\.txt$/,".pdf");
+    document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},800);
+    flash("PDF saved to your downloads");
+  }catch(e){ flash("Couldn't make the PDF — use Copy answers"); }
 });
 document.getElementById("btnClear").addEventListener("click",function(){
   if(!confirm("Clear every answer? This can't be undone.")) return;
