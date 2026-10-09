@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Genre and Structure in Film Trailers — Year 11 General Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#E3006E; --pink-2:#FF4FA3; --pink-tint:#FFE7F1;
+  --blue:#0047FF; --blue-2:#4D84FF; --blue-tint:#E4EBFF;
+  --lime:#00C26E; --lime-ink:#00301B; --amber:#FFAE00;
+  --ink:#0E1220; --ink-soft:#5A6173; --card:#FFFFFF; --rule:#DCDFE8;
+  --shell:#0E1220; --shell-ink:#F2F3F7; --shell-soft:#9096A8;
+  --r:15px; --maxw:78rem;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:calc(4.2rem + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --pink-tint:#2C0A1C; --blue-tint:#0B1230;
+    --ink:#EDEFF5; --ink-soft:#A1A8BA; --card:#171B28; --rule:#333949;
+    --shell:#080B14; --pink:#FF3D90; --blue:#6B95FF;
+  }
+}
+:root[data-theme="dark"]{
+  --pink-tint:#2C0A1C; --blue-tint:#0B1230;
+  --ink:#EDEFF5; --ink-soft:#A1A8BA; --card:#171B28; --rule:#333949;
+  --shell:#080B14; --pink:#FF3D90; --blue:#6B95FF;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--card);color:var(--ink);
+  font-family:Figtree,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.52;
+}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,sans-serif;font-weight:800;letter-spacing:-.025em;line-height:1.06;margin:0}
+p{margin:0 0 .55rem}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px;border-radius:6px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.1rem}
+
+/* ===== HERO ===== */
+.hero{background:var(--shell);color:var(--shell-ink);padding:2rem 0 1.7rem}
+.kick{display:inline-block;background:var(--lime);color:var(--lime-ink);font-weight:800;font-size:.72rem;letter-spacing:.05em;padding:.24rem .65rem;border-radius:100px;margin-bottom:.85rem}
+.hero h1{font-size:clamp(1.75rem,5.4vw,3.1rem);max-width:17ch}
+.hero h1 em{font-style:normal;color:var(--pink-2)}
+.hero h1 b{color:var(--blue-2)}
+.hero p{color:var(--shell-soft);max-width:54ch;margin-top:.85rem}
+.split{display:flex;gap:4px;margin-top:1.25rem;max-width:44rem}
+.split div{border-radius:8px;padding:.5rem .8rem;font-weight:800;font-size:.82rem;line-height:1.25;color:#fff}
+.split .s1{flex:20;background:var(--pink)}
+.split .s2{flex:60;background:var(--blue)}
+.split span{display:block;font-weight:500;opacity:.85;font-size:.72rem}
+
+/* ===== STICKY NAV ===== */
+.nav{position:sticky;top:0;z-index:40;background:var(--card);border-bottom:1px solid var(--rule);padding-top:env(safe-area-inset-top,0px)}
+.nav-in{display:flex;align-items:center;gap:.45rem;height:3.4rem}
+.nav a{text-decoration:none;font-weight:800;font-size:.84rem;color:var(--ink);padding:.32rem .8rem;border-radius:100px;border:2px solid var(--rule);white-space:nowrap}
+.nav a.p1{border-color:var(--pink);color:var(--pink)}
+.nav a.p1:hover{background:var(--pink-tint)}
+.nav a.p2{border-color:var(--blue);color:var(--blue)}
+.nav a.p2:hover{background:var(--blue-tint)}
+.nav .sp{flex:1}
+.nav .tally{font-weight:800;font-size:.8rem;color:var(--ink-soft);white-space:nowrap}
+.track{width:5.5rem;height:7px;background:var(--rule);border-radius:100px;overflow:hidden;flex:none}
+.track i{display:block;height:100%;width:0;background:var(--lime);transition:width .25s}
+@media(max-width:600px){.nav .tally{display:none}}
+
+/* ===== ZONES ===== */
+.zone{padding:2.1rem 0 2.5rem}
+.zone1{background:var(--pink-tint)}
+.zone2{background:var(--blue-tint)}
+.zhead{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-bottom:.3rem}
+.znum{width:2.3rem;height:2.3rem;border-radius:9px;display:grid;place-items:center;color:#fff;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.12rem;flex:none}
+.zone1 .znum{background:var(--pink)} .zone2 .znum{background:var(--blue)}
+.zhead h2{font-size:clamp(1.3rem,4vw,1.95rem)}
+.pill{font-weight:800;font-size:.73rem;padding:.24rem .65rem;border-radius:100px;color:#fff}
+.zone1 .pill{background:var(--pink)} .zone2 .pill{background:var(--blue)}
+.zsub{color:var(--ink-soft);max-width:60ch;font-size:.97rem;margin:0 0 1.15rem}
+
+/* ===== FACTS ===== */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.6rem;margin-bottom:1.35rem}
+.fact{background:var(--card);border-radius:12px;padding:.8rem .9rem;border-left:5px solid}
+.zone1 .fact{border-left-color:var(--pink)} .zone2 .fact{border-left-color:var(--blue)}
+.fact b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1rem;letter-spacing:-.02em;margin-bottom:.1rem}
+.fact span{font-size:.89rem;color:var(--ink-soft);line-height:1.42}
+
+/* ===== TASK BOXES ===== */
+.task{background:var(--card);border-radius:var(--r);margin:0 0 .85rem;border:2px solid transparent;overflow:hidden}
+.zone1 .task{border-color:var(--pink)} .zone2 .task{border-color:var(--blue)}
+.task-h{display:flex;align-items:center;gap:.55rem;padding:.55rem .9rem;color:#fff;flex-wrap:wrap}
+.zone1 .task-h{background:var(--pink)} .zone2 .task-h{background:var(--blue)}
+.task-h .tn{background:rgba(255,255,255,.22);border-radius:6px;padding:.1rem .45rem;font-weight:800;font-size:.74rem;flex:none}
+.task-h h3{font-size:1rem;font-weight:700;flex:1;min-width:8rem}
+.task-h .mins{font-size:.75rem;font-weight:700;opacity:.9}
+.task-h .tick{width:1.3rem;height:1.3rem;border-radius:50%;border:2px solid rgba(255,255,255,.5);flex:none;display:grid;place-items:center;font-size:.72rem;font-weight:800;color:transparent}
+.task.done .task-h .tick{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+.task-b{padding:.95rem .9rem 1.05rem}
+
+.steps{margin:0 0 .85rem;padding:0;list-style:none;display:grid;gap:.3rem;counter-reset:s}
+.steps li{font-size:.92rem;padding-left:1.65rem;position:relative;color:var(--ink-soft)}
+.steps li::before{content:counter(s);counter-increment:s;position:absolute;left:0;top:.1rem;width:1.2rem;height:1.2rem;border-radius:50%;display:grid;place-items:center;font-size:.67rem;font-weight:800;color:#fff}
+.zone1 .steps li::before{background:var(--pink-2)} .zone2 .steps li::before{background:var(--blue-2)}
+
+/* ===== FIELDS ===== */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.f{margin:0 0 .8rem}
+.f:last-child{margin-bottom:0}
+.f label{display:block;font-weight:700;font-size:.87rem;margin-bottom:.1rem}
+.f .h{display:block;font-size:.81rem;color:var(--ink-soft);margin-bottom:.33rem}
+input[type=text],textarea{width:100%;background:transparent;color:var(--ink);font-family:inherit;font-size:.94rem;border:2px solid var(--rule);border-radius:9px;padding:.45rem .6rem;line-height:1.45}
+textarea{resize:vertical;min-height:3.7rem}
+input:focus,textarea:focus{border-color:var(--amber);outline:none}
+.zone1 .filled{border-color:var(--pink-2)}
+.zone2 .filled{border-color:var(--blue-2)}
+
+/* ===== CHIPS ===== */
+.chips{display:flex;flex-wrap:wrap;gap:.38rem}
+.chip{font-family:inherit;font-size:.84rem;font-weight:600;cursor:pointer;padding:.35rem .78rem;border-radius:100px;background:transparent;color:var(--ink);border:2px solid var(--rule)}
+.chip:hover{border-color:var(--pink)}
+.chip[aria-pressed=true]{background:var(--pink);border-color:var(--pink);color:#fff}
+.gout{margin-top:.8rem;background:var(--pink-tint);border-radius:11px;padding:.7rem .85rem}
+.gout .tt{font-weight:700;font-size:.92rem;margin-bottom:.12rem}
+.gout .nn{font-size:.86rem;color:var(--ink-soft)}
+.gout.hid{display:none}
+
+/* ===== BEAT LEARN CARDS ===== */
+.bgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem}
+@media(max-width:980px){.bgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.bgrid{grid-template-columns:1fr}}
+.bcard{background:var(--card);border:2px solid var(--rule);border-radius:12px;padding:.7rem .78rem;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink)}
+.bcard:hover{border-color:var(--blue)}
+.bcard[aria-expanded=true]{border-color:var(--blue);background:var(--blue-tint)}
+.bn{display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:7px;background:var(--blue);color:#fff;font-weight:800;font-size:.76rem}
+.bcard .bt{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:.93rem;letter-spacing:-.02em;margin-top:.3rem;line-height:1.16}
+.bcard .bw{font-size:.73rem;font-weight:800;color:var(--blue);margin-top:.1rem}
+.bcard .bd{font-size:.84rem;color:var(--ink-soft);margin-top:.3rem;line-height:1.38}
+.bcard .more{display:none;margin-top:.45rem;padding-top:.45rem;border-top:1px solid var(--rule)}
+.bcard[aria-expanded=true] .more{display:block}
+.more .lab{font-size:.7rem;font-weight:800;color:var(--blue)}
+.more p{font-size:.84rem;color:var(--ink-soft);margin:.12rem 0 .35rem}
+.tag{display:inline-block;font-size:.68rem;font-weight:700;padding:.1rem .45rem;border-radius:100px;background:var(--blue);color:#fff;margin:0 .22rem .2rem 0}
+.hintline{font-size:.8rem;font-weight:700;color:var(--ink-soft);margin:.7rem 0 0}
+.extras{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
+.extras button{font-family:inherit;font-size:.77rem;font-weight:700;background:var(--card);border:2px dashed var(--rule);border-radius:100px;padding:.22rem .65rem;cursor:pointer;color:var(--ink)}
+.extras button:hover{border-style:solid;border-color:var(--blue)}
+.extras button[aria-pressed=true]{border-style:solid;background:var(--blue);border-color:var(--blue);color:#fff}
+.exout{margin-top:.7rem;background:var(--card);border:2px solid var(--blue);border-radius:12px;padding:.8rem;display:grid;grid-template-columns:17rem 1fr;gap:.9rem;align-items:start}
+@media(max-width:700px){.exout{grid-template-columns:1fr}}
+.exout.hid{display:none}
+.exout svg{width:100%;height:auto;border-radius:7px;display:block}
+.exout .ex-t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1rem;margin-bottom:.2rem}
+.exout .ex-d{font-size:.88rem;color:var(--ink-soft);margin-bottom:.5rem}
+.exout .ex-y{font-size:.86rem;background:var(--blue-tint);border-radius:8px;padding:.45rem .6rem}
+.exout .ex-y b{font-size:.72rem;font-weight:800;color:var(--blue);display:block;margin-bottom:.1rem}
+
+/* worked example */
+.worked{margin-top:.9rem;border:2px solid var(--blue);border-radius:12px;overflow:hidden}
+.wtog{width:100%;text-align:left;font-family:inherit;font-weight:800;font-size:.9rem;background:var(--blue);color:#fff;border:0;padding:.55rem .85rem;cursor:pointer;display:flex;align-items:center;gap:.5rem}
+.wtog .arrow{margin-left:auto;font-size:.8rem}
+.wbody{padding:.85rem}
+.wbody.hid{display:none}
+.wnote{font-size:.83rem;color:var(--ink-soft);background:var(--blue-tint);border-radius:9px;padding:.55rem .7rem;margin-bottom:.7rem}
+.wrow{display:grid;grid-template-columns:9.5rem 1fr;gap:.7rem;padding:.55rem 0;border-top:1px solid var(--rule)}
+.wrow:first-of-type{border-top:0}
+@media(max-width:700px){.wrow{grid-template-columns:1fr;gap:.15rem}}
+.wrow .wn{font-weight:800;font-size:.84rem}
+.wrow .wn i{display:block;font-style:normal;font-weight:600;font-size:.72rem;color:var(--blue);margin-top:.05rem}
+.wrow p{font-size:.88rem;margin:0;color:var(--ink-soft)}
+.wflag{display:inline-block;font-size:.66rem;font-weight:800;background:var(--amber);color:#3A2600;border-radius:100px;padding:.04rem .4rem;margin-right:.3rem;vertical-align:1px}
+
+/* ===== MAP ROWS ===== */
+#mapWrap{display:grid;gap:.55rem}
+.maprow{background:var(--card);border:2px solid var(--rule);border-radius:12px;padding:.7rem .8rem .8rem;display:grid;gap:.55rem;grid-template-columns:10rem 1fr;align-items:start}
+@media(max-width:780px){.maprow{grid-template-columns:1fr}}
+.maprow .nm{font-weight:700;font-size:.88rem;line-height:1.2;margin:.25rem 0 .1rem}
+.maprow .wn{font-size:.72rem;font-weight:800;color:var(--blue);margin-bottom:.35rem}
+.maprow input{font-size:.85rem;padding:.3rem .45rem}
+.micro{display:block;font-size:.71rem;font-weight:800;color:var(--ink-soft);margin-bottom:.15rem}
+.swat{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem}
+.sw{font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer;padding:.22rem .58rem;border-radius:100px;border:2px solid var(--rule);background:transparent;color:var(--ink-soft)}
+.sw[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.maprow textarea{min-height:3.2rem}
+
+/* ===== SAVE BAR ===== */
+.savebar{position:sticky;bottom:0;z-index:40;background:var(--shell);color:var(--shell-ink);padding:.6rem 0 calc(.6rem + env(safe-area-inset-bottom,0px))}
+.sb{display:flex;gap:.5rem;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.sb .msg{font-size:.8rem;font-weight:800;color:var(--lime);margin-right:auto}
+.btn{font-family:inherit;font-weight:800;font-size:.84rem;cursor:pointer;padding:.45rem .9rem;border-radius:100px;border:2px solid #343A4D;background:transparent;color:var(--shell-ink)}
+.btn:hover{border-color:var(--shell-ink)}
+.btn.go{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+
+/* ===== TEACHER ===== */
+.task.ovis{overflow:visible}
+.task.ovis .task-h{border-radius:13px 13px 0 0}
+.plan-intro{font-size:.97rem;max-width:68ch;margin:0 0 .9rem}
+.palette{background:var(--blue-tint);border-radius:12px;padding:.7rem .8rem;margin-bottom:.9rem;position:sticky;top:4.4rem;z-index:5}
+.pchips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem}
+.pchip{font-family:inherit;font-size:.84rem;font-weight:700;background:var(--card);color:var(--ink);border:2px dashed var(--blue);border-radius:100px;padding:.4rem .85rem;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.pchip:active{cursor:grabbing}
+.pchip[aria-pressed=true]{background:var(--blue);color:#fff;border-style:solid}
+.phint{margin:.45rem 0 0;font-size:.82rem;font-weight:700;color:var(--blue)}
+.phint:empty{display:none}
+.plan{display:flex;flex-direction:column}
+.pbeat{display:grid;grid-template-columns:11rem 1fr;gap:.8rem;align-items:start;background:var(--card);border:2px solid var(--rule);border-radius:12px;padding:.7rem .8rem}
+.pbeat .bn{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:.8rem;margin-bottom:.25rem}
+.pbeat .nm{font-weight:800;line-height:1.2}
+.pbeat .wn{font-size:.75rem;color:var(--ink-soft);font-weight:700}
+.pbeat textarea{min-height:3.2rem}
+@media (max-width:640px){.pbeat{grid-template-columns:1fr;gap:.35rem}}
+.pslot{min-height:.9rem;margin:.25rem 0;border-radius:10px;display:flex;flex-direction:column;gap:.35rem}
+.pslot .drop{display:none;font-family:inherit;width:100%;border:2px dashed var(--blue);background:transparent;color:var(--blue);font-weight:800;font-size:.8rem;border-radius:10px;padding:.45rem;cursor:pointer}
+.plan.dragging .pslot .drop,.plan.placing .pslot .drop{display:block}
+.pslot.over .drop{background:var(--blue);color:#fff;border-style:solid}
+.pextra{display:grid;grid-template-columns:auto 1fr auto;gap:.6rem;align-items:start;background:var(--pink-tint);border:2px solid var(--pink);border-radius:12px;padding:.55rem .7rem}
+.pextra .handle{cursor:grab;touch-action:none;font-weight:800;color:var(--pink);padding:.2rem .1rem;user-select:none;-webkit-user-select:none;font-size:1rem;line-height:1}
+.pextra .en{font-weight:800;font-size:.85rem;color:var(--pink);margin-bottom:.2rem}
+.pextra textarea{min-height:2.6rem;background:var(--card)}
+.pextra .rm{font-family:inherit;border:0;background:transparent;color:var(--pink);font-size:1.1rem;font-weight:800;cursor:pointer;padding:.1rem .3rem;line-height:1}
+.ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%);background:var(--blue);color:#fff;font-weight:800;font-size:.85rem;padding:.4rem .85rem;border-radius:100px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.create{margin:1.6rem 0 .4rem;background:linear-gradient(120deg,var(--pink),var(--blue));color:#fff;border-radius:var(--r);padding:1.4rem 1.3rem}
+.create h2{font-size:clamp(1.8rem,5vw,2.6rem);letter-spacing:.02em;margin:0 0 .35rem}
+.create p{margin:0;font-size:1.05rem;font-weight:600;max-width:56ch}
+.teach{background:var(--card);padding:1.6rem 0 2.4rem;border-top:1px solid var(--rule)}
+details{max-width:62ch}
+summary{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1rem;cursor:pointer;padding:.35rem 0}
+details h4{font-size:.88rem;margin:1rem 0 .25rem}
+details ul{padding-left:1.05rem;font-size:.9rem;color:var(--ink-soft);margin:.15rem 0}
+details li{margin:.18rem 0}
+.rs div{display:grid;grid-template-columns:4.8rem 1fr;gap:.6rem;font-size:.89rem;color:var(--ink-soft);margin:.18rem 0}
+.rs b{font-size:.78rem;color:var(--ink)}
+footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kick">Year 11 General Media · Task 2 · 80 minutes</span>
+    <h1>Turn your short film into a <em>trailer</em> people want to <b>watch</b></h1>
+    <p>A trailer isn't a shortened film. It's a new text with its own rules. Today: the two rules that matter most.</p>
+    <div class="split">
+      <div class="s1">Part 1 · Genre<span>20 min</span></div>
+      <div class="s2">Part 2 · Structure<span>60 min</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a href="#p1" class="p1">1 · Genre</a>
+    <a href="#p2" class="p2">2 · Structure</a>
+    <span class="sp"></span>
+    <span class="tally" id="tally">0 of 7 done</span>
+    <span class="track"><i id="fill"></i></span>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============== PART 1 ============== -->
+<section class="zone zone1" id="p1">
+  <div class="wrap">
+    <div class="zhead">
+      <span class="znum">1</span>
+      <h2>What your genre promises</h2>
+      <span class="pill">20 min</span>
+    </div>
+    <p class="zsub">Your film already has a genre. Your trailer has to sell it to a stranger in about 90 seconds.</p>
+
+    <div class="facts">
+      <div class="fact"><b>Ten seconds</b><span>A film can take 15 minutes to reveal its genre. A trailer has about ten seconds.</span></div>
+      <div class="fact"><b>They already know the rules</b><span>Light a face in hard red and the audience reads danger before anyone has spoken. Nobody has to explain it.</span></div>
+    </div>
+
+    <div class="task" data-task>
+      <div class="task-h"><span class="tn">Task 1</span><h3>Name your genre</h3><span class="mins">2 min</span><span class="tick">&#10003;</span></div>
+      <div class="task-b">
+        <div class="grid2">
+          <div class="f"><label for="f_name">Names in your group</label><input type="text" id="f_name" data-k="name" autocomplete="off"></div>
+          <div class="f"><label for="f_genre">Your short film's genre</label><input type="text" id="f_genre" data-k="filmgenre" autocomplete="off" placeholder="e.g. psychological thriller"></div>
+        </div>
+        <div class="f" style="margin-bottom:0">
+          <label>Pick the closest genre for examples</label>
+          <span class="h">All PG or M. Want to use a trailer that isn't listed? Check it with your teacher first.</span>
+          <div class="chips" id="genres" role="group" aria-label="Genres"></div>
+          <div class="gout hid" id="gout" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="task" data-task>
+        <div class="task-h"><span class="tn">Task 2</span><h3>Trailer A</h3><span class="mins">8 min</span><span class="tick">&#10003;</span></div>
+        <div class="task-b">
+          <ol class="steps"><li>Watch it once, normally.</li><li>Watch it again on mute.</li></ol>
+          <div class="f"><label for="a_title">Title and year</label><input type="text" id="a_title" data-k="a_title" autocomplete="off"></div>
+          <div class="f"><label for="a_conv">Three genre conventions</label><span class="h">Setting, character types, colour, lighting, camera, music, sound, title typeface.</span><textarea id="a_conv" data-k="a_conv"></textarea></div>
+          <div class="f"><label for="a_promise">The promise, in one sentence</label><span class="h">What's it telling the audience they'll feel?</span><textarea id="a_promise" data-k="a_promise" style="min-height:3rem"></textarea></div>
+          <div class="f"><label for="a_muted">On mute, what still says "this genre"?</label><textarea id="a_muted" data-k="a_muted" style="min-height:3rem"></textarea></div>
+        </div>
+      </div>
+
+      <div class="task" data-task>
+        <div class="task-h"><span class="tn">Task 3</span><h3>Trailer B</h3><span class="mins">8 min</span><span class="tick">&#10003;</span></div>
+        <div class="task-b">
+          <ol class="steps"><li>Same genre, different film.</li><li>Same two watches.</li></ol>
+          <div class="f"><label for="b_title">Title and year</label><input type="text" id="b_title" data-k="b_title" autocomplete="off"></div>
+          <div class="f"><label for="b_conv">Three genre conventions</label><span class="h">Setting, character types, colour, lighting, camera, music, sound, title typeface.</span><textarea id="b_conv" data-k="b_conv"></textarea></div>
+          <div class="f"><label for="b_promise">The promise, in one sentence</label><span class="h">What's it telling the audience they'll feel?</span><textarea id="b_promise" data-k="b_promise" style="min-height:3rem"></textarea></div>
+          <div class="f"><label for="b_muted">On mute, what still says "this genre"?</label><textarea id="b_muted" data-k="b_muted" style="min-height:3rem"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task" data-task>
+      <div class="task-h"><span class="tn">Task 4</span><h3>Decide as a group</h3><span class="mins">2 min</span><span class="tick">&#10003;</span></div>
+      <div class="task-b">
+        <div class="grid2">
+          <div class="f" style="margin:0"><label for="p1_borrow">Which conventions can you actually pull off?</label><span class="h">"Slow push-in on the main character" yes. "Helicopter over a burning city" no.</span><textarea id="p1_borrow" data-k="p1_borrow"></textarea></div>
+          <div class="f" style="margin:0"><label for="p1_break">OPTIONAL: One convention you'll twist or withhold</label><span class="h">(e.g. twist: a horror trailer set in bright, cheerful daylight; withhold: never show the monster, only people reacting to it)</span><textarea id="p1_break" data-k="p1_break" data-opt></textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 2 ============== -->
+<section class="zone zone2" id="p2">
+  <div class="wrap">
+    <div class="zhead">
+      <span class="znum">2</span>
+      <h2>The structure of a film trailer</h2>
+      <span class="pill">60 min</span>
+    </div>
+    <p class="zsub">Genre decides what it feels like. Structure decides what order it happens in — and nearly every trailer uses the same skeleton.</p>
+
+
+    <div class="task" data-task="skip">
+      <div class="task-h"><span class="tn">Learn</span><h3>The eight beats — tap any card to open it</h3><span class="mins">10 min</span></div>
+      <div class="task-b">
+        <div class="bgrid" id="bgrid"></div>
+        <p class="hintline" id="opened"></p>
+        <p class="hintline" style="font-weight:600">Percentages are of total runtime, so they scale to your 90-second cut.</p>
+        <span class="micro" style="margin-top:.7rem">Also floating about anywhere — tap one to see what it looks like on screen</span>
+        <div class="extras" id="extras"></div>
+        <div class="exout hid" id="exout" aria-live="polite"></div>
+
+        <div class="worked">
+          <button class="wtog" id="wtog" type="button" aria-expanded="false">Worked example — Spider-Man: Brand New Day<span class="arrow" id="warrow">Show</span></button>
+          <div class="wbody hid" id="wbody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task" data-task>
+      <div class="task-h"><span class="tn">Task 5</span><h3>Choose a third trailer</h3><span class="mins">3 min</span><span class="tick">&#10003;</span></div>
+      <div class="task-b">
+        <ol class="steps">
+          <li>Any genre, roughly 1:30–2:30 long, PG or M.</li>
+          <li>Get it approved by your teacher.</li>
+          <li>Watch it once with no notes at all.</li>
+        </ol>
+        <div class="grid2">
+          <div class="f" style="margin:0"><label for="c_title">Title and year</label><input type="text" id="c_title" data-k="c_title" autocomplete="off"></div>
+          <div class="f" style="margin:0"><label for="c_length">Runtime</label><input type="text" id="c_length" data-k="c_length" autocomplete="off" placeholder="e.g. 2:14"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task" data-task>
+      <div class="task-h"><span class="tn">Task 6</span><h3>Map it beat by beat</h3><span class="mins">30 min</span><span class="tick">&#10003;</span></div>
+      <div class="task-b">
+        <ol class="steps">
+          <li>Watch again with your finger on the pause key.</li>
+          <li>Tap the code chips, then write what happens and its effect.</li>
+          <li>If a beat is missing, write "not used" and say what the editor did instead.</li>
+        </ol>
+        <div id="mapWrap"></div>
+      </div>
+    </div>
+
+    <div class="task ovis" data-task>
+      <div class="task-h"><span class="tn">Task 7</span><h3>Your turn: plan your trailer</h3><span class="mins">10 min</span><span class="tick">&#10003;</span></div>
+      <div class="task-b">
+        <p class="plan-intro">Looking at your finished film, short film footage OR coming up with your own new ideas, fill in how you will structure your film trailer. You can also drag and drop in the additional elements you may use (e.g. tagline) between the eight parts.</p>
+        <div class="palette">
+          <span class="micro">Additional elements — drag one into a gap, or tap it and then tap a gap</span>
+          <div class="pchips" id="pchips"></div>
+          <p class="phint" id="phint" aria-live="polite"></p>
+        </div>
+        <div class="plan" id="plan"></div>
+        <div class="f" style="margin:1rem 0 0"><label for="p2_gap">The beat you can't fill yet — and what you'll film to fix it</label><textarea id="p2_gap" data-k="p2_gap"></textarea></div>
+      </div>
+    </div>
+
+    <div class="create">
+      <h2>GET CREATING</h2>
+      <p>Now you have finished your planning, begin structuring your trailer within your group. Sell the class your idea!</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="savebar">
+  <div class="wrap sb">
+    <span class="msg" id="msg"></span>
+    <button class="btn" id="btnClear" type="button">Clear</button>
+    <button class="btn" id="btnCopy" type="button">Copy answers</button>
+    <button class="btn go" id="btnSave" type="button">Save as file</button>
+  </div>
+</div>
+
+<div class="teach">
+  <div class="wrap">
+    <footer>Media Production and Analysis (General) · Year 11 · Task 2: Film Trailer Production</footer>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var GENRES=[
+ {n:"Horror / thriller",t:"A Quiet Place (2018) · The Woman in Black (2012) · Signs (2002)",note:"Listen for how much of the fear is carried by silence and sound design rather than anything you actually see."},
+ {n:"Action / adventure",t:"Top Gun: Maverick (2022) · Dune (2021) · Mission: Impossible – Fallout (2018)",note:"Count the full sentences of dialogue. There'll be almost none — it's built from fragments and impacts."},
+ {n:"Comedy",t:"Paddington 2 (2017) · Barbie (2023) · The Lego Movie (2014)",note:"The setup-punchline rhythm becomes the editing rhythm. Find where the joke lands relative to the cut."},
+ {n:"Romance",t:"Pride & Prejudice (2005) · Past Lives (2023) · Ticket to Paradise (2022)",note:"Watch the colour grade and the lens. Warmth, shallow focus and golden light do most of the work."},
+ {n:"Drama / coming of age",t:"Hidden Figures (2016) · Wonder (2017) · October Sky (1999)",note:"Watch how hard the music works to tell you what to feel before any plot has been explained."},
+ {n:"Sci-fi / fantasy",t:"Arrival (2016) · Interstellar (2014) · The Fellowship of the Ring (2001)",note:"The title typeface and the sound of the title card carry enormous genre weight. Look closely."},
+ {n:"Crime / mystery",t:"Knives Out (2019) · Murder on the Orient Express (2017) · Sherlock Holmes (2009)",note:"These work by asking questions on screen. List every question raised and never answered."},
+ {n:"Sports / underdog",t:"Ford v Ferrari (2019) · Remember the Titans (2000) · Cool Runnings (1993)",note:"Built on a training-montage structure. Find where the music turns from doubt to determination."}
+];
+
+var BEATS=[
+ {t:"Cold open",w:"0–10%",d:"One moment, dropped in with no set-up. No logos, no narration.",l:"How long before you understand what you're looking at? Is the hook an image, a line, or a sound?",s:["Audio","Technical"],ask:"What's the first thing you see and hear, and why does it hook you?"},
+ {t:"Idents & classification",w:"~10%",d:"Studio logos, then the classification card — after the hook, not before it.",l:"Are the logos treated — glitched, muted, graded, scored — to match the film's tone?",s:["Written","Symbolic"],ask:"Which logos and cards appear? Are they treated to suit the film?"},
+ {t:"Act 1 — Setup",w:"10–30%",d:"Who, where, what normal looks like. Longer takes, sparse music.",l:"How many shots pass before the problem arrives? What's the establishing shot telling you?",s:["Technical","Symbolic"],ask:"What do you learn about character and setting? Describe the cutting pace and the music."},
+ {t:"Act 2 — The turn",w:"30–55%",d:"The problem arrives and the stakes get stated once. Music changes. Cuts speed up.",l:"Find the exact shot where the tone flips. What does the audio do at that precise moment?",s:["Audio","Technical"],ask:"Timecode of the turn. What changes in the image, and what changes in the sound?"},
+ {t:"Act 3 — Escalation",w:"55–80%",d:"Fastest cutting in the trailer. Biggest images. Dialogue shrinks to fragments.",l:"Count the cuts in ten seconds here, then ten seconds of Act 1. The difference is the point.",s:["Technical","Written"],ask:"Roughly how many cuts per ten seconds? List any text cards or actor name cards."},
+ {t:"Drop-out & title",w:"80–88%",d:"Music falls away for a beat, then the title lands. The silence is what sells it.",l:"How long is the silence? Does the title have its own sound design? What typeface is it?",s:["Audio","Written"],ask:"Describe the drop-out and the title reveal. How long is the gap?"},
+ {t:"The button",w:"88–95%",d:"One last beat after the title — a joke, a scare, a look. The quotable bit.",l:"What emotion does it leave you on, and does that match the genre the trailer has been selling?",s:["Audio","Symbolic"],ask:"What is the button, and what emotion does it leave you on?"},
+ {t:"Billing & release",w:"final %",d:"Cast names, the squashed credits block, and the release line.",l:"Do the typefaces suit the genre, or are they just the studio's house style?",s:["Written"],ask:"What release information is given, and how is it styled?"}
+];
+var SWAT=["Symbolic","Written","Audio","Technical"];
+
+/* ---------- drawn examples of the floating elements ---------- */
+function frame(inner,bg){
+  return '<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" role="img">'+
+    '<rect width="320" height="180" fill="'+(bg||"#000")+'"/>'+inner+'</svg>';
+}
+function star(x,y,s){
+  return '<path transform="translate('+x+','+y+') scale('+s+')" fill="#fff" '+
+    'd="M0,-7 L2.1,-2.3 L7,-2.3 L3.1,1 L4.4,6 L0,3.1 L-4.4,6 L-3.1,1 L-7,-2.3 L-2.1,-2.3 Z"/>';
+}
+function laurel(cx,cy,flip){
+  var g='<g transform="translate('+cx+','+cy+') scale('+(flip?-1:1)+',1)" fill="none" stroke="#fff" stroke-width="1.5">'+
+    '<path d="M0,-26 C-13,-16 -17,4 -8,24"/></g><g transform="translate('+cx+','+cy+') scale('+(flip?-1:1)+',1)" fill="#fff">';
+  var pts=[[-4,-24,-35],[-9,-17,-20],[-12,-9,-8],[-13,-1,4],[-12,7,16],[-9,15,28]];
+  for(var i=0;i<pts.length;i++){
+    g+='<ellipse cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" rx="5.5" ry="2.6" transform="rotate('+pts[i][2]+','+pts[i][0]+','+pts[i][1]+')"/>';
+  }
+  return g+'</g>';
+}
+var T='font-family="Figtree,Helvetica,Arial,sans-serif" text-anchor="middle" fill="#fff"';
+
+var EXTRAS=[
+ {n:"Tagline",
+  svg:frame('<text x="160" y="84" '+T+' font-size="13" font-weight="600" letter-spacing="4">EVERY TOWN HAS</text>'+
+            '<text x="160" y="106" '+T+' font-size="13" font-weight="600" letter-spacing="4">A QUIET HOUR</text>'),
+  d:"One line of text, almost always on black, almost always in two parts split across two cards. It states the premise without giving away the plot.",
+  y:"Write yours as two halves so it can land on two cuts. Keep it under eight words and never explain the ending."},
+
+ {n:"Critic quotes",
+  svg:frame(star(122,62,1)+star(141,62,1)+star(160,62,1)+star(179,62,1)+star(198,62,1)+
+            '<text x="160" y="104" '+T+' font-size="17" font-weight="700" letter-spacing="2">"A STUNNER."</text>'+
+            '<text x="160" y="126" '+T+' font-size="9" font-weight="600" letter-spacing="3" opacity=".72">THE DAILY REVIEW</text>'),
+  d:"A star rating or a short quote with the publication underneath in much smaller type. These only turn up on second and re-release trailers — a first trailer has nothing to quote yet.",
+  y:"You can build these from peer feedback on your rough cut. Keep the quote to three words and put the source in small caps beneath."},
+
+ {n:"Accolades",
+  svg:frame(laurel(102,90,false)+laurel(218,90,true)+
+            '<text x="160" y="84" '+T+' font-size="9" font-weight="700" letter-spacing="3">OFFICIAL</text>'+
+            '<text x="160" y="98" '+T+' font-size="9" font-weight="700" letter-spacing="3">SELECTION</text>'+
+            '<text x="160" y="122" '+T+' font-size="7" font-weight="600" letter-spacing="1.4" opacity=".72">SCREEN AWARDS 2026</text>'),
+  d:"Laurel wreaths carrying festival selections, nominations or wins. The laurel shape does the work — you read \u201cthis was taken seriously\u201d before you read a single word.",
+  y:"Only use one if it's true. A fake laurel is the fastest way to lose an audience's trust, and your marker's."},
+
+ {n:"Actor name cards",
+  svg:frame('<rect x="8" y="46" width="96" height="88" fill="#111"/>'+
+            '<rect x="112" y="46" width="96" height="88" fill="#111"/>'+
+            '<rect x="216" y="46" width="96" height="88" fill="#111"/>'+
+            '<text x="56" y="94" '+T+' font-size="9" font-weight="700" letter-spacing="2">JORDAN</text>'+
+            '<text x="56" y="106" '+T+' font-size="9" font-weight="700" letter-spacing="2">ELLIS</text>'+
+            '<text x="160" y="94" '+T+' font-size="9" font-weight="700" letter-spacing="2">PRIYA</text>'+
+            '<text x="160" y="106" '+T+' font-size="9" font-weight="700" letter-spacing="2">NAIR</text>'+
+            '<text x="264" y="94" '+T+' font-size="9" font-weight="700" letter-spacing="2">SAM</text>'+
+            '<text x="264" y="106" '+T+' font-size="9" font-weight="700" letter-spacing="2">OKAFOR</text>'+
+            '<text x="160" y="164" '+T+' font-size="7.5" font-weight="600" letter-spacing="2" opacity=".55">ONE NAME PER CUT, IN RHYTHM WITH THE MUSIC</text>'),
+  d:"One name per card, cut on the beat during the montage. They're never read properly — they exist to make the montage feel like it's counting up to something.",
+  y:"Cut them on the beat of your music, not between beats. Three names is plenty for a 90-second trailer."},
+
+ {n:"Release line",
+  svg:frame('<text x="160" y="82" '+T+' font-size="20" font-weight="800" letter-spacing="3">IN CINEMAS</text>'+
+            '<text x="160" y="108" '+T+' font-size="20" font-weight="800" letter-spacing="3">JULY 31</text>'+
+            '<line x1="118" y1="122" x2="202" y2="122" stroke="#fff" stroke-width="1" opacity=".5"/>'+
+            '<text x="160" y="140" '+T+' font-size="8" font-weight="600" letter-spacing="3" opacity=".7">ONLY IN THEATRES</text>'),
+  d:"The last thing on screen after the title and billing block. A date, a platform, or a deliberately vague promise like \u201cthis summer\u201d when the studio hasn't locked a date.",
+  y:"Yours can be a screening date, a class showcase, or a channel name. It gives the audience somewhere to go, which is the actual point."},
+
+ {n:"Hashtag",
+  svg:frame('<rect width="320" height="180" fill="#1a1d24"/>'+
+            '<circle cx="232" cy="52" r="46" fill="#2a2f3a"/>'+
+            '<path d="M0,132 L92,70 L176,124 L248,84 L320,122 L320,180 L0,180 Z" fill="#0d1014"/>'+
+            '<text x="26" y="164" font-family="Figtree,Helvetica,Arial,sans-serif" text-anchor="start" fill="#fff" font-size="11" font-weight="700" letter-spacing="1">#THEQUIETHOUR</text>'),
+  d:"Small, tucked into a bottom corner, sitting over the picture rather than on black. It's the only element designed to be screenshotted rather than watched.",
+  y:"Sits low and small so it doesn't fight the image. If your film has no social presence, skip it — an empty hashtag is worse than none."}
+];
+
+/* ---------- worked example ---------- */
+var SPIDEY=[
+ {v:1,x:"Spider-Man swings in fast and crashes straight through a row of shopfront signs, unable to control the momentum of his new organic webs. He lands in front of Scorpion in green armour with a mechanical tail: \u201cDid you miss me, Spidey?\u201d No logos, no context. The hook is a hero who can't control his own body."},
+ {v:0,x:"Call this one live. Watch whether the Marvel and Sony idents sit before that opening or after it, and whether they're scored or silent."},
+ {v:1,x:"The premise gets laid out. Peter's mechanical web-shooters are forced off his wrists by organic webbing growing underneath. He goes to Bruce Banner for help \u2014 \u201cYou've found a way to suppress mutant DNA?\u201d \u2014 and Banner shows him an inhibitor, telling him that if he's ever seen without it, run. Longer takes, dialogue you can actually follow."},
+ {v:1,x:"Peter's eyes go fully black and he overpowers Scorpion without effort: \u201cI'm losing my mind.\u201d A hooded figure takes control of Banner, the inhibitor comes off, and the Hulk transforms. The stakes get stated once \u2014 the danger is inside him. Find the shot where the music changes."},
+ {v:1,x:"Fastest cutting in the trailer. Hulk's thunderclap sends Spider-Man flying. The prison fight with the Hand, Spider-Man launching off the ceiling into the ninjas and firing webs in every direction, the web tornado. Dialogue shrinks to fragments over the music."},
+ {v:0,x:"Aunt May's voice carries the quiet stretch \u2014 \u201cthe people who love you love you because you're you. Never forget that, no matter how powerful you become\u201d \u2014 over Peter at her grave in the rain. Time the gap between the music dropping out and the title landing."},
+ {v:0,x:"Call this one live. The first trailer ended on a gag at Ned and MJ's housewarming, with Peter bringing flowers and a joke about the friendly neighbour. Find what this one ends on, and whether it leaves you laughing or worried."},
+ {v:1,x:"Cast block, then the release line: in cinemas 29 July in some territories and 31 July in the US."}
+];
+
+/* ---------- storage ---------- */
+var KEY="y11-trailer-v3", store={};
+try{ var raw=localStorage.getItem(KEY); if(raw) store=JSON.parse(raw)||{}; }catch(e){ store={}; }
+function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
+function set(k,v){ store[k]=v; persist(); flash("Saved"); }
+
+var msg=document.getElementById("msg"), msgT=null;
+function flash(s){ if(!msg) return; msg.textContent=s; if(msgT) clearTimeout(msgT); msgT=setTimeout(function(){msg.textContent="";},1500); }
+
+/* ---------- genre chips ---------- */
+var gWrap=document.getElementById("genres"), gOut=document.getElementById("gout");
+GENRES.forEach(function(g,i){
+  var b=document.createElement("button");
+  b.type="button"; b.className="chip"; b.setAttribute("aria-pressed","false"); b.textContent=g.n;
+  b.addEventListener("click",function(){
+    var on=b.getAttribute("aria-pressed")==="true";
+    Array.prototype.forEach.call(gWrap.children,function(c){c.setAttribute("aria-pressed","false");});
+    if(on){ gOut.classList.add("hid"); set("pg",""); tick(); return; }
+    b.setAttribute("aria-pressed","true"); showG(i); set("pg",String(i)); tick();
+  });
+  gWrap.appendChild(b);
+});
+function showG(i){
+  var g=GENRES[i];
+  gOut.innerHTML='<div class="tt"></div><div class="nn"></div><div class="nn" style="margin-top:.3rem">All PG or M. Search YouTube for the title plus \u201cofficial trailer\u201d. Choosing your own instead? Check it with your teacher first.</div>';
+  gOut.querySelector(".tt").textContent=g.t;
+  gOut.querySelector(".nn").textContent=g.note;
+  gOut.classList.remove("hid");
+}
+
+/* ---------- learn cards ---------- */
+var bgrid=document.getElementById("bgrid"), openedEl=document.getElementById("opened");
+BEATS.forEach(function(b,i){
+  var el=document.createElement("button");
+  el.type="button"; el.className="bcard"; el.setAttribute("aria-expanded","false");
+  el.innerHTML='<span class="bn">'+(i+1)+'</span><div class="bt"></div><div class="bw"></div><div class="bd"></div>'+
+    '<div class="more"><span class="lab">Watch for</span><p></p>'+b.s.map(function(s){return '<span class="tag">'+s+'</span>';}).join("")+'</div>';
+  el.querySelector(".bt").textContent=b.t;
+  el.querySelector(".bw").textContent=b.w;
+  el.querySelector(".bd").textContent=b.d;
+  el.querySelector(".more p").textContent=b.l;
+  el.addEventListener("click",function(){
+    el.setAttribute("aria-expanded", el.getAttribute("aria-expanded")==="true"?"false":"true");
+    countOpened();
+  });
+  bgrid.appendChild(el);
+});
+function countOpened(){
+  var n=bgrid.querySelectorAll('[aria-expanded=true]').length;
+  openedEl.textContent = n===8 ? "All eight opened — you're ready to map one." : n+" of 8 opened";
+}
+
+/* ---------- floating-element examples ---------- */
+var exWrap=document.getElementById("extras"), exOut=document.getElementById("exout");
+EXTRAS.forEach(function(x,i){
+  var b=document.createElement("button");
+  b.type="button"; b.setAttribute("aria-pressed","false"); b.textContent=x.n;
+  b.addEventListener("click",function(){
+    var on=b.getAttribute("aria-pressed")==="true";
+    Array.prototype.forEach.call(exWrap.children,function(c){c.setAttribute("aria-pressed","false");});
+    if(on){ exOut.classList.add("hid"); return; }
+    b.setAttribute("aria-pressed","true");
+    exOut.innerHTML='<div>'+x.svg+'</div><div><div class="ex-t"></div><div class="ex-d"></div>'+
+      '<div class="ex-y"><b>In your trailer</b><span></span></div></div>';
+    exOut.querySelector(".ex-t").textContent=x.n;
+    exOut.querySelector(".ex-d").textContent=x.d;
+    exOut.querySelector(".ex-y span").textContent=x.y;
+    exOut.querySelector("svg").setAttribute("aria-label","Example of a "+x.n.toLowerCase()+" card as it appears on screen");
+    exOut.classList.remove("hid");
+  });
+  exWrap.appendChild(b);
+});
+
+/* ---------- worked example ---------- */
+var wtog=document.getElementById("wtog"), wbody=document.getElementById("wbody"), warrow=document.getElementById("warrow");
+var note=document.createElement("div"); note.className="wnote";
+note.textContent="Built from published trailer breakdowns, not from watching it frame by frame — the running order is an inference. Play the trailer and check it as a class. Where a beat is marked CHECK, nobody has written it down, so that one is yours to call live.";
+wbody.appendChild(note);
+SPIDEY.forEach(function(s,i){
+  var row=document.createElement("div"); row.className="wrow";
+  var l=document.createElement("div"); l.className="wn";
+  l.textContent=(i+1)+". "+BEATS[i].t;
+  var w=document.createElement("i"); w.textContent=BEATS[i].w; l.appendChild(w);
+  var p=document.createElement("p");
+  if(!s.v){ var f=document.createElement("span"); f.className="wflag"; f.textContent="CHECK"; p.appendChild(f); }
+  p.appendChild(document.createTextNode(s.x));
+  row.appendChild(l); row.appendChild(p);
+  wbody.appendChild(row);
+});
+wtog.addEventListener("click",function(){
+  var on=wtog.getAttribute("aria-expanded")==="true";
+  wtog.setAttribute("aria-expanded", on?"false":"true");
+  wbody.classList.toggle("hid", on);
+  warrow.textContent = on ? "Show" : "Hide";
+});
+
+/* ---------- map rows ---------- */
+var mapWrap=document.getElementById("mapWrap");
+BEATS.forEach(function(b,i){
+  var row=document.createElement("div"); row.className="maprow";
+
+  var lhs=document.createElement("div");
+  lhs.innerHTML='<span class="bn">'+(i+1)+'</span><div class="nm"></div><div class="wn"></div>'+
+    '<label class="micro" for="tc_'+i+'">Timecode</label>'+
+    '<input type="text" id="tc_'+i+'" data-k="tc_'+i+'" placeholder="0:00–0:00">';
+  lhs.querySelector(".nm").textContent=b.t;
+  lhs.querySelector(".wn").textContent=b.w;
+
+  var rhs=document.createElement("div");
+  var swLab=document.createElement("span"); swLab.className="micro"; swLab.textContent="Which codes are doing the work?";
+  var sw=document.createElement("div"); sw.className="swat";
+  var stored=(store["sw_"+i]||"").split(",").filter(Boolean);
+  SWAT.forEach(function(code){
+    var c=document.createElement("button");
+    c.type="button"; c.className="sw"; c.textContent=code;
+    c.setAttribute("aria-pressed", stored.indexOf(code)>-1?"true":"false");
+    c.addEventListener("click",function(){
+      c.setAttribute("aria-pressed", c.getAttribute("aria-pressed")==="true"?"false":"true");
+      var list=[];
+      Array.prototype.forEach.call(sw.children,function(x){ if(x.getAttribute("aria-pressed")==="true") list.push(x.textContent); });
+      set("sw_"+i,list.join(",")); tick();
+    });
+    sw.appendChild(c);
+  });
+  var taLab=document.createElement("label"); taLab.className="micro"; taLab.setAttribute("for","bt_"+i);
+  taLab.textContent="What happens, and its effect on the audience";
+  var ta=document.createElement("textarea");
+  ta.id="bt_"+i; ta.setAttribute("data-k","bt_"+i); ta.placeholder=b.ask;
+  rhs.appendChild(swLab); rhs.appendChild(sw); rhs.appendChild(taLab); rhs.appendChild(ta);
+
+  row.appendChild(lhs); row.appendChild(rhs);
+  mapWrap.appendChild(row);
+});
+
+/* ---------- your trailer planner (drag extras between the eight beats) ---------- */
+var plan=document.getElementById("plan"), pchips=document.getElementById("pchips"), phint=document.getElementById("phint");
+function getX(){ try{ return JSON.parse(store.plan_x||"[]")||[]; }catch(e){ return []; } }
+function setX(a){ set("plan_x",JSON.stringify(a)); }
+var placing=null;
+function renderPlan(){
+  var xs=getX();
+  plan.innerHTML="";
+  for(var s=0;s<=BEATS.length;s++){
+    var slot=document.createElement("div"); slot.className="pslot"; slot.setAttribute("data-slot",s);
+    xs.filter(function(x){return x.slot===s;}).forEach(function(x){ slot.appendChild(extraRow(x)); });
+    var drop=document.createElement("button"); drop.type="button"; drop.className="drop";
+    drop.textContent= s===0 ? "+ Place before beat 1" : (s===BEATS.length ? "+ Place after beat 8" : "+ Place between beat "+s+" and beat "+(s+1));
+    drop.addEventListener("click",(function(sl){ return function(){ if(placing){ addExtra(placing,sl); stopPlacing(); } }; })(s));
+    slot.appendChild(drop);
+    plan.appendChild(slot);
+    if(s<BEATS.length){
+      var b=BEATS[s], row=document.createElement("div"); row.className="pbeat";
+      row.innerHTML='<div><span class="bn">'+(s+1)+'</span><div class="nm"></div><div class="wn"></div></div><div><textarea data-k="plan_'+s+'"></textarea></div>';
+      row.querySelector(".nm").textContent=b.t; row.querySelector(".wn").textContent=b.w;
+      var ta=row.querySelector("textarea"); ta.id="plan_"+s; ta.setAttribute("aria-label","Your "+b.t); ta.placeholder=b.d;
+      plan.appendChild(row);
+    }
+  }
+}
+function extraRow(x){
+  var r=document.createElement("div"); r.className="pextra"; r.setAttribute("data-id",x.id);
+  r.innerHTML='<span class="handle" title="Drag to move" aria-hidden="true">&#8942;&#8942;</span><div><div class="en"></div><textarea data-opt></textarea></div><button type="button" class="rm" aria-label="Remove">&times;</button>';
+  r.querySelector(".en").textContent=x.n;
+  var ta=r.querySelector("textarea"); ta.value=x.text||""; ta.setAttribute("aria-label","Your "+x.n);
+  var ex=EXTRAS.filter(function(e){return e.n===x.n;})[0]; ta.placeholder= ex ? ex.y : "What will it say or show?";
+  ta.addEventListener("input",function(){ var a=getX(); a.forEach(function(y){ if(y.id===x.id) y.text=ta.value; }); setX(a); });
+  r.querySelector(".rm").addEventListener("click",function(){ setX(getX().filter(function(y){return y.id!==x.id;})); renderPlan(); wirePlan(); });
+  startDrag(r.querySelector(".handle"),function(){ return {name:x.n, move:x.id}; });
+  return r;
+}
+function addExtra(name,slot){ var a=getX(); a.push({id:"x"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),n:name,slot:slot,text:""}); setX(a); renderPlan(); wirePlan(); flash("Added "+name); }
+function moveExtra(id,slot){ var a=getX(), it=a.filter(function(y){return y.id===id;})[0]; if(!it) return; a=a.filter(function(y){return y.id!==id;}); it.slot=slot; a.push(it); setX(a); renderPlan(); wirePlan(); }
+function stopPlacing(){ placing=null; plan.classList.remove("placing"); phint.textContent=""; Array.prototype.forEach.call(pchips.children,function(c){c.setAttribute("aria-pressed","false");}); }
+EXTRAS.forEach(function(x){
+  var c=document.createElement("button"); c.type="button"; c.className="pchip"; c.textContent=x.n; c.setAttribute("aria-pressed","false");
+  c.addEventListener("click",function(){
+    if(c._dragged){ c._dragged=false; return; }
+    if(placing===x.n){ stopPlacing(); return; }
+    stopPlacing(); placing=x.n; c.setAttribute("aria-pressed","true"); plan.classList.add("placing");
+    phint.textContent="Now tap a gap between the beats to place \u201c"+x.n+"\u201d.";
+  });
+  startDrag(c,function(){ return {name:x.n}; });
+  pchips.appendChild(c);
+});
+/* pointer-based dragging: works with a mouse, a finger or a pen */
+function startDrag(el,info){
+  el.addEventListener("pointerdown",function(ev){
+    if(ev.button!==undefined&&ev.button!==0) return;
+    var sx=ev.clientX, sy=ev.clientY, ghost=null, over=null, d=info();
+    function slotAt(x,y){ var t=document.elementFromPoint(x,y); return t&&t.closest?t.closest(".pslot"):null; }
+    function move(e){
+      if(!ghost){ if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)<8) return;
+        ghost=document.createElement("div"); ghost.className="ghost"; ghost.textContent=d.name; document.body.appendChild(ghost);
+        plan.classList.add("dragging"); el._dragged=true; }
+      e.preventDefault();
+      ghost.style.left=e.clientX+"px"; ghost.style.top=e.clientY+"px";
+      var s=slotAt(e.clientX,e.clientY);
+      if(s!==over){ if(over) over.classList.remove("over"); over=s; if(over) over.classList.add("over"); }
+      if(e.clientY<60) window.scrollBy(0,-14); else if(e.clientY>innerHeight-60) window.scrollBy(0,14);
+    }
+    function up(){
+      document.removeEventListener("pointermove",move); document.removeEventListener("pointerup",up); document.removeEventListener("pointercancel",up);
+      if(!ghost) return;
+      ghost.remove(); plan.classList.remove("dragging");
+      if(over){ var sl=parseInt(over.getAttribute("data-slot"),10); over.classList.remove("over"); if(d.move) moveExtra(d.move,sl); else addExtra(d.name,sl); stopPlacing(); }
+      setTimeout(function(){ el._dragged=false; },0);
+    }
+    document.addEventListener("pointermove",move,{passive:false}); document.addEventListener("pointerup",up); document.addEventListener("pointercancel",up);
+  });
+}
+function wirePlan(){
+  Array.prototype.forEach.call(plan.querySelectorAll("textarea[data-k]"),function(el){
+    var k=el.getAttribute("data-k");
+    if(typeof store[k]==="string") el.value=store[k];
+    mark(el);
+    el.addEventListener("input",function(){ set(k,el.value); mark(el); tick(); });
+  });
+  if(tasks) tick();
+}
+renderPlan();
+
+/* ---------- wire fields ---------- */
+var fields=Array.prototype.slice.call(document.querySelectorAll("[data-k]")).filter(function(el){ return !plan.contains(el); });
+fields.forEach(function(el){
+  var k=el.getAttribute("data-k");
+  if(typeof store[k]==="string") el.value=store[k];
+  mark(el);
+  el.addEventListener("input",function(){ set(k,el.value); mark(el); tick(); });
+});
+function mark(el){
+  if(el.value && el.value.trim().length>1) el.classList.add("filled");
+  else el.classList.remove("filled");
+}
+wirePlan();
+if(store.pg && GENRES[parseInt(store.pg,10)]){
+  gWrap.children[parseInt(store.pg,10)].setAttribute("aria-pressed","true");
+  showG(parseInt(store.pg,10));
+}
+
+/* ---------- progress ---------- */
+var tally=document.getElementById("tally"), fill=document.getElementById("fill"), tasks=null;
+tasks=Array.prototype.slice.call(document.querySelectorAll("[data-task]")).filter(function(t){
+  return t.getAttribute("data-task")!=="skip";
+});
+function tick(){
+  var done=0;
+  tasks.forEach(function(t){
+    var f=Array.prototype.slice.call(t.querySelectorAll("[data-k]")).filter(function(el){ return !el.hasAttribute("data-opt"); });
+    var ok=f.length>0 && f.every(function(el){ return el.value && el.value.trim().length>1; });
+    if(t.contains(gWrap)) ok = ok && !!store.pg;
+    if(ok){ t.classList.add("done"); done++; } else t.classList.remove("done");
+  });
+  tally.textContent=done+" of "+tasks.length+" done";
+  fill.style.width=(done/tasks.length*100)+"%";
+}
+
+/* ---------- export ---------- */
+function build(){
+  var L=[];
+  L.push("GENRE AND STRUCTURE IN FILM TRAILERS");
+  L.push("Year 11 General Media — Task 2: Film Trailer Production");
+  L.push("");
+  L.push("Group: "+(store.name||""));
+  L.push("Our film's genre: "+(store.filmgenre||""));
+  if(store.pg && GENRES[parseInt(store.pg,10)]) L.push("Genre studied: "+GENRES[parseInt(store.pg,10)].n);
+  L.push("");
+  L.push("=== PART 1 — GENRE ===");
+  [["TRAILER A","a_"],["TRAILER B","b_"]].forEach(function(p){
+    L.push("");
+    L.push(p[0]+": "+(store[p[1]+"title"]||""));
+    L.push("  Conventions: "+(store[p[1]+"conv"]||""));
+    L.push("  The promise: "+(store[p[1]+"promise"]||""));
+    L.push("  On mute: "+(store[p[1]+"muted"]||""));
+  });
+  L.push("");
+  L.push("Conventions we can pull off: "+(store.p1_borrow||""));
+  L.push("Convention we'll twist or withhold (optional): "+(store.p1_break||""));
+  L.push("");
+  L.push("=== PART 2 — STRUCTURE ===");
+  L.push("Trailer mapped: "+(store.c_title||"")+"   Runtime: "+(store.c_length||""));
+  L.push("");
+  BEATS.forEach(function(b,i){
+    L.push((i+1)+". "+b.t.toUpperCase()+"  ["+(store["tc_"+i]||"no timecode")+"]  Codes: "+(store["sw_"+i]||"none selected"));
+    L.push("   "+(store["bt_"+i]||""));
+    L.push("");
+  });
+  L.push("--- Our trailer plan ---");
+  var xs=getX();
+  for(var s=0;s<=BEATS.length;s++){
+    xs.filter(function(x){return x.slot===s;}).forEach(function(x){ L.push("   + "+x.n.toUpperCase()+": "+(x.text||"")); });
+    if(s<BEATS.length) L.push((s+1)+". "+BEATS[s].t.toUpperCase()+": "+(store["plan_"+s]||""));
+  }
+  L.push("");
+  L.push("Beat we can't fill / what we'll film: "+(store.p2_gap||""));
+  return L.join("\n");
+}
+function fname(){
+  var n=(store.name||"trailer-lesson").trim().replace(/[^a-zA-Z0-9 _-]/g,"").replace(/\s+/g,"-");
+  return (n||"trailer-lesson")+"-genre-and-structure.txt";
+}
+document.getElementById("btnCopy").addEventListener("click",function(){
+  var t=build();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){flash("Copied — paste it into your doc");},function(){fb(t);});
+  } else fb(t);
+});
+function fb(t){
+  var ta=document.createElement("textarea");
+  ta.value=t; ta.style.position="fixed"; ta.style.top="-1000px";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); flash("Copied — paste it into your doc"); }
+  catch(e){ flash("Couldn't copy — select manually"); }
+  document.body.removeChild(ta);
+}
+var dl=null;
+if(window.claude&&typeof window.claude.use==="function"){
+  window.claude.use("downloads").then(function(d){dl=d;},function(){dl=null;});
+}
+document.getElementById("btnSave").addEventListener("click",function(){
+  var t=build();
+  if(dl&&typeof dl.save==="function"){
+    dl.save({filename:fname(),data:t}).then(function(){flash("Saved");},function(){flash("Declined — use Copy answers");});
+  } else {
+    try{ var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([t],{type:"text/plain"})); a.download=fname(); document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500); flash("Saved to your downloads"); }
+    catch(e){ flash("Couldn't save — use Copy answers"); }
+  }
+});
+document.getElementById("btnClear").addEventListener("click",function(){
+  if(!confirm("Clear every answer? This can't be undone.")) return;
+  store={}; persist();
+  fields.forEach(function(el){ el.value=""; mark(el); });
+  Array.prototype.forEach.call(document.querySelectorAll(".sw"),function(c){c.setAttribute("aria-pressed","false");});
+  Array.prototype.forEach.call(gWrap.children,function(c){c.setAttribute("aria-pressed","false");});
+  gOut.classList.add("hid"); stopPlacing(); renderPlan(); wirePlan(); tick(); flash("Cleared");
+});
+
+/* ---------- boot ---------- */
+countOpened();
+tick();
+
+})();
+</script>
+</body>
+</html>
