@@ -39,7 +39,7 @@ window.PORTAL = {
       page: "",
       assignments: [
         { title: "Film Trailers: Genre and Structure",
-          text:  "Task 2 · 80-minute lesson. Work through Part 1 and Part 2 with your group.",
+          text:  "Task 2 · Genre, trailer structure and your production task. Work through all three parts with your group.",
           url:   "/film-trailers.html",
           image: "" }
       ],
