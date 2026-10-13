@@ -357,7 +357,25 @@ body.wide .borrow{grid-template-columns:minmax(0,1fr) 300px;gap:20px}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
 .keypad button{min-height:64px;border-radius:16px;border:1.5px solid var(--line);background:var(--bg);font-family:var(--display);font-size:26px;font-weight:700}
 .keypad .kp-alt{font-family:var(--body);font-size:16px;color:var(--muted)}
-.hist-tools{justify-content:center}
+.hist-tools{justify-content:flex-start}
+.hist th.ck,.hist td.ck{width:44px;padding-right:0}
+.hist input[type=checkbox]{width:22px;height:22px;accent-color:var(--rec);cursor:pointer}
+.hist td.who label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.hist td.who label input{margin-top:2px;flex:none}
+.hist td.who label small{display:block}
+.hist tr.sel td{background:var(--rec-soft)!important}
+.bulkbar{position:sticky;bottom:12px;margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--ink);color:var(--surface);border-radius:16px;padding:10px 12px 10px 18px;box-shadow:0 10px 30px rgba(22,33,46,.25)}
+.bulkbar[hidden]{display:none}
+.bulkbar span{font-weight:800;margin-right:auto}
+.bulkbar .btn-ghost{color:var(--surface);border-color:rgba(255,255,255,.35)}
+.jump{position:sticky;top:calc(8px + env(safe-area-inset-top,0px));z-index:6;display:flex;gap:8px;overflow-x:auto;padding:10px;margin:0 0 18px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 18px rgba(22,33,46,.08);scrollbar-width:thin}
+.jump a{flex:none;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-weight:700;font-size:15px;padding:9px 14px;border-radius:12px;background:var(--bg);border:1.5px solid transparent;min-height:44px;white-space:nowrap}
+.jump a:hover{border-color:var(--line)}
+.jump a.on{background:var(--ink);color:var(--surface)}
+.jump a .n{background:var(--rec);color:#fff;border-radius:999px;font-size:12px;padding:1px 8px;line-height:18px}
+#teacherBody .panel{scroll-margin-top:96px}
+#autoNote[hidden]{display:none}
+
 .hist-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-l)}
 .hist{width:100%;border-collapse:collapse;min-width:760px;font-size:15px}
 .hist th{position:sticky;top:0;background:var(--ink);color:var(--surface);text-align:left;padding:12px 14px;font-weight:700;font-size:14px;white-space:nowrap}
@@ -430,7 +448,6 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="borrow" aria-selected="true">Borrow gear</button>
     <button role="tab" data-tab="return" aria-selected="false">Return gear</button>
-    <button role="tab" data-tab="history" aria-selected="false" id="historyTab">Loan history</button>
     <button role="tab" data-tab="teacher" aria-selected="false" id="teacherTab">Teacher <span class="badge" id="waitCount" hidden>0</span></button>
   </nav>
 </header>
@@ -461,25 +478,6 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
     <div class="people" id="people"></div>
   </section>
 
-  <section id="tab-history" hidden>
-    <div id="histLockSlot"></div>
-    <div id="histBody" hidden>
-      <div class="t-head"><div><h2>Loan history</h2>
-      <p class="lede">Every loan, newest first. Ticks show what has been returned and when.</p></div></div>
-      <div class="toolbar hist-tools">
-        <input class="search" id="histSearch" type="search" placeholder="Search by name or equipment" aria-label="Search loan history">
-        <div class="seg" role="group" aria-label="Show">
-          <button data-hf="all" aria-pressed="true">All</button><button data-hf="out" aria-pressed="false">Still out</button><button data-hf="back" aria-pressed="false">Returned</button>
-        </div>
-      </div>
-      <p class="hint" id="histCount" style="text-align:center;margin:-4px 0 12px"></p>
-      <div class="hist-wrap"><table class="hist">
-        <thead><tr><th>Date of loan</th><th>Student / staff</th><th>Equipment borrowed</th><th>Returned</th><th>Return date</th></tr></thead>
-        <tbody id="histRows"></tbody>
-      </table></div>
-    </div>
-  </section>
-
   <section id="tab-teacher" hidden>
     <div id="lock" class="lock">
       <div class="lock-card">
@@ -500,7 +498,9 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
     <p class="lede">Current loans, returns to check and the inventory. Returns only count once you confirm them here.</p></div>
     <span class="pill ok" id="autoNote" hidden title="You don't need the password while signed in with a teacher account">Signed in as teacher</span><button class="btn btn-ghost btn-sm" id="lockBtn" title="Lock the Teacher tab on this device">Lock</button></div>
 
-    <div class="panel">
+    <nav class="jump" id="jumpBar" aria-label="Teacher sections"></nav>
+
+    <div class="panel" id="sec-loans">
       <h3>Current loans</h3>
       <p class="lede" style="margin-bottom:12px">Everything that's out right now. Gear is due back 1 week after it's borrowed.</p>
       <div class="summary" id="summary"></div>
@@ -520,14 +520,14 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-wait">
       <h3>Waiting for you to check</h3>
       <p class="lede" style="margin-bottom:10px">Students have ticked these as brought back. Check each one is here and undamaged, then confirm.</p>
       <div class="row-actions" style="margin:0 0 12px;justify-content:flex-start"><button class="btn btn-go btn-sm" id="confirmAll" hidden>Confirm all</button></div>
       <div id="waitList"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-overdue">
       <h3>Overdue reminders</h3>
       <p class="lede" style="margin-bottom:14px">Loans older than 1 week. Copy the three parts below into a new Outlook email, or use a student's own buttons to send them a personal reminder.</p>
       <div class="rem-all" id="remAll">
@@ -543,7 +543,23 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
       <div id="overdueList"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-history">
+      <h3>Loan history</h3>
+      <p class="lede" style="margin-bottom:12px">Every loan, newest first. Tick items, or tick a student's name to select all their returned items, then tap <b>Mark not returned</b> to put them back on loan.</p>
+      <div class="toolbar hist-tools">
+        <input class="search" id="histSearch" type="search" placeholder="Search by name or equipment" aria-label="Search loan history">
+        <div class="seg" role="group" aria-label="Show">
+          <button data-hf="all" aria-pressed="true">All</button><button data-hf="out" aria-pressed="false">Still out</button><button data-hf="back" aria-pressed="false">Returned</button>
+        </div>
+      </div>
+      <p class="hint" id="histCount" style="text-align:center;margin:-4px 0 12px"></p>
+      <div class="hist-wrap"><table class="hist">
+        <thead><tr><th class="ck"><span class="sr-only">Select</span></th><th>Date of loan</th><th>Student / staff</th><th>Equipment borrowed</th><th>Returned</th><th>Return date</th></tr></thead>
+        <tbody id="histRows"></tbody>
+      </table></div>
+      <div class="bulkbar" id="bulkBar" hidden><span id="bulkCount"></span><button class="btn btn-ghost btn-sm" id="bulkClear">Clear selection</button><button class="btn btn-rec btn-sm" id="bulkUndo">Mark not returned</button></div>
+    </div>
+    <div class="panel" id="sec-qr">
       <h3>QR stickers</h3>
       <p class="lede" style="margin-bottom:12px">Print stickers and put one on each piece of gear. Then, on Return gear, tap a student's "Scan returns" and hold each item up to the camera.</p>
       <label class="chk"><input type="checkbox" id="qrUnits" checked> Numbered gear: one sticker per kit, handycam, GoPro and numbered microphone</label>
@@ -551,7 +567,7 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
       <div class="row-actions" style="justify-content:flex-start"><button class="btn btn-ink btn-sm" id="qrPrint">Print QR stickers</button><span class="hint" id="qrCount" style="align-self:center"></span></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-backup">
       <h3>Backup and records</h3>
       <p class="lede" style="margin-bottom:12px">Everything is saved online and updates live on every device. Download a backup each term for safekeeping.</p>
       <div class="row-actions" style="justify-content:flex-start;margin-top:0">
@@ -563,13 +579,13 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
       <p class="hint" id="bkInfo"></p>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-missing">
       <h3>Records that disappeared</h3>
       <p class="lede" style="margin-bottom:10px">If a loan is removed without you confirming a return, it shows up here so nothing goes missing quietly.</p>
       <div id="missingList"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-inv">
       <h3>Inventory</h3>
       <p class="lede" style="margin-bottom:6px">Change names, notes, categories or quantities and they save straight away. The picture comes from the category. Untick "Can borrow" to keep an item in the stocktake but hide it from students. Cameras, handycams and GoPros are numbered 1 to the quantity.</p>
       <div id="invList"></div>
@@ -690,7 +706,8 @@ ICONS.wireless=`<svg viewBox="0 0 120 120"><rect x="10" y="40" width="30" height
 ICONS["mic-acc"]=`<svg viewBox="0 0 120 120"><rect x="22" y="18" width="16" height="26" rx="8" fill="#2B3A4E" ${S}/><path d="M26 44h8v8h-8z" fill="#9AA7B6" stroke="#16212E" stroke-width="2.5"/><path d="M30 52c0 20 -14 26 -8 42s26 10 30 16" stroke="#16212E" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 22l10-4" stroke="#16212E" stroke-width="3" stroke-linecap="round"/><rect x="76" y="10" width="14" height="88" rx="6" fill="#9AA7B6" ${S}/><path d="M76 34h14M76 60h14" stroke="#16212E" stroke-width="3"/><rect x="74" y="96" width="18" height="16" rx="5" fill="#2B3A4E" ${S}/><circle cx="83" cy="10" r="4" fill="#D8343A" stroke="#16212E" stroke-width="2"/></svg>`;
 ICONS.wireless1=`<svg viewBox="0 0 120 120"><rect x="16" y="44" width="34" height="40" rx="9" fill="#2B3A4E" ${S}/><circle cx="33" cy="62" r="8" fill="#9AA7B6" stroke="#16212E" stroke-width="2.5"/><rect x="66" y="58" width="36" height="44" rx="8" fill="#fff" ${S}/><rect x="73" y="67" width="22" height="11" rx="2" fill="#6FA8DC"/><circle cx="84" cy="90" r="4" fill="#D8343A"/><path d="M24 38a12 12 0 0 1 18 0M18 30a22 22 0 0 1 30 0" stroke="#D8343A" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
 ICONS.lav=`<svg viewBox="0 0 120 120"><path d="M40 20h26l4 10H36z" fill="#9AA7B6" stroke="#16212E" stroke-width="3" stroke-linejoin="round"/><path d="M44 30v14M62 30v14" stroke="#16212E" stroke-width="3" stroke-linecap="round"/><rect x="42" y="44" width="22" height="30" rx="11" fill="#2B3A4E" ${S}/><path d="M47 52h12M47 58h12M47 64h12" stroke="#4A5A70" stroke-width="2"/><rect x="48" y="74" width="10" height="8" rx="2" fill="#2B3A4E" stroke="#16212E" stroke-width="2.5"/><path d="M53 82c0 14 -18 12 -18 24s30 6 44 -4 20 -6 24 0" stroke="#16212E" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="92" y="92" width="18" height="12" rx="3" fill="#D8343A" stroke="#16212E" stroke-width="2.5"/></svg>`;
-ICONS.stick=`<img alt="" src="data:image/png;base64,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">`;
+ICONS.stick=`<svg viewBox="0 0 120 120"><defs><linearGradient id="stkH" x1="0" x2="1"><stop offset="0" stop-color="#3A4252"/><stop offset=".35" stop-color="#1B2029"/><stop offset="1" stop-color="#0E1117"/></linearGradient><radialGradient id="stkF" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#4A5262"/><stop offset="1" stop-color="#14181F"/></radialGradient></defs><rect x="40" y="8" width="40" height="38" rx="18" fill="url(#stkF)" stroke="#0B0D12" stroke-width="2.5"/><g fill="#5C6577" opacity=".55"><circle cx="50" cy="20" r="1.6"/><circle cx="58" cy="17" r="1.6"/><circle cx="66" cy="20" r="1.6"/><circle cx="54" cy="27" r="1.6"/><circle cx="62" cy="27" r="1.6"/><circle cx="70" cy="28" r="1.6"/><circle cx="48" cy="33" r="1.6"/><circle cx="58" cy="35" r="1.6"/><circle cx="66" cy="36" r="1.6"/></g><path d="M47 44h26l-4 10H51z" fill="#20252F" stroke="#0B0D12" stroke-width="2.5" stroke-linejoin="round"/><circle cx="60" cy="49" r="2.6" fill="#E3A82B"/><path d="M51 54h18l-3 58a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4z" fill="url(#stkH)" stroke="#0B0D12" stroke-width="2.5" stroke-linejoin="round"/><path d="M55 58l1.5 52" stroke="#6B7486" stroke-width="2" stroke-linecap="round" opacity=".6"/></svg>`;
+
 ICONS.charger=`<svg viewBox="0 0 120 120"><rect x="18" y="40" width="70" height="48" rx="10" fill="#2B3A4E" ${S}/><rect x="30" y="30" width="46" height="26" rx="5" fill="#fff" ${S}/><rect x="36" y="36" width="34" height="14" rx="2" fill="#1F8A5B"/><circle cx="34" cy="74" r="4" fill="#F2B632"/><circle cx="48" cy="74" r="4" fill="#9AA7B6"/><path d="M88 64h8c8 0 8 12 16 12" stroke="#16212E" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="100" y="70" width="14" height="14" rx="3" fill="#fff" stroke="#16212E" stroke-width="3"/><path d="M104 84v8M110 84v8" stroke="#16212E" stroke-width="3" stroke-linecap="round"/></svg>`;
 const EMO=e=>`<span class="emo" aria-hidden="true">${e}</span>`;
 Object.assign(ICONS,{props:EMO("🎭"),tshirt:EMO("👕"),jacket:EMO("🧥"),hat:EMO("🎩"),scarf:EMO("🧣"),propgun:EMO("🔫"),knife:EMO("🔪"),mask:EMO("🎭"),glasses:EMO("👓"),
@@ -698,7 +715,8 @@ Object.assign(ICONS,{props:EMO("🎭"),tshirt:EMO("👕"),jacket:EMO("🧥"),hat
   wig:`<svg viewBox="0 0 120 120"><path d="M60 12c-30 0-44 22-44 48 0 18 4 34 10 46h16c-6-14-8-30-6-44 10-2 22-8 30-18 8 10 18 16 28 18 2 14 0 30-6 44h16c6-12 10-28 10-46 0-26-14-48-44-48z" fill="#C98A00" stroke="#16212E" stroke-width="3" stroke-linejoin="round"/><path d="M40 30c8 6 16 8 24 6M58 20c6 8 16 12 26 12" stroke="#8A5E00" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
   misc:`<svg viewBox="0 0 120 120"><rect x="36" y="44" width="36" height="62" rx="8" fill="#2B3A4E" stroke="#16212E" stroke-width="3"/><rect x="42" y="18" width="24" height="28" rx="3" fill="#9AA7B6" stroke="#16212E" stroke-width="3"/><rect x="48" y="26" width="5" height="6" fill="#16212E"/><rect x="56" y="26" width="5" height="6" fill="#16212E"/><circle cx="54" cy="88" r="5" fill="#1F8A5B"/><rect x="78" y="62" width="30" height="40" rx="6" fill="#fff" stroke="#16212E" stroke-width="3"/><rect x="84" y="56" width="18" height="12" rx="2" fill="#F2B632" stroke="#16212E" stroke-width="2.5"/></svg>`});
 ICONS.usb=ICONS.misc; ICONS.reader=ICONS.card;
-ICONS.snowball=`<svg viewBox="0 0 120 120"><circle cx="60" cy="48" r="32" fill="#E8EEF5" stroke="#16212E" stroke-width="3"/><g stroke="#9AA7B6" stroke-width="2"><path d="M34 40h52M30 50h60M34 60h52M42 30h36M44 70h32"/><path d="M50 18v60M60 16v64M70 18v60M40 26v44M80 26v44"/></g><circle cx="60" cy="48" r="32" fill="none" stroke="#16212E" stroke-width="3"/><circle cx="60" cy="84" r="4" fill="#D8343A"/><path d="M60 80v12M60 92L40 110M60 92l20 18M60 92v18" stroke="#16212E" stroke-width="3" stroke-linecap="round"/><path d="M26 48c0-10 4-18 10-24M94 48c0-10-4-18-10-24" stroke="#2B3A4E" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`;
+ICONS.snowball=`<svg viewBox="0 0 120 120"><defs><radialGradient id="sbB" cx=".38" cy=".3" r=".75"><stop offset="0" stop-color="#4B5362"/><stop offset=".55" stop-color="#1A1E26"/><stop offset="1" stop-color="#07090C"/></radialGradient><linearGradient id="sbS" x1="0" x2="1"><stop offset="0" stop-color="#9AA3B2"/><stop offset=".5" stop-color="#E9EDF3"/><stop offset="1" stop-color="#8A93A2"/></linearGradient></defs><path d="M36 112l20-26M84 112L64 86M60 86v24" stroke="#14181F" stroke-width="4.5" stroke-linecap="round"/><circle cx="35" cy="112" r="4" fill="#2A303B"/><circle cx="85" cy="112" r="4" fill="#2A303B"/><circle cx="60" cy="111" r="4" fill="#2A303B"/><ellipse cx="60" cy="86" rx="15" ry="6" fill="#20252F" stroke="#0B0D12" stroke-width="2"/><rect x="56" y="58" width="8" height="28" rx="3" fill="#1B2029" stroke="#0B0D12" stroke-width="2"/><rect x="53" y="58" width="14" height="7" rx="2" fill="#2A303B" stroke="#0B0D12" stroke-width="2"/><circle cx="60" cy="34" r="27" fill="url(#sbB)" stroke="#05070A" stroke-width="2.5"/><g stroke="#3B4351" stroke-width="1.4" opacity=".9"><path d="M41 22c5-6 33-6 38 0M37 30c6-4 40-4 46 0M37 40c6 4 40 4 46 0M41 47c5 6 33 6 38 0"/><path d="M48 14v40M54 11v46M60 10v48M66 11v46M72 14v40"/></g><rect x="35" y="29" width="50" height="10" rx="5" fill="#0E1117"/><ellipse cx="60" cy="34" rx="15" ry="8" fill="url(#sbS)" stroke="#0B0D12" stroke-width="2"/><ellipse cx="60" cy="34" rx="10.5" ry="4.6" fill="#1E232C"/><circle cx="60" cy="11" r="2.2" fill="#FF3B3B"><animate attributeName="opacity" values="1;.35;1" dur="2.4s" repeatCount="indefinite"/></circle><path d="M45 19c4-5 10-7 15-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".35"/></svg>`;
+
 ICONS.cable=`<svg viewBox="0 0 120 120"><path d="M30 36c0 30 60 18 60 48" stroke="#16212E" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="18" y="12" width="24" height="26" rx="5" fill="#2B3A4E" stroke="#16212E" stroke-width="3"/><rect x="23" y="4" width="14" height="10" rx="2" fill="#9AA7B6" stroke="#16212E" stroke-width="2.5"/><rect x="78" y="82" width="24" height="26" rx="5" fill="#2B3A4E" stroke="#16212E" stroke-width="3"/><rect x="84" y="106" width="12" height="8" rx="3" fill="#9AA7B6" stroke="#16212E" stroke-width="2.5"/><path d="M60 50l-6 10h8l-6 10" stroke="#F2B632" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 ICONS["gp-power"]=ICONS.power; ICONS["gp-card"]=ICONS.card;
 const icon=c=>ICONS[c]||ICONS.bag;
@@ -767,8 +785,7 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("clic
   document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
   $("#basket").classList.remove("open"); renderBasket();
-  if(b.dataset.tab==="history") $("#histLockSlot").appendChild($("#lock")); else if(b.dataset.tab==="teacher") $("#tab-teacher").prepend($("#lock"));
-  if(b.dataset.tab==="history") renderHistory();
+  if(b.dataset.tab==="teacher"){ renderHistory(); renderJump(); }
   document.body.classList.toggle("wide",layout==="columns"&&b.dataset.tab==="borrow");
 }));
 const currentTab=()=>document.querySelector('nav.tabs [aria-selected="true"]').dataset.tab;
@@ -1375,8 +1392,7 @@ $("#scanDone").onclick=$("#scanClose").onclick=closeScanner;
 let unlocked=false; try{unlocked=!!localStorage.getItem("kcc-code");}catch(e){}   // remembered on this device until "Lock" is tapped
 let checking=false;
 function showLock(){
-  $("#lock").hidden=unlocked; $("#teacherBody").hidden=!unlocked; $("#histBody").hidden=!unlocked;
-  $("#historyTab").textContent=unlocked?"Loan history":"🔒 Loan history";
+  $("#lock").hidden=unlocked; $("#teacherBody").hidden=!unlocked;
   $("#lockBtn").hidden=false; $("#autoNote").hidden=true;
 }
 function lockTeacher(){ unlocked=false; isTeacher=false; try{localStorage.removeItem("kcc-code");}catch(e){} showLock(); applySiteLock(); db&&db.refresh(); renderAll(); }
@@ -1398,40 +1414,75 @@ $("#lockBtn").onclick=()=>{ lockTeacher(); toast("Teacher tab locked on this dev
 
 /* ---------- Loan history (teacher only) ---------- */
 let histFilter="all";
-function renderHistory(){
-  if(!isTeacher||$("#tab-history").hidden) return;
-  const q=$("#histSearch").value.trim().toLowerCase();
-  const groups=[];
-  const byId={};
+const histSel=new Set();
+function histGroups(){
+  const groups=[], byId={};
   allLines().forEach(l=>{ const bid=l.lineId.replace(/_\d+$/,""); if(!byId[bid]){ byId[bid]={bid,name:l.name,year:l.year,email:l.email,borrowedAt:l.borrowedAt,lines:[]}; groups.push(byId[bid]); } byId[bid].lines.push(l); });
-  groups.sort((a,b)=>new Date(b.borrowedAt)-new Date(a.borrowedAt));
-  const shown=groups.filter(g=>{
+  return groups.sort((a,b)=>new Date(b.borrowedAt)-new Date(a.borrowedAt));
+}
+const undoable=l=>l.confirmed>0||l.waiting>0;
+async function undoReturn(id){ await db.doc("returns/"+id).delete(); await db.doc("handbacks/"+id).delete(); delete returns[id]; delete handbacks[id]; }
+function renderHistory(){
+  if(!isTeacher||!$("#histRows")) return;
+  const q=$("#histSearch").value.trim().toLowerCase();
+  const shown=histGroups().filter(g=>{
     if(q&&!(g.name+" "+g.lines.map(l=>l.itemName).join(" ")).toLowerCase().includes(q)) return false;
     const allBack=g.lines.every(l=>l.outstanding===0);
     return histFilter==="all"||(histFilter==="back"?allBack:!allBack);
   });
+  // forget selections that can no longer be undone
+  const live=new Set(allLines().filter(undoable).map(l=>l.lineId)); [...histSel].forEach(id=>{ if(!live.has(id)) histSel.delete(id); });
   const fmtD=d=>new Date(d).toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric"});
   $("#histCount").textContent=`${shown.length} loan${shown.length===1?"":"s"} shown`;
-  if(!shown.length){ $("#histRows").innerHTML=`<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">No loans match.</td></tr>`; return; }
-  $("#histRows").innerHTML=shown.map(g=>g.lines.map((l,i)=>{
-    const r=returns[l.lineId]||{}; const back=l.confirmed;
-    const status=back>=l.qty?`<span class="ok">✓ Returned</span>`:back>0?`<span class="part">${back} of ${l.qty} returned</span>`:`<span class="no">✗ Not returned</span>`;
-    const waiting=l.waiting>0?`<div class="wait">Student says handed back</div>`:"";
-    const undo=(back>0||l.waiting>0)?`<button class="undo" data-undo="${esc(l.lineId)}">Undo</button>`:"";
-    return `<tr class="${i===0?"first":""}">${i===0?`<td class="when" rowspan="${g.lines.length}">${fmtD(g.borrowedAt)}</td><td class="who" rowspan="${g.lines.length}"><b>${esc(g.name)}</b><small>${g.year==="Staff"?"Staff":"Year "+esc(g.year)}${g.email?" · "+esc(g.email):""}</small></td>`:""}
-      <td>${l.qty>1?l.qty+" × ":""}${esc(l.itemName)}</td><td>${status}${undo}${waiting}</td><td class="when">${r.confirmedAt&&back>0?fmtD(r.confirmedAt):"—"}</td></tr>`;
-  }).join("")).join("");
+  if(!shown.length){ $("#histRows").innerHTML=`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">No loans match.</td></tr>`; }
+  else $("#histRows").innerHTML=shown.map(g=>{
+    const can=g.lines.filter(undoable), allOn=can.length&&can.every(l=>histSel.has(l.lineId));
+    return g.lines.map((l,i)=>{
+      const r=returns[l.lineId]||{}, back=l.confirmed;
+      const status=back>=l.qty?`<span class="ok">✓ Returned</span>`:back>0?`<span class="part">${back} of ${l.qty} returned</span>`:`<span class="no">✗ Not returned</span>`;
+      const waiting=l.waiting>0?`<div class="wait">Student says handed back</div>`:"";
+      const undo=undoable(l)?`<button class="undo" data-undo="${esc(l.lineId)}">Undo</button>`:"";
+      const ck=undoable(l)?`<input type="checkbox" data-pick="${esc(l.lineId)}" ${histSel.has(l.lineId)?"checked":""} aria-label="Select ${esc(l.itemName)}">`:"";
+      return `<tr class="${i===0?"first":""} ${histSel.has(l.lineId)?"sel":""}"><td class="ck">${ck}</td>${i===0?`<td class="when" rowspan="${g.lines.length}">${fmtD(g.borrowedAt)}</td><td class="who" rowspan="${g.lines.length}">${can.length?`<label><input type="checkbox" data-pickall="${esc(g.bid)}" ${allOn?"checked":""} aria-label="Select all of ${esc(g.name)}'s returned items"><span>`:"<span>"}<b>${esc(g.name)}</b><small>${g.year==="Staff"?"Staff":"Year "+esc(g.year)}${g.email?" · "+esc(g.email):""}</small></span>${can.length?"</label>":""}</td>`:""}
+        <td>${l.qty>1?l.qty+" × ":""}${esc(l.itemName)}</td><td>${status}${undo}${waiting}</td><td class="when">${r.confirmedAt&&back>0?fmtD(r.confirmedAt):"—"}</td></tr>`;
+    }).join("");
+  }).join("");
+  const groups=Object.fromEntries(shown.map(g=>[g.bid,g]));
+  $("#histRows").querySelectorAll("[data-pick]").forEach(c=>c.onchange=()=>{ c.checked?histSel.add(c.dataset.pick):histSel.delete(c.dataset.pick); renderHistory(); });
+  $("#histRows").querySelectorAll("[data-pickall]").forEach(c=>c.onchange=()=>{ groups[c.dataset.pickall].lines.filter(undoable).forEach(l=>c.checked?histSel.add(l.lineId):histSel.delete(l.lineId)); renderHistory(); });
   $("#histRows").querySelectorAll("[data-undo]").forEach(b=>b.onclick=async()=>{
-    if(!b.classList.contains("sure")){ b.classList.add("sure"); b.textContent="Tap again to undo"; setTimeout(()=>{ b.classList.remove("sure"); b.textContent="Undo"; },3000); return; }
-    b.disabled=true; const id=b.dataset.undo;
-    try{ await db.doc("returns/"+id).delete(); await db.doc("handbacks/"+id).delete(); delete returns[id]; delete handbacks[id]; renderAll(); toast("Return undone. It's back on loan."); }
+    b.disabled=true;
+    try{ await undoReturn(b.dataset.undo); histSel.delete(b.dataset.undo); renderAll(); toast("Marked not returned. It's back on loan."); }
     catch(e){ b.disabled=false; toast("Couldn't undo. Check the internet connection."); }
   });
+  $("#bulkBar").hidden=!histSel.size;
+  $("#bulkCount").textContent=`${histSel.size} item${histSel.size===1?"":"s"} selected`;
 }
 $("#histSearch").addEventListener("input",renderHistory);
 document.querySelectorAll("[data-hf]").forEach(b=>b.onclick=()=>{ histFilter=b.dataset.hf; document.querySelectorAll("[data-hf]").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderHistory(); });
+$("#bulkClear").onclick=()=>{ histSel.clear(); renderHistory(); };
+$("#bulkUndo").onclick=async()=>{
+  const ids=[...histSel]; if(!ids.length) return; $("#bulkUndo").disabled=true;
+  let n=0; try{ for(const id of ids){ await undoReturn(id); histSel.delete(id); n++; } toast(`${n} item${n===1?"":"s"} marked not returned`); }
+  catch(e){ toast("Some items didn't save. Try again."); }
+  $("#bulkUndo").disabled=false; renderAll();
+};
 
-function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();}
+/* ---------- Teacher jump bar ---------- */
+const JUMPS=[["sec-loans","📋","Current loans"],["sec-wait","⏳","To check","wait"],["sec-overdue","⚠️","Overdue","late"],["sec-history","🗂️","Loan history"],["sec-inv","📦","Inventory"],["sec-qr","🔳","QR codes"],["sec-backup","💾","Backup"],["sec-missing","🔎","Missing records"]];
+function renderJump(){
+  const lines=activeLines(), counts={wait:lines.filter(l=>l.waiting>0).length, late:new Set(lines.filter(l=>l.still>0&&daysOut(l.borrowedAt)>=LOAN_DAYS).map(l=>l.name.toLowerCase())).size};
+  $("#jumpBar").innerHTML=JUMPS.filter(([id])=>$("#"+id)&&!$("#"+id).closest("[hidden]")).map(([id,ic,t,c])=>`<a href="#${id}" data-jump-to="${id}"><span aria-hidden="true">${ic}</span>${t}${c&&counts[c]?`<span class="n">${counts[c]}</span>`:""}</a>`).join("");
+  $("#jumpBar").querySelectorAll("a").forEach(a=>a.onclick=e=>{ e.preventDefault(); const t=$("#"+a.dataset.jumpTo); t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"}); });
+}
+/* put the teacher panels in a sensible order */
+(()=>{ const box=$("#adminPanels"); ["sec-wait","sec-overdue","sec-history","sec-inv","sec-qr","sec-backup","sec-missing"].forEach(id=>{ const el=$("#"+id); if(el) box.appendChild(el); }); })();
+if("IntersectionObserver" in window){
+  const io=new IntersectionObserver(es=>{ es.forEach(en=>{ if(en.isIntersecting){ document.querySelectorAll("#jumpBar a").forEach(a=>a.classList.toggle("on",a.dataset.jumpTo===en.target.id)); } }); },{rootMargin:"-40% 0px -55% 0px"});
+  JUMPS.forEach(([id])=>{ const el=$("#"+id); if(el) io.observe(el); });
+}
+
+function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();if(isTeacher&&$("#jumpBar"))renderJump();}
 
 /* ---------- Boot (online, live) ---------- */
 const STORE_KEY="kcc-media-loans-online";
@@ -1484,7 +1535,7 @@ renderAll();
 db=makeDb(); user=null; me=deviceId();
 api("config").then(c=>{ SITE=c; applySiteLock(); db.refresh(); if(unlocked) api("verify",{}).then(r=>{ if(!r.ok&&!r.locked) lockTeacher(); }); }).catch(()=>{$("#offline").hidden=false;});
 isTeacher=unlocked; showLock();
-db.collection("inventory").onSnapshot(s=>{inventory=s.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>(a.order??999)-(b.order??999)||a.name.localeCompare(b.name));renderAll();});
+db.collection("inventory").onSnapshot(s=>{inventory=s.docs.map(x=>{ const it={id:x.id,...x.data()}; if(!it.icon){ if(/snowball/i.test(it.name)) it.icon="snowball"; else if(/mic(rophone)?\s*stick/i.test(it.name)) it.icon="stick"; } return it; }).sort((a,b)=>(a.order??999)-(b.order??999)||a.name.localeCompare(b.name));renderAll();});
 db.collection("loans").onSnapshot(s=>{loanDocs={};s.docs.forEach(x=>loanDocs[x.id]=x.data());renderAll();syncLedger();});
 db.collection("handbacks").onSnapshot(s=>{handbacks={};s.docs.forEach(x=>handbacks[x.id]=x.data());renderAll();});
 db.collection("returns").onSnapshot(s=>{returns={};s.docs.forEach(x=>returns[x.id]=x.data());renderAll();});
