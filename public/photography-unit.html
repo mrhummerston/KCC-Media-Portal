@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Photography Unit | KCC Media Portal</title>
+<meta name="description" content="Year 8 Photography Unit: learn one photography concept at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<script>
+/* Set the theme before the page paints so there is no flash */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('kcc-theme'); } catch (e) {}
+  if (!t) t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+:root{
+  --bg:#FFF8F0; --surface:#ffffff; --surface2:#F6ECDF; --text:#2b2338; --muted:#655c75;
+  --line:#E6D9C8; --accent:#D63A4A; --accent-hover:#BE2E3E; --on-accent:#ffffff;
+  --focus:#1d5fd1; --ok:#1f8a57;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#12131C; --surface:#1C1E2C; --surface2:#262939; --text:#F4F0F7; --muted:#AAA8C0;
+  --line:#34374D; --accent:#F0586A; --accent-hover:#FF7585; --on-accent:#1a0b0e;
+  --focus:#7db1ff; --ok:#52d796;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.55 var(--body);
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:8px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px 64px}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;
+  border:2px solid var(--line);background:var(--surface);color:var(--text);font:700 .95rem var(--body);text-decoration:none;cursor:pointer}
+.pill:hover{border-color:var(--text)}
+
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;letter-spacing:-.01em}
+.hero{padding:12px 0 8px}
+.hero h1{font-size:clamp(2.4rem,7vw,4rem);font-weight:800}
+.hero p{font-size:1.2rem;max-width:34em;margin:14px 0 0;color:var(--muted)}
+
+/* three settings strip */
+.triangle{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0;padding:0;list-style:none}
+.triangle li{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:14px;background:var(--surface);border:2px solid var(--line);font-weight:700}
+.triangle i{width:14px;height:14px;border-radius:50%;background:var(--c)}
+.triangle small{font-weight:400;color:var(--muted)}
+
+/* big buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;padding:14px 26px;border-radius:18px;border:0;
+  background:var(--accent);color:var(--on-accent);font:700 1.2rem var(--display);text-decoration:none;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.22);transition:transform .08s,box-shadow .08s}
+.btn:hover{background:var(--accent-hover)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.22)}
+.btn.ghost{background:var(--surface);color:var(--text);border:2px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--text);background:var(--surface)}
+.btn.done{background:var(--ok);color:#fff}
+.cta{margin:26px 0 8px}
+
+h2.sec{font-size:1.5rem;margin:40px 0 14px}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.tile{position:relative;display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:22px;background:var(--surface);
+  border:2px solid var(--line);border-top:8px solid var(--c);text-decoration:none;min-height:190px;transition:transform .12s,border-color .12s}
+.tile:hover{transform:translateY(-3px);border-color:var(--c)}
+.ico{display:grid;place-items:center;width:60px;height:60px;border-radius:18px;background:var(--c);font-size:1.9rem;line-height:1}
+.tile h3{font-size:1.35rem}
+.tile p{margin:0;color:var(--muted);font-size:.98rem}
+.tile .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.badge{display:inline-block;padding:3px 12px;border-radius:999px;background:var(--surface2);font-size:.88rem;font-weight:700}
+.tick{position:absolute;top:14px;right:14px;display:none;width:32px;height:32px;border-radius:50%;background:var(--ok);color:#fff;place-items:center;font-weight:800}
+.tile.is-done .tick{display:grid}
+
+/* lesson view */
+.back{margin:4px 0 18px}
+.head{display:flex;gap:18px;align-items:center;margin-bottom:18px}
+.head .ico{width:78px;height:78px;font-size:2.4rem;border-radius:24px;flex:none}
+.head h1{font-size:clamp(2rem,6vw,3rem);font-weight:800}
+.idea{font-size:1.3rem;line-height:1.45;padding:22px 24px;border-radius:20px;background:var(--surface);border-left:10px solid var(--c);margin:0 0 20px}
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:22px 24px;margin:0 0 18px}
+.panel h2{font-size:1.35rem;margin-bottom:14px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:0 0 18px}
+.cols .panel{margin:0;border-top:8px solid var(--c)}
+.cols .panel h3{font-size:1.25rem;margin-bottom:4px}
+.cols .sub{margin:0 0 12px;color:var(--muted)}
+
+ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:12px}
+ol.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start}
+ol.steps li::before{content:counter(s);flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;
+  background:var(--c);font:800 1.05rem var(--display);color:#14121c}
+ul.plain{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+ul.plain li{padding-left:28px;position:relative}
+ul.plain li::before{content:"";position:absolute;left:4px;top:.6em;width:10px;height:10px;border-radius:50%;background:var(--c)}
+ul.never li::before{background:var(--accent);border-radius:2px;transform:rotate(45deg)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.chips li{padding:8px 14px;border-radius:12px;background:var(--surface2);font-weight:700;font-size:.98rem}
+.chips li small{font-weight:400;color:var(--muted)}
+.tip{display:flex;gap:14px;padding:18px 22px;border-radius:18px;background:var(--surface2);margin:0 0 18px}
+.tip b{flex:none}
+
+.visual{margin:0 0 18px;padding:18px;border-radius:20px;background:var(--surface);border:2px solid var(--line)}
+.visual svg{display:block;width:100%;height:auto;max-height:230px}
+.visual figcaption{margin-top:8px;color:var(--muted);font-size:.95rem;text-align:center}
+.scale{display:flex;border-radius:14px;overflow:hidden;font-weight:700;font-size:.9rem;text-align:center}
+.scale span{flex:1;padding:14px 4px}
+.scale.sh span:nth-child(1){background:#bcd8f7;color:#0f2a4a}
+.scale.sh span:nth-child(2){background:#8fbdee;color:#0f2a4a}
+.scale.sh span:nth-child(3){background:#5b9fe2;color:#0b1f38}
+.scale.sh span:nth-child(4){background:#2f7fd1;color:#fff}
+.scale.sh span:nth-child(5){background:#1d5fa8;color:#fff}
+.scale.iso span:nth-child(1){background:#244d3b;color:#fff}
+.scale.iso span:nth-child(2){background:#2f7456;color:#fff}
+.scale.iso span:nth-child(3){background:#3b9b72;color:#fff}
+.scale.iso span:nth-child(4){background:#7cc7a2;color:#0f2e20}
+.scale.iso span:nth-child(5){background:#b6e4cd;color:#0f2e20}
+.scale-labels{display:flex;justify-content:space-between;margin-top:8px;color:var(--muted);font-size:.92rem}
+
+table.guide{width:100%;border-collapse:collapse}
+table.guide td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.guide td:first-child{font-weight:700;white-space:nowrap;padding-right:16px}
+table.guide tr:last-child td{border-bottom:0}
+
+.folio-box{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:22px 24px;border-radius:22px;
+  background:var(--surface);border:3px solid var(--accent);margin:0 0 18px}
+.folio-box h2{font-size:1.3rem;margin-bottom:4px}
+.folio-box p{margin:0;color:var(--muted)}
+.folio-box .btn{flex:1 1 260px}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.nav .btn{font-size:1.05rem}
+.nav .spacer{visibility:hidden}
+.mark{margin:0 0 18px}
+
+[hidden]{display:none!important}
+@media (max-width:560px){
+  .wrap{padding:0 16px 56px}
+  .head{flex-direction:column;align-items:flex-start}
+  .nav{grid-template-columns:1fr}
+  .nav .spacer{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <a class="pill" href="/" id="backLink">&larr; Media Portal</a>
+    <button class="pill" id="themeBtn" type="button">Light mode</button>
+  </div>
+
+  <!-- HOME: concept tiles -->
+  <main id="home">
+    <section class="hero">
+      <h1>Photography Unit</h1>
+      <p>Learn one idea at a time. Pick a concept, try it with your camera, then add your best photos to your folio.</p>
+      <ul class="triangle" aria-label="The three settings that control light">
+        <li><i style="--c:#E9902F"></i>Aperture <small>size of the opening</small></li>
+        <li><i style="--c:#3A86DB"></i>Shutter speed <small>how long it stays open</small></li>
+        <li><i style="--c:#35AE79"></i>ISO <small>how sensitive to light</small></li>
+      </ul>
+    </section>
+
+    <div class="cta">
+      <a class="btn" href="/photography-folio.html">📸 Open my Photography Folio</a>
+    </div>
+
+    <h2 class="sec">Get ready</h2>
+    <div class="tiles" id="tilesStart"></div>
+
+    <h2 class="sec">Learn a concept</h2>
+    <div class="tiles" id="tilesLearn"></div>
+
+    <h2 class="sec">Put it all together</h2>
+    <div class="tiles" id="tilesMore"></div>
+  </main>
+
+  <!-- LESSON: one concept -->
+  <main id="lesson" hidden></main>
+
+</div>
+
+<script>
+/* =====================================================================
+   PHOTOGRAPHY UNIT CONTENT
+   Each concept is one object. Edit the words here; the page builds itself.
+   folio.page matches a page id in photography-folio.html (p1 to p6).
+   ===================================================================== */
+var CONCEPTS = [
+  {
+    id:'camera', group:'start', icon:'📷', color:'#9B7BF2',
+    title:'Know your camera', short:'Set up, focus and zoom. Then learn the modes.',
+    idea:'This term you will move off Auto and take control in Manual. First, get to know your camera.',
+    steps:{h:'Get set up', items:[
+      'Write down your name, your partner\u2019s name, and your camera and SD card numbers.',
+      'Check the battery, SD card and strap are in place.',
+      'Start in Auto or Portrait mode.',
+      'Half-press the shutter button to focus.',
+      'Turn the zoom ring on the lens to zoom in and out.'
+    ]},
+    cards:[
+      {h:'Modes you will use', chips:[
+        ['Auto','camera decides everything'],['Av','you choose the aperture'],
+        ['Tv','you choose the shutter speed'],['M','you choose everything']]},
+      {h:'If something goes wrong', items:[
+        '<b>Card error?</b> Ask Mr Hummerston to help you format the SD card. Formatting deletes everything on it, so copy your photos off first.',
+        '<b>Screen went dark?</b> The camera has Auto Power-Off. Tap the shutter button to wake it up.'
+      ]}
+    ]
+  },
+  {
+    id:'rules', group:'start', icon:'📋', color:'#EF5B67',
+    title:'Filming rules', short:'What to do, and what not to do, with school cameras.',
+    idea:'Follow these every lesson. If you are not sure, ask your teacher first.',
+    cards:[
+      {h:'Always', items:[
+        'Use the same camera and SD card every week.',
+        'Keep the camera strap around your neck.',
+        'Write on the whiteboard: who is with you, where you are, and when you are back.',
+        'If you move to a new spot, come back and update the board.',
+        'Make sure the light is behind you when you take a photo.',
+        'Check each photo is in focus, well framed and well lit.'
+      ]},
+      {h:'Never', never:true, items:[
+        'Photograph in the classroom unless Mr Hummerston says so.',
+        'Photograph anyone who has not given permission. Only students in our class who said yes.',
+        'Film in bathrooms, toilets or change rooms.',
+        'Film in the Auditorium seating, backstage or the Dance rooms.',
+        'Film anywhere that is not written on the board.'
+      ]}
+    ],
+    tip:'Break the rules and you may lose the chance to film at school.'
+  },
+  {
+    id:'shots', group:'learn', icon:'🔍', color:'#E9B02F',
+    title:'Shots & angles', short:'How far away the camera is, and where it sits.',
+    folio:{page:'p1', count:2, text:'1 shot type photo and 1 angle photo'},
+    idea:'A <b>shot</b> is how far the camera is from your subject. An <b>angle</b> is where the camera is placed.',
+    compare:[
+      {h:'Shot sizes', sub:'Pick one for your folio.', chips:[
+        ['XLS','extreme long shot'],['LS','long shot'],['MLS','medium long shot'],['MS','mid shot'],
+        ['MCU','medium close up'],['CU','close up'],['BCU','big close up'],['XCU','extreme close up']]},
+      {h:'Camera angles', sub:'Pick one for your folio.', chips:[
+        ['Low',''],['Eye-level',''],['High',''],['Worm\u2019s eye','from the ground'],['Canted','tilted'],['Bird\u2019s eye','from above']]}
+    ],
+    steps:{h:'Warm-up: 24 photos', items:[
+      'Collect a camera and write your names and camera and SD numbers.',
+      'Choose one spot and write it on the whiteboard.',
+      'Take 24 different shots without leaving that spot. Change the shot size and angle each time.',
+      'Come back and show Mr Hummerston. You may be sent out to take more.',
+      'Choose your best shot photo and best angle photo for your folio.'
+    ]},
+    tip:'Take more photos than you need so you have lots to choose from. Every five photos, check the screen: in focus? framed well? bright enough?'
+  },
+  {
+    id:'composition', group:'learn', icon:'📐', color:'#4C9BEA',
+    title:'Composition', short:'Rule of thirds, leading lines and frames.',
+    folio:{page:'p2', count:4, text:'2 leading lines photos and 2 rule of thirds photos'},
+    idea:'Where you put things in the frame changes how a photo feels.',
+    visual:'thirds',
+    cards:[
+      {h:'Rule of thirds', items:[
+        'Imagine your photo split into a 3 x 3 grid.',
+        'Put your subject on a point where lines cross.',
+        'Turn the camera\u2019s <b>Grid</b> on to help.',
+        'Portraits: put the eyes on a crossing. Landscapes: put the horizon on a line.'
+      ]},
+      {h:'Leading lines', items:[
+        'Lines that pull the viewer\u2019s eye into the photo.',
+        'Look for stairs, fences, roads, rails and walls.'
+      ], chips:[['Horizontal',''],['Vertical',''],['Converging',''],['Diagonal',''],['Curved','']]},
+      {h:'Frame within a frame', items:[
+        'Use a window, doorway, arch or trees to frame your subject.',
+        'Natural frames: trees. Man-made frames: buildings.',
+        'It is not a folio box, but it makes other photos stronger.'
+      ]}
+    ],
+    steps:{h:'Try it', items:[
+      'Turn the Grid on.',
+      'Find a subject, like a tree, a friend or a staircase.',
+      'Take it three ways: centred, on a crossing point, and with a leading line.',
+      'Choose your best photos.'
+    ]}
+  },
+  {
+    id:'aperture', group:'learn', icon:'🌸', color:'#E9902F',
+    title:'Aperture', short:'Control the blur behind your subject.',
+    folio:{page:'p3', count:4, text:'2 wide aperture photos and 2 narrow aperture photos'},
+    idea:'Aperture is the size of the opening in your lens. It controls how much light comes in and how blurry the background is.',
+    visual:'aperture',
+    compare:[
+      {h:'Wide aperture', tag:'small f-number', sub:'Try f/3.5 to f/5.6', items:[
+        'Lets in <b>more</b> light.',
+        '<b>Shallow</b> depth of field: your subject is sharp and the background is blurry.']},
+      {h:'Narrow aperture', tag:'big f-number', sub:'Try f/16 to f/36', items:[
+        'Lets in <b>less</b> light.',
+        '<b>Deep</b> depth of field: almost everything is sharp.']}
+    ],
+    steps:{h:'Try it', items:[
+      'Turn the Mode Dial to <b>Av</b>. Now you only change the aperture.',
+      'Pick a subject with something behind it.',
+      'Take a photo with the <b>lowest</b> f-number you can.',
+      'Raise the f-number and take the same photo again.',
+      'Find the value: open your photo in File Explorer, click <b>Details</b> and read the F-stop.'
+    ]},
+    tip:'Your lowest f-number depends on the light, how far you are zoomed in, and which lens you have.'
+  },
+  {
+    id:'shutter', group:'learn', icon:'⏱️', color:'#3A86DB',
+    title:'Shutter speed', short:'Freeze the action or blur it on purpose.',
+    folio:{page:'p4', count:4, text:'2 fast shutter photos and 2 slow shutter photos'},
+    idea:'Shutter speed is how long the shutter stays open. It controls how motion looks.',
+    visual:'shutter',
+    compare:[
+      {h:'Fast shutter speed', tag:'freezes motion', sub:'Try 1/4000 of a second', items:[
+        'Lets in <b>less</b> light.',
+        'Stops a moving thing in mid-air.']},
+      {h:'Slow shutter speed', tag:'blurs motion', sub:'Try 1 second (1")', items:[
+        'Lets in <b>more</b> light.',
+        'Moving things smear. <b>Use a tripod.</b>']}
+    ],
+    steps:{h:'Try it', items:[
+      'Turn the Mode Dial to <b>Tv</b>. Now you only change the shutter speed.',
+      'Fast: shoot a friend in motion, soccer balls, the water fountain or a jump off the wall.',
+      'Slow: shoot the same things at about 1/30, or try light painting in the dark studio.',
+      'Find the value: in File Explorer click <b>Details</b> and read the Exposure time.'
+    ]},
+    cards:[{h:'Good subjects', chips:[['Friend in motion',''],['Water',''],['Balls',''],['Jumping',''],['Dark room with light','']]}]
+  },
+  {
+    id:'iso', group:'learn', icon:'🌙', color:'#35AE79',
+    title:'ISO', short:'Make the camera more or less sensitive to light.',
+    folio:{page:'p5', count:3, text:'1 low ISO, 1 balanced ISO and 1 high ISO photo', note:'If time permits'},
+    idea:'ISO is how sensitive your camera is to light. Higher ISO means a brighter photo, but more grain.',
+    visual:'iso',
+    steps:{h:'Try it', items:[
+      'Turn the Mode Dial to <b>M</b> (Manual).',
+      'Set the aperture to <b>f/5.6</b> and the shutter speed to <b>1/125</b>. Leave them alone.',
+      'Take the same subject at a low ISO (like 200), a balanced ISO (800 or 1600) and a high ISO (like 2000).',
+      'Find the value: in File Explorer click <b>Details</b> and read the ISO speed.'
+    ]},
+    cards:[
+      {h:'Which ISO?', table:[
+        ['100 to 200','Full sun, tripod'],['200 to 400','Cloudy day or shade'],['400 to 800','Sunrise or sunset'],
+        ['800 to 1600','Indoors, no flash'],['1600 to 3200','Indoors at night'],['3200+','Stars and very dark scenes']]},
+      {h:'Rule of thumb', items:['Use the <b>lowest ISO</b> that is not too dark. That keeps grain away.']}
+    ]
+  },
+  {
+    id:'macro', group:'learn', icon:'🐜', color:'#E0558F',
+    title:'Macro & texture', short:'Get super close to tiny details.',
+    folio:{page:'p6', count:3, text:'3 macro or texture photos'},
+    idea:'Macro is an extreme close-up of tiny things. Texture is a surface pattern, like bark, leaves or fabric.',
+    cards:[
+      {h:'Before you shoot', items:[
+        'Set the lens to the <b>FULL</b> focus range.',
+        'Use <b>MF</b> (manual focus), or AF if you are confident.',
+        'Stabiliser <b>ON</b> if you are holding the camera.',
+        'Keep your subject at least <b>30 cm</b> from the lens.'
+      ]},
+      {h:'Camera settings (Manual)', table:[
+        ['ISO','400 to 800 (1600 if it is dark)'],['Aperture','f/8 to f/11'],['Shutter','1/250 or faster if handheld']]},
+      {h:'Shooting tips', items:[
+        'Use a tripod or rest the camera on something steady.',
+        'Focus on the most detailed part of your subject.',
+        'Take lots of shots and adjust a little each time.',
+        'Use Live View and zoom in to check it is sharp.'
+      ]}
+    ],
+    tip:'Ask your teacher which camera and macro lens to use.'
+  },
+  {
+    id:'series', group:'more', icon:'🏫', color:'#3FA9A6',
+    title:'Prison or Paradise', short:'Make our school look like both.',
+    idea:'Photographers choose what goes in the photo and how it is shown. Today you make Kingsway look like paradise, and like a prison.',
+    steps:{h:'Your task', items:[
+      'Work in a pair.',
+      'Take at least <b>5 photos</b> that make the school look like <b>paradise</b>.',
+      'Take at least <b>5 photos</b> that make it look like a <b>prison</b>.',
+      'Each person takes at least 5 photos. That is 10 or more in total.',
+      'Upload your best photos to the <b>Prison or Paradise</b> folder in <b>Uploads</b> on the Media (O:) drive.'
+    ]},
+    cards:[
+      {h:'Use your skills', chips:[['Shots and angles',''],['Leading lines',''],['Rule of thirds',''],['Aperture',''],['Shutter speed',''],['ISO',''],['Macro',''],['Texture','']]},
+      {h:'Think about your audience', items:[
+        'You are trying to persuade two audiences: fellow Year 8 students and the Principal, Mr Burton.',
+        'What do they care about? What would make them agree?'
+      ]}
+    ],
+    tip:'Every photo should be in focus and well lit.'
+  },
+  {
+    id:'creative', group:'more', icon:'✨', color:'#9B7BF2',
+    title:'Creative challenges', short:'Light painting, motion blur, forced perspective and more.',
+    idea:'Use everything you have learnt to make something fun and different.',
+    cards:[
+      {h:'Light painting', items:[
+        'Slow shutter speed in the dark. Write your name with a white torch.',
+        'Make the writing neat and leave gaps between letters. Switch the torch off and on between letters.',
+        'Write it fast and you will not appear. Or stand very still and let a partner write above your head.',
+        'Then try a fun message, or the \u201chardest\u201d album cover, with light sticks and torches.'
+      ]},
+      {h:'Motion blur', items:[
+        'Slow shutter speed in the light.',
+        'Set up a wide shot, then make the coolest blur with 1 to 4 people. Add props or costumes.',
+        'Put the camera on <b>M</b>. Start with ISO 800, f/5.6 and a shutter speed of 0.5", then try 1".'
+      ]},
+      {h:'Forced perspective', items:[
+        'An optical illusion that makes things look closer, further, bigger or smaller than they are.',
+        'Ideas: pinch the sun between your fingers, hold a far-away tree, make a friend look tiny.'
+      ]},
+      {h:'Double exposure', items:['Combine two images into one. Your teacher will show you how.']},
+      {h:'A to Z photo hunt', items:[
+        'In pairs, find a creative photo for each letter of the alphabet.',
+        'Use Av for blurry backgrounds and Tv for motion.',
+        'Drag your best photo next to its letter on the A to Z sheet and label it.',
+        'Be back in class on time to upload.'
+      ]}
+    ],
+    steps:{h:'Handing in', items:[
+      'Email your best photos using the request email in Outlook.',
+      'Upload your best photos to the matching folder in <b>Uploads</b> on the Media (O:) drive.'
+    ]}
+  }
+];
+
+/* ---------- helpers ---------- */
+function $(s, r){ return (r||document).querySelector(s); }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function load(k, d){ try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+function save(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+var done = load('kcc-photo-unit-done', {});
+
+/* ---------- theme ---------- */
+var themeBtn = $('#themeBtn');
+function paintTheme(){ themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light mode' : 'Dark mode'; }
+themeBtn.addEventListener('click', function(){
+  var n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', n);
+  try { localStorage.setItem('kcc-theme', n); } catch(e){}
+  paintTheme();
+});
+paintTheme();
+
+/* ---------- home tiles ---------- */
+function tileHTML(c){
+  var badge = c.folio ? '<span class="badge">' + c.folio.count + ' folio photos</span>' : '';
+  return '<a class="tile' + (done[c.id] ? ' is-done' : '') + '" href="#' + c.id + '" style="--c:' + c.color + '">' +
+    '<span class="tick" aria-hidden="true">✓</span>' +
+    '<span class="ico" aria-hidden="true">' + c.icon + '</span>' +
+    '<h3>' + esc(c.title) + '</h3><p>' + esc(c.short) + '</p>' +
+    '<span class="foot">' + badge + (done[c.id] ? '<span class="badge">Done</span>' : '') + '</span></a>';
+}
+function paintHome(){
+  ['start','learn','more'].forEach(function(g){
+    var el = $('#tiles' + g.charAt(0).toUpperCase() + g.slice(1));
+    el.innerHTML = CONCEPTS.filter(function(c){return c.group === g;}).map(tileHTML).join('');
+  });
+}
+
+/* ---------- visuals ---------- */
+function svgThirds(){
+  var s = '<svg viewBox="0 0 360 220" role="img" aria-label="A photo split into a three by three grid with a subject on a crossing point">' +
+    '<rect x="20" y="10" width="320" height="200" rx="10" fill="var(--surface2)" stroke="var(--line)" stroke-width="3"/>';
+  [126.7, 233.3].forEach(function(x){ s += '<line x1="'+x+'" y1="10" x2="'+x+'" y2="210" stroke="var(--c)" stroke-width="3"/>'; });
+  [76.7, 143.3].forEach(function(y){ s += '<line x1="20" y1="'+y+'" x2="340" y2="'+y+'" stroke="var(--c)" stroke-width="3"/>'; });
+  [[126.7,76.7],[233.3,76.7],[126.7,143.3],[233.3,143.3]].forEach(function(p){
+    s += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="none" stroke="var(--text)" stroke-width="3"/>';
+  });
+  s += '<circle cx="233.3" cy="76.7" r="22" fill="#E9B02F"/><circle cx="233.3" cy="76.7" r="9" fill="#fff" opacity=".7"/></svg>';
+  return '<figure class="visual">' + s + '<figcaption>Put your subject on a crossing point, not in the middle.</figcaption></figure>';
+}
+function svgAperture(){
+  var f = [1.8, 2.8, 4, 5.6, 8, 11, 16, 22], s = '<svg viewBox="0 0 640 170" role="img" aria-label="Lens openings from wide at f/1.8 to narrow at f/22">';
+  f.forEach(function(n, i){
+    var cx = 40 + i * 80, r = Math.max(3, 30 * 1.8 / n * 1.0 + (n < 5 ? 0 : 0));
+    s += '<circle cx="'+cx+'" cy="62" r="34" fill="var(--surface2)" stroke="var(--line)" stroke-width="3"/>' +
+         '<circle cx="'+cx+'" cy="62" r="'+r.toFixed(1)+'" fill="var(--c)"/>' +
+         '<text x="'+cx+'" y="120" text-anchor="middle" font-size="17" font-weight="700" fill="var(--text)" font-family="Atkinson Hyperlegible,Segoe UI,sans-serif">f/'+n+'</text>';
+  });
+  s += '<text x="8" y="154" font-size="15" fill="var(--muted)" font-family="Atkinson Hyperlegible,Segoe UI,sans-serif">Wide: more light, blurry background</text>' +
+       '<text x="632" y="154" text-anchor="end" font-size="15" fill="var(--muted)" font-family="Atkinson Hyperlegible,Segoe UI,sans-serif">Narrow: less light, everything sharp</text></svg>';
+  return '<figure class="visual">' + s + '</figure>';
+}
+function visualShutter(){
+  return '<figure class="visual"><div class="scale sh"><span>1/4000</span><span>1/1000</span><span>1/125</span><span>1/30</span><span>1"</span></div>' +
+    '<div class="scale-labels"><span>Fast: freezes motion</span><span>Slow: blurs motion</span></div></figure>';
+}
+function visualISO(){
+  return '<figure class="visual"><div class="scale iso"><span>100</span><span>200</span><span>800</span><span>1600</span><span>3200</span></div>' +
+    '<div class="scale-labels"><span>Darker, clean photo</span><span>Brighter, grainy photo</span></div></figure>';
+}
+function visualHTML(v){
+  return v === 'thirds' ? svgThirds() : v === 'aperture' ? svgAperture() : v === 'shutter' ? visualShutter() : v === 'iso' ? visualISO() : '';
+}
+
+/* ---------- lesson ---------- */
+function chipsHTML(chips){
+  return '<ul class="chips">' + chips.map(function(c){
+    return '<li>' + esc(c[0]) + (c[1] ? ' <small>' + esc(c[1]) + '</small>' : '') + '</li>';
+  }).join('') + '</ul>';
+}
+function listHTML(items, never){ return '<ul class="plain' + (never ? ' never' : '') + '">' + items.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</ul>'; }
+function tableHTML(rows){ return '<table class="guide"><tbody>' + rows.map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>'; }
+
+function cardHTML(c){
+  var body = '';
+  if (c.items) body += listHTML(c.items, c.never);
+  if (c.chips) body += (c.items ? '<div style="height:12px"></div>' : '') + chipsHTML(c.chips);
+  if (c.table) body += tableHTML(c.table);
+  return '<section class="panel"><h2>' + esc(c.h) + '</h2>' + body + '</section>';
+}
+function compareHTML(list){
+  return '<div class="cols">' + list.map(function(c){
+    var inner = '<h3>' + esc(c.h) + (c.tag ? ' <small style="font-family:var(--body);font-weight:400;color:var(--muted)">(' + esc(c.tag) + ')</small>' : '') + '</h3>' +
+      (c.sub ? '<p class="sub">' + esc(c.sub) + '</p>' : '');
+    if (c.items) inner += listHTML(c.items);
+    if (c.chips) inner += chipsHTML(c.chips);
+    return '<section class="panel">' + inner + '</section>';
+  }).join('') + '</div>';
+}
+function stepsHTML(s){
+  return '<section class="panel"><h2>' + esc(s.h) + '</h2><ol class="steps">' + s.items.map(function(i){ return '<li><span>' + i + '</span></li>'; }).join('') + '</ol></section>';
+}
+
+function showLesson(id){
+  var i = CONCEPTS.findIndex(function(c){ return c.id === id; });
+  if (i < 0) return showHome();
+  var c = CONCEPTS[i], prev = CONCEPTS[i-1], next = CONCEPTS[i+1], h = '';
+  h += '<p class="back"><a class="pill" href="#">&larr; All concepts</a></p>';
+  h += '<header class="head"><span class="ico" aria-hidden="true">' + c.icon + '</span><h1>' + esc(c.title) + '</h1></header>';
+  h += '<p class="idea">' + c.idea + '</p>';
+  if (c.visual) h += visualHTML(c.visual);
+  if (c.compare) h += compareHTML(c.compare);
+  if (c.steps) h += stepsHTML(c.steps);
+  if (c.cards) h += c.cards.map(cardHTML).join('');
+  if (c.tip) h += '<p class="tip"><b>Tip</b><span>' + c.tip + '</span></p>';
+  if (c.folio){
+    h += '<section class="folio-box"><div><h2>Your folio: ' + c.folio.count + ' photos</h2><p>' + esc(c.folio.text) +
+         (c.folio.note ? ' (' + esc(c.folio.note.toLowerCase()) + ')' : '') + '</p></div>' +
+         '<a class="btn" href="/photography-folio.html#' + c.folio.page + '">📸 Add photos to my folio</a></section>';
+  }
+  h += '<div class="mark"><button class="btn ghost" id="doneBtn" type="button"></button></div>';
+  h += '<nav class="nav">' +
+    (prev ? '<a class="btn ghost" href="#' + prev.id + '">&larr; ' + esc(prev.title) + '</a>' : '<span class="spacer"></span>') +
+    (next ? '<a class="btn" href="#' + next.id + '">' + esc(next.title) + ' &rarr;</a>' : '<a class="btn" href="/photography-folio.html">📸 Open my folio</a>') + '</nav>';
+
+  var el = $('#lesson');
+  el.style.setProperty('--c', c.color);
+  el.innerHTML = h;
+  document.title = c.title + ' | Photography Unit';
+  $('#home').hidden = true; el.hidden = false;
+
+  var btn = $('#doneBtn');
+  function paintDone(){
+    btn.textContent = done[c.id] ? '✓ Done. Tap to undo' : 'I have done this';
+    btn.classList.toggle('done', !!done[c.id]);
+  }
+  btn.addEventListener('click', function(){ done[c.id] = !done[c.id]; if (!done[c.id]) delete done[c.id]; save('kcc-photo-unit-done', done); paintDone(); });
+  paintDone();
+  window.scrollTo(0, 0);
+}
+function showHome(){
+  $('#lesson').hidden = true; $('#home').hidden = false;
+  document.title = 'Photography Unit | KCC Media Portal';
+  paintHome();
+}
+function route(){
+  var id = decodeURIComponent((location.hash || '').replace('#', ''));
+  if (id) showLesson(id); else { showHome(); }
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

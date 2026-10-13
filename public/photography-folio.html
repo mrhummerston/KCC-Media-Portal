@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Photography Folio | KCC Media Portal</title>
+<meta name="description" content="Year 8 Media Arts: build your Photography Folio and save it as a PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<script>
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('kcc-theme'); } catch (e) {}
+  if (!t) t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+:root{
+  --bg:#FFF8F0; --surface:#ffffff; --surface2:#F6ECDF; --text:#2b2338; --muted:#655c75;
+  --line:#D9CBB8; --accent:#D63A4A; --accent-hover:#BE2E3E; --on-accent:#ffffff;
+  --focus:#1d5fd1; --ok:#1f8a57; --warn:#A85E00;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#12131C; --surface:#1C1E2C; --surface2:#262939; --text:#F4F0F7; --muted:#AAA8C0;
+  --line:#41445C; --accent:#F0586A; --accent-hover:#FF7585; --on-accent:#1a0b0e;
+  --focus:#7db1ff; --ok:#52d796; --warn:#F2B35C;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.5 var(--body);
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;letter-spacing:-.01em}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0 8px}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;
+  border:2px solid var(--line);background:var(--surface);color:var(--text);font:700 .95rem var(--body);text-decoration:none;cursor:pointer}
+.pill:hover{border-color:var(--text)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;padding:14px 26px;border-radius:18px;border:0;
+  background:var(--accent);color:var(--on-accent);font:700 1.2rem var(--display);text-decoration:none;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.22);transition:transform .08s,box-shadow .08s}
+.btn:hover{background:var(--accent-hover)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.22)}
+.btn.ghost{background:var(--surface);color:var(--text);border:2px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--text)}
+.btn.small{min-height:48px;padding:8px 18px;font-size:1rem;border-radius:14px;box-shadow:none}
+
+.title h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;margin:6px 0 6px}
+.title p{margin:0;color:var(--muted);font-size:1.15rem}
+
+/* progress strip */
+.progress{position:sticky;top:0;z-index:20;margin:14px -20px 18px;padding:10px 20px;background:var(--bg);border-bottom:2px solid var(--line);
+  padding-top:max(10px,env(safe-area-inset-top,0))}
+.progress .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:960px;margin:0 auto}
+.meter{flex:1 1 200px;height:16px;border-radius:999px;background:var(--surface2);border:2px solid var(--line);overflow:hidden}
+.meter span{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
+#progText{font-weight:700}
+#saved{color:var(--muted);font-size:.95rem}
+
+/* how it works */
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:0 0 14px}
+.how div{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:18px;background:var(--surface);border:2px solid var(--line)}
+.how b{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:800 1.05rem var(--display)}
+.how span{display:block}
+.notice{padding:14px 18px;border-radius:16px;background:var(--surface2);margin:0 0 12px;font-size:1rem}
+.notice.warn{border:2px solid var(--warn)}
+.checks{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 24px;padding:0;list-style:none}
+.checks li{padding:8px 16px;border-radius:999px;background:var(--surface);border:2px solid var(--line);font-weight:700}
+.checks li::before{content:"✓ ";color:var(--ok)}
+
+/* folio pages */
+.fpage{margin:0 0 34px;padding:24px;border-radius:26px;background:var(--surface);border:2px solid var(--line);scroll-margin-top:92px}
+.fhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:6px}
+.fhead h2{font-size:1.7rem;font-weight:800;flex:1 1 auto}
+.fintro{flex-basis:100%;margin:0 0 6px;color:var(--muted);font-size:1.05rem}
+.learn{font-weight:700;text-decoration:none;padding:8px 14px;border-radius:12px;background:var(--surface2)}
+.learn:hover{text-decoration:underline}
+.count{font-weight:700;padding:6px 14px;border-radius:999px;background:var(--surface2)}
+.count.full{background:var(--ok);color:#fff}
+.tag{padding:4px 12px;border-radius:999px;border:2px solid var(--warn);color:var(--warn);font-weight:700;font-size:.9rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;margin-top:14px}
+.slot{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:20px;background:var(--bg);border:2px solid var(--line)}
+.slot.has-photo{border-color:var(--ok)}
+.slot h3{font-size:1.15rem}
+.slot h3 small{display:block;font:400 .92rem var(--body);color:var(--muted);margin-top:2px}
+.photo{position:relative;border-radius:14px}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;aspect-ratio:4/3;padding:12px;
+  border:3px dashed var(--line);border-radius:14px;background:var(--surface2);color:var(--text);font:700 1.05rem var(--body);cursor:pointer;text-align:center}
+.drop .big{font-size:2.4rem;line-height:1}
+.drop span:last-child{font-weight:400;color:var(--muted);font-size:.95rem}
+.drop:hover,.photo.over .drop{border-color:var(--accent);background:var(--surface)}
+.photo.over{outline:4px solid var(--accent);outline-offset:2px}
+.photo img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:var(--surface2);border-radius:14px}
+.acts{display:flex;gap:8px;margin-top:8px}
+.acts button{flex:1;min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--text);font:700 .95rem var(--body);cursor:pointer}
+.acts button:hover{border-color:var(--text)}
+.busy{position:absolute;inset:0;display:grid;place-items:center;border-radius:14px;background:rgba(0,0,0,.55);color:#fff;font-weight:700}
+.err{color:var(--accent);font-weight:700;margin:0}
+
+.fields{display:grid;gap:10px}
+.fields label{display:grid;gap:4px;font-weight:700;font-size:.95rem}
+.fields input,.fields select{width:100%;min-height:48px;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--text);font:400 1.05rem var(--body)}
+.fields input:focus,.fields select:focus{border-color:var(--focus)}
+.vwrap{display:flex;align-items:center;gap:0}
+.vwrap .affix{display:grid;place-items:center;min-height:48px;padding:0 12px;background:var(--surface2);border:2px solid var(--line);font-weight:700}
+.vwrap .affix.pre{border-right:0;border-radius:12px 0 0 12px}
+.vwrap input{border-radius:0 12px 12px 0}
+.vwrap.noaffix input{border-radius:12px}
+.hint{font-weight:400;color:var(--muted);font-size:.9rem}
+.findit{font-size:.95rem}
+.findit summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center;text-decoration:underline}
+.findit ol{margin:4px 0 4px;padding-left:22px;color:var(--muted)}
+.state{margin:0;font-size:.95rem;font-weight:700}
+.state.need{color:var(--warn)}
+.state.ok{color:var(--ok)}
+
+.nameField{display:grid;gap:6px;max-width:460px;margin:12px 0 4px;font-weight:700}
+.nameField input{min-height:56px;padding:8px 16px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--text);font:700 1.3rem var(--display)}
+.nameField input:focus{border-color:var(--focus)}
+.addMore{margin-top:16px}
+
+/* finish */
+.finish{padding:26px;border-radius:26px;background:var(--surface);border:3px solid var(--accent);text-align:center}
+.finish h2{font-size:1.8rem;margin-bottom:8px}
+.finish p{margin:0 auto 16px;max-width:36em;color:var(--muted)}
+.finish .btn{max-width:420px;margin:0 auto;font-size:1.4rem;min-height:76px}
+.finish ol{max-width:32em;margin:18px auto 0;text-align:left;color:var(--muted)}
+.reset{display:block;margin:22px auto 0;background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;min-height:44px}
+
+dialog{border:0;border-radius:22px;background:var(--surface);color:var(--text);max-width:540px;width:calc(100% - 32px);padding:26px;font-family:var(--body)}
+dialog::backdrop{background:rgba(10,10,20,.6)}
+dialog h2{font-size:1.5rem;margin-bottom:10px}
+dialog ul{margin:0 0 18px;padding-left:22px}
+dialog .row{display:grid;gap:10px}
+
+.print-only,.print-empty,.print-label,.run-head,.print-title{display:none}
+[hidden]{display:none!important}
+
+@media (max-width:560px){
+  .wrap{padding:0 14px 56px}
+  .progress{margin:12px -14px 16px;padding:10px 14px}
+  .fpage{padding:16px;border-radius:20px}
+  .grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ---------- PRINT / SAVE TO PDF ---------- */
+@page{size:A4 portrait;margin:14mm}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--surface2:#f2f2f2;--text:#000;--muted:#444;--line:#bbb}
+  html,body{background:#fff!important;color:#000}
+  body{font-size:11pt;padding:0}
+  .wrap{max-width:none;padding:0}
+  .noprint{display:none!important}
+  .run-head{display:block;margin:0 0 6mm;padding-bottom:2mm;border-bottom:1px solid #000;font:700 10pt var(--body)}
+  .fpage{border:0;border-radius:0;padding:0;margin:0;background:#fff;break-after:page;page-break-after:always}
+  .fpage:last-of-type{break-after:auto;page-break-after:auto}
+  .fhead h2{font-size:18pt}
+  .fintro{display:none}
+  .grid{grid-template-columns:1fr 1fr;gap:8mm;margin-top:4mm}
+  .slot{break-inside:avoid;page-break-inside:avoid;padding:3mm;border:1px solid #999;border-radius:0;background:#fff}
+  .slot.has-photo{border-color:#999}
+  .slot h3{font-size:11pt}
+  .slot h3 small{display:none}
+  .photo{outline:0!important}
+  .photo img{border-radius:0}
+  .drop,.acts,.fields,.state,.busy,.findit{display:none!important}
+  .print-empty{display:grid;place-items:center;aspect-ratio:4/3;border:1px dashed #888;color:#666}
+  .slot.has-photo .print-empty{display:none}
+  .print-label{display:block;margin:0}
+  .print-label b{display:block;font-size:11pt}
+  .print-label span{display:block;font-size:10pt}
+  .cover .slot:not(.has-photo){display:none}
+  .cover .grid{grid-template-columns:1fr 1fr 1fr}
+  .cover .slot h3{display:none}
+  .cover .run-head{display:none}
+  .print-title{display:block;text-align:center;margin:20mm 0 8mm}
+  .print-title h1{font-size:30pt;font-weight:800}
+  .print-title p{margin:6px 0 0;font-size:12pt;color:#333}
+  .cover .nameField,.cover .fhead{display:none}
+  .photo img,.print-empty{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top noprint">
+    <a class="pill" href="/photography-unit.html">&larr; Photography Unit</a>
+    <button class="pill" id="themeBtn" type="button">Light mode</button>
+  </div>
+
+  <header class="title noprint">
+    <h1>My Photography Folio</h1>
+    <p>Drag your best photos into the boxes, add your labels, then save it as a PDF.</p>
+  </header>
+
+  <div class="progress noprint" role="status" aria-live="polite">
+    <div class="row">
+      <div class="meter" aria-hidden="true"><span id="progFill"></span></div>
+      <span id="progText">0 of 20 photos</span>
+      <span id="saved"></span>
+    </div>
+  </div>
+
+  <section class="noprint" aria-label="How it works">
+    <div class="how">
+      <div><b>1</b><span><strong>Type your name</strong><br>It goes on your cover page.</span></div>
+      <div><b>2</b><span><strong>Drag photos in</strong><br>Drop them on a box, or tap a box to choose.</span></div>
+      <div><b>3</b><span><strong>Add the labels</strong><br>Aperture, shutter speed, ISO and what it shows.</span></div>
+    </div>
+    <ul class="checks" aria-label="Every photo should be">
+      <li>In focus</li><li>Framed on purpose</li><li>Not too dark, not too bright</li>
+    </ul>
+    <p class="notice">Your folio saves by itself on this computer, in this browser. Your photos are <strong>not</strong> uploaded anywhere. Use the same computer each time, and save a PDF to keep a copy.</p>
+    <p class="notice warn" id="storageWarn" hidden>This browser would not let me save your photos. They will disappear if you close or refresh this page, so save your PDF before you leave.</p>
+  </section>
+
+  <main id="folio"></main>
+
+  <section class="finish noprint" id="finish">
+    <h2>All done? Save it as a PDF</h2>
+    <p>Hand the PDF in to your teacher at the end of term.</p>
+    <button class="btn" id="saveBtn" type="button">📄 Save to PDF</button>
+    <ol>
+      <li>Press the button. A print window opens.</li>
+      <li>Set <b>Destination</b> to <b>Save as PDF</b>.</li>
+      <li>Press <b>Save</b> and keep the file safe.</li>
+    </ol>
+    <button class="reset" id="resetBtn" type="button">Not your folio? Start a new folio on this computer</button>
+  </section>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" multiple hidden>
+
+<dialog id="checkDlg">
+  <h2>Before you save</h2>
+  <div id="checkBody"></div>
+  <div class="row">
+    <button class="btn" id="fixBtn" type="button">Go back and fix it</button>
+    <button class="btn ghost" id="anywayBtn" type="button">Save to PDF anyway</button>
+  </div>
+</dialog>
+
+<dialog id="resetDlg">
+  <h2>Start a new folio?</h2>
+  <p>This clears the name, labels and photos saved on this computer. Save your PDF first if you want to keep this one.</p>
+  <div class="row">
+    <button class="btn ghost" id="resetNo" type="button">Keep my folio</button>
+    <button class="btn" id="resetYes" type="button">Clear it and start again</button>
+  </div>
+</dialog>
+
+<script>
+/* =====================================================================
+   FOLIO STRUCTURE  (based on the 2026 Semester 2 Photography Folio Task Sheet)
+   To change what students need to upload, edit this list.
+   ===================================================================== */
+var AUTO_EXIF = false;  // false: students find and type their own aperture / shutter / ISO. true: fill them in from the photo for the student to check.
+var MAX_SIDE = 1600;    // photos are shrunk to this many pixels on the long side so they save quickly
+var COVER_MAX = 8;
+
+var SHOTS  = ['Extreme long shot (XLS)','Long shot (LS)','Medium long shot (MLS)','Mid shot (MS)','Medium close up (MCU)','Close up (CU)','Big close up (BCU)','Extreme close up (XCU)'];
+var ANGLES = ['Low angle','Eye-level angle','High angle','Worm\u2019s eye angle','Canted angle','Bird\u2019s eye angle'];
+
+var AP = {kind:'aperture', label:'Aperture value', ph:'2.8', prefix:'f/'};
+var SH = {kind:'shutter',  label:'Shutter speed',  ph:'1/4000 or 1', hint:'Slow speeds: type 1 for one second'};
+var ISO = {kind:'iso',     label:'ISO value',      ph:'200'};
+
+var FOLIO = [
+  {id:'cover', title:'Cover page', cover:true, intro:'Type your name, then add 5 or more photos that inspire you.'},
+  {id:'p1', title:'Page 1: Shots and angles', learn:['shots','shots and angles'], intro:'Label your best shot photo and your best angle photo.', slots:[
+    {id:'p1a', name:'Shot photo', label:'Shot', choices:SHOTS, choiceLabel:'Shot type', cap:{ph:'close up shot of a flower', req:true}},
+    {id:'p1b', name:'Angle photo', label:'Angle', choices:ANGLES, choiceLabel:'Angle type', cap:{ph:'high angle of my friend', req:true}}
+  ]},
+  {id:'p2', title:'Page 2: Composition', learn:['composition','composition'], intro:'Label each photo with what it shows.', slots:[
+    {id:'p2a', name:'Leading lines, photo 1', label:'Leading Lines', cap:{ph:'leading lines created by stairs', req:true}},
+    {id:'p2b', name:'Leading lines, photo 2', label:'Leading Lines', cap:{ph:'leading lines created by a fence', req:true}},
+    {id:'p2c', name:'Rule of thirds, photo 1', label:'Rule of Thirds', cap:{ph:'rule of thirds with a tree as the subject', req:true}},
+    {id:'p2d', name:'Rule of thirds, photo 2', label:'Rule of Thirds', cap:{ph:'rule of thirds with my friend as the subject', req:true}}
+  ]},
+  {id:'p3', title:'Page 3: Aperture', learn:['aperture','aperture'], intro:'Label each photo with its aperture value.', slots:[
+    {id:'p3a', name:'Wide aperture, photo 1', hint:'Shallow depth of field. Try f/3.5 to f/5.6', label:'Wide Aperture', value:AP},
+    {id:'p3b', name:'Wide aperture, photo 2', hint:'Shallow depth of field', label:'Wide Aperture', value:AP},
+    {id:'p3c', name:'Narrow aperture, photo 1', hint:'Deep depth of field. Try f/16 to f/36', label:'Narrow Aperture', value:AP},
+    {id:'p3d', name:'Narrow aperture, photo 2', hint:'Deep depth of field', label:'Narrow Aperture', value:AP}
+  ]},
+  {id:'p4', title:'Page 4: Shutter speed', learn:['shutter','shutter speed'], intro:'Label each photo with its shutter speed.', slots:[
+    {id:'p4a', name:'Fast shutter speed, photo 1', hint:'Freezes motion. Try 1/4000', label:'Fast Shutter Speed', value:SH},
+    {id:'p4b', name:'Fast shutter speed, photo 2', hint:'Freezes motion', label:'Fast Shutter Speed', value:SH},
+    {id:'p4c', name:'Slow shutter speed, photo 1', hint:'Blurs motion. Use a tripod. Try 1 second', label:'Slow Shutter Speed', value:SH},
+    {id:'p4d', name:'Slow shutter speed, photo 2', hint:'Blurs motion', label:'Slow Shutter Speed', value:SH}
+  ]},
+  {id:'p5', title:'Page 5: ISO', learn:['iso','ISO'], tag:'If time permits', intro:'Same subject, aperture f/5.6 and shutter 1/125 for all three. Label each with its ISO.', slots:[
+    {id:'p5a', name:'Low ISO', hint:'For example 200', label:'Low ISO', value:ISO},
+    {id:'p5b', name:'Balanced ISO', hint:'For example 800 or 1600', label:'Balanced ISO', value:ISO},
+    {id:'p5c', name:'High ISO', hint:'For example 2000', label:'High ISO', value:ISO}
+  ]},
+  {id:'p6', title:'Page 6: Macro and texture', learn:['macro','macro and texture'], intro:'Label what each macro subject is.', slots:[
+    {id:'p6a', name:'Macro subject, photo 1', label:'Macro', cap:{ph:'macro photo of a tree branch', req:true}},
+    {id:'p6b', name:'Macro subject, photo 2', label:'Macro', cap:{ph:'texture of a leaf', req:true}},
+    {id:'p6c', name:'Macro subject, photo 3', label:'Macro', cap:{ph:'macro photo of an insect', req:true}}
+  ]}
+];
+
+/* =====================================================================
+   CODE
+   ===================================================================== */
+var LS_KEY = 'kcc-photo-folio-v1';
+var DEF = {};          // slot id -> definition
+var slotEl = {};       // slot id -> element
+var urls = {};         // slot id -> object URL of photo
+var blobs = {};        // slot id -> Blob
+var state = {name:'', coverCount:5, meta:{}};
+var storageOK = true;
+
+function $(s, r){ return (r||document).querySelector(s); }
+function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+/* ---------- theme ---------- */
+var themeBtn = $('#themeBtn');
+function paintTheme(){ themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light mode' : 'Dark mode'; }
+themeBtn.addEventListener('click', function(){
+  var n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', n);
+  try { localStorage.setItem('kcc-theme', n); } catch(e){}
+  paintTheme();
+});
+paintTheme();
+
+/* ---------- storage: text in localStorage, photos in IndexedDB ---------- */
+var savedTimer = null;
+function saveState(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch(e){ showStorageWarn(); }
+  var el = $('#saved'); el.textContent = 'Saved ✓';
+  clearTimeout(savedTimer); savedTimer = setTimeout(function(){ el.textContent = ''; }, 2500);
+}
+function loadState(){
+  try {
+    var s = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+    if (s && typeof s === 'object'){
+      state.name = s.name || ''; state.coverCount = Math.min(COVER_MAX, Math.max(5, s.coverCount || 5)); state.meta = s.meta || {};
+    }
+  } catch(e){}
+}
+function showStorageWarn(){ storageOK = false; $('#storageWarn').hidden = false; }
+
+var dbPromise = null;
+function db(){
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise(function(res, rej){
+    try {
+      var r = indexedDB.open('kcc-photo-folio', 1);
+      r.onupgradeneeded = function(){ r.result.createObjectStore('photos'); };
+      r.onsuccess = function(){ res(r.result); };
+      r.onerror = function(){ rej(r.error); };
+    } catch(e){ rej(e); }
+  });
+  return dbPromise;
+}
+function idb(mode, fn){
+  return db().then(function(d){
+    return new Promise(function(res, rej){
+      var t = d.transaction('photos', mode), out = fn(t.objectStore('photos'));
+      t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : undefined); };
+      t.onerror = function(){ rej(t.error); };
+      t.onabort = function(){ rej(t.error); };
+    });
+  });
+}
+function putPhoto(id, blob){ return idb('readwrite', function(s){ return s.put(blob, id); }); }
+function delPhoto(id){ return idb('readwrite', function(s){ return s.delete(id); }); }
+function clearPhotos(){ return idb('readwrite', function(s){ return s.clear(); }); }
+function loadPhotos(){
+  return db().then(function(d){
+    return new Promise(function(res, rej){
+      var out = {}, req = d.transaction('photos').objectStore('photos').openCursor();
+      req.onsuccess = function(){ var c = req.result; if (c){ out[c.key] = c.value; c.continue(); } else res(out); };
+      req.onerror = function(){ rej(req.error); };
+    });
+  });
+}
+
+/* ---------- reading camera settings from a JPEG ---------- */
+function readExif(buf){
+  var v = new DataView(buf);
+  if (v.byteLength < 4 || v.getUint16(0) !== 0xFFD8) return null;
+  var off = 2;
+  while (off + 4 < v.byteLength){
+    var marker = v.getUint16(off); off += 2;
+    if (marker === 0xFFE1){
+      if (v.getUint32(off + 2) === 0x45786966) return parseTiff(v, off + 8);
+      off += v.getUint16(off);
+    } else if ((marker & 0xFF00) === 0xFF00 && marker !== 0xFFDA){
+      off += v.getUint16(off);
+    } else { break; }
+  }
+  return null;
+}
+function parseTiff(v, start){
+  var little = v.getUint16(start) === 0x4949;
+  function g16(o){ return v.getUint16(o, little); }
+  function g32(o){ return v.getUint32(o, little); }
+  var out = {};
+  function walk(p, cb){ var n = g16(p); for (var i = 0; i < n; i++){ var e = p + 2 + i * 12; cb(g16(e), g16(e + 2), e + 8); } }
+  var exifPtr = 0;
+  walk(start + g32(start + 4), function(tag, type, vo){ if (tag === 0x8769) exifPtr = g32(vo); });
+  if (!exifPtr) return out;
+  walk(start + exifPtr, function(tag, type, vo){
+    if (tag === 0x829A || tag === 0x829D){
+      var p = start + g32(vo), den = g32(p + 4);
+      if (den) out[tag === 0x829A ? 'exposure' : 'fnumber'] = g32(p) / den;
+    } else if (tag === 0x8827){
+      out.iso = type === 3 ? g16(vo) : g32(vo);
+    }
+  });
+  return out;
+}
+function exifToValue(kind, x){
+  if (!x) return '';
+  if (kind === 'aperture' && x.fnumber) return String(Math.round(x.fnumber * 10) / 10);
+  if (kind === 'iso' && x.iso) return String(x.iso);
+  if (kind === 'shutter' && x.exposure){
+    var e = x.exposure;
+    return e >= 1 ? String(Math.round(e * 10) / 10) : '1/' + Math.round(1 / e);
+  }
+  return '';
+}
+
+/* ---------- labels ---------- */
+function fmtValue(kind, raw){
+  var v = String(raw || '').trim();
+  if (!v) return '';
+  if (kind === 'aperture'){ return 'f/' + v.replace(/^f\s*\/?\s*/i, ''); }
+  if (kind === 'iso'){ return v.replace(/iso/ig, '').trim() + ' ISO'; }
+  if (kind === 'shutter'){
+    v = v.replace(/\s*(seconds?|secs?|s|["\u201D\u2033'])\s*$/i, '').trim();
+    return v.indexOf('/') > -1 ? v + ' sec' : (v === '1' ? '1 second' : v + ' seconds');
+  }
+  return v;
+}
+function meta(id){ return state.meta[id] || (state.meta[id] = {}); }
+function labelParts(id){
+  var d = DEF[id], m = meta(id), head = d.label;
+  if (d.choices && m.choice) head = m.choice;
+  if (d.value && m.value) head += ' \u2013 ' + fmtValue(d.value.kind, m.value);
+  return {head: head, cap: (m.caption || '').trim()};
+}
+function missing(id){
+  var d = DEF[id], m = meta(id), need = [];
+  if (d.cover) return need;
+  if (d.choices && !m.choice) need.push(d.choiceLabel.toLowerCase());
+  if (d.value && !(m.value || '').trim()) need.push(d.value.label.toLowerCase());
+  if (d.cap && d.cap.req && !(m.caption || '').trim()) need.push('what it shows');
+  return need;
+}
+
+/* ---------- build the page ---------- */
+function slotHTML(d){
+  var h = '<article class="slot" data-id="' + d.id + '">';
+  h += '<h3>' + esc(d.name) + (d.hint ? '<small>' + esc(d.hint) + '</small>' : '') + '</h3>';
+  h += '<div class="photo"><button type="button" class="drop"><span class="big" aria-hidden="true">📷</span><span>Drag a photo here</span><span>or tap to choose</span></button>' +
+       '<img alt="" hidden><div class="print-empty">No photo added</div></div>';
+  h += '<div class="acts" hidden><button type="button" class="change">Change photo</button><button type="button" class="remove">Remove</button></div>';
+  h += '<p class="err" hidden></p>';
+  if (!d.cover){
+    h += '<div class="fields">';
+    if (d.choices){
+      h += '<label>' + esc(d.choiceLabel) + '<select class="f-choice"><option value="">Choose one</option>' +
+           d.choices.map(function(c){ return '<option>' + esc(c) + '</option>'; }).join('') + '</select></label>';
+    }
+    if (d.value){
+      var v = d.value;
+      h += '<label>' + esc(v.label) + '<span class="vwrap' + (v.prefix ? '' : ' noaffix') + '">' +
+           (v.prefix ? '<span class="affix pre">' + esc(v.prefix) + '</span>' : '') +
+           '<input class="f-value" type="text" inputmode="' + (v.kind === 'iso' ? 'numeric' : 'text') + '" placeholder="' + esc(v.ph) + '" autocomplete="off"></span>' +
+           (v.hint ? '<span class="hint">' + esc(v.hint) + '</span>' : '') + '<span class="hint auto" hidden>Filled in from your photo. Check it is right.</span></label>';
+    }
+    if (d.value){
+      var fld = {aperture:'F-stop', shutter:'Exposure time', iso:'ISO speed'}[d.value.kind];
+      h += '<details class="findit"><summary>How do I find this?</summary><ol>' +
+           '<li>Open the folder with your photos in File Explorer.</li>' +
+           '<li>Click your photo once.</li>' +
+           '<li>Click <b>Details</b> at the top right.</li>' +
+           '<li>Read <b>' + fld + '</b> in the list.</li></ol></details>';
+    }
+    if (d.cap){
+      h += '<label>What is it?<input class="f-cap" type="text" placeholder="e.g. ' + esc(d.cap.ph) + '" autocomplete="off"></label>';
+    }
+    h += '</div><p class="state" hidden></p>';
+  }
+  h += '<p class="print-label"><b></b><span></span></p>';
+  h += '</article>';
+  return h;
+}
+function coverDef(i){ return {id:'c' + i, name:'Inspiring photo ' + i, cover:true, label:'Inspiring photo'}; }
+
+function build(){
+  var root = $('#folio'), html = '';
+  FOLIO.forEach(function(sec){
+    html += '<section class="fpage' + (sec.cover ? ' cover' : '') + '" id="' + sec.id + '" data-sec="' + sec.id + '">';
+    html += '<p class="run-head"></p>';
+    if (sec.cover){
+      html += '<div class="print-title"><h1 id="printName"></h1><p>Media Arts, Year 8 \u00b7 Kingsway Christian College</p></div>';
+    }
+    html += '<div class="fhead noprint"><h2>' + esc(sec.title) + '</h2>' +
+      (sec.tag ? '<span class="tag">' + esc(sec.tag) + '</span>' : '') +
+      (sec.learn ? '<a class="learn" href="/photography-unit.html#' + sec.learn[0] + '">📖 Learn ' + esc(sec.learn[1]) + '</a>' : '') +
+      '<span class="count" data-count></span><p class="fintro">' + esc(sec.intro) + '</p></div>';
+    if (sec.cover){
+      html += '<label class="nameField noprint">Your name<input id="nameInput" type="text" placeholder="Type your full name" autocomplete="name"></label>';
+      html += '<div class="grid" id="coverGrid"></div>';
+      html += '<button class="btn ghost small addMore noprint" id="addCover" type="button">+ Add another photo</button>';
+    } else {
+      html += '<div class="grid">' + sec.slots.map(function(s){ DEF[s.id] = s; return slotHTML(s); }).join('') + '</div>';
+    }
+    html += '</section>';
+  });
+  root.innerHTML = html;
+
+  for (var i = 1; i <= COVER_MAX; i++){ DEF['c' + i] = coverDef(i); }
+  $$('.slot').forEach(wireSlot);   // folio pages 1-6 (cover slots wire themselves below)
+  paintCoverSlots();
+  $('#nameInput').value = state.name;
+}
+function paintCoverSlots(){
+  var grid = $('#coverGrid');
+  for (var i = 1; i <= state.coverCount; i++){
+    if (!$('[data-id="c' + i + '"]', grid)){
+      grid.insertAdjacentHTML('beforeend', slotHTML(DEF['c' + i]));
+      wireSlot($('[data-id="c' + i + '"]', grid)); paintSlot('c' + i);
+    }
+  }
+  $('#addCover').hidden = state.coverCount >= COVER_MAX;
+}
+
+/* ---------- slot wiring ---------- */
+function sectionSlotIds(id){
+  var sec = document.getElementById(id).closest('.fpage');
+  return $$('.slot', sec).map(function(el){ return el.getAttribute('data-id'); });
+}
+var pickTarget = null;
+function wireSlot(el){
+  var id = el.getAttribute('data-id'), d = DEF[id], m = meta(id);
+  slotEl[id] = el;
+  var photo = $('.photo', el);
+  function pick(){ pickTarget = id; var fi = $('#fileInput'); fi.value = ''; fi.click(); }
+  $('.drop', el).addEventListener('click', pick);
+  $('.change', el).addEventListener('click', pick);
+  $('.remove', el).addEventListener('click', function(){ removePhoto(id); });
+
+  ['dragenter', 'dragover'].forEach(function(t){
+    photo.addEventListener(t, function(e){ e.preventDefault(); e.stopPropagation(); photo.classList.add('over'); if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'; });
+  });
+  photo.addEventListener('dragleave', function(e){ if (!photo.contains(e.relatedTarget)) photo.classList.remove('over'); });
+  photo.addEventListener('drop', function(e){
+    e.preventDefault(); e.stopPropagation(); photo.classList.remove('over');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) addFiles(id, e.dataTransfer.files);
+  });
+
+  var fc = $('.f-choice', el), fv = $('.f-value', el), fp = $('.f-cap', el);
+  if (fc){ fc.value = m.choice || ''; fc.addEventListener('change', function(){ meta(id).choice = fc.value; changed(id); }); }
+  if (fv){ fv.value = m.value || ''; fv.addEventListener('input', function(){ var mm = meta(id); mm.value = fv.value; mm.auto = false; changed(id); }); }
+  if (fp){ fp.value = m.caption || ''; fp.addEventListener('input', function(){ meta(id).caption = fp.value; changed(id); }); }
+  paintSlot(id);
+}
+function changed(id){ saveState(); paintSlot(id, true); updateProgress(); }
+
+function paintSlot(id){
+  var el = slotEl[id]; if (!el) return;
+  var url = urls[id], img = $('img', el), drop = $('.drop', el), acts = $('.acts', el);
+  if (url){ img.src = url; img.hidden = false; drop.hidden = true; acts.hidden = false; el.classList.add('has-photo'); }
+  else { img.removeAttribute('src'); img.hidden = true; drop.hidden = false; acts.hidden = true; el.classList.remove('has-photo'); }
+
+  var p = labelParts(id);
+  $('.print-label b', el).textContent = DEF[id].cover ? '' : p.head;
+  $('.print-label span', el).textContent = p.cap;
+  img.alt = DEF[id].cover ? 'Inspiring photo' : (p.head + (p.cap ? ': ' + p.cap : ''));
+
+  var st = $('.state', el), auto = $('.auto', el);
+  if (auto) auto.hidden = !(meta(id).auto && (meta(id).value || '').trim());
+  if (st){
+    var need = missing(id);
+    if (!url){ st.hidden = true; }
+    else if (need.length){ st.hidden = false; st.className = 'state need'; st.textContent = 'Still to add: ' + need.join(', ') + '.'; }
+    else { st.hidden = false; st.className = 'state ok'; st.textContent = '✓ Ready'; }
+  }
+}
+
+/* ---------- adding photos ---------- */
+function isImage(f){ return /^image\//.test(f.type) || /\.(jpe?g|png|webp|gif|bmp|heic)$/i.test(f.name); }
+function setBusy(id, on, msg){
+  var photo = $('.photo', slotEl[id]), b = $('.busy', photo);
+  if (on && !b){ photo.insertAdjacentHTML('beforeend', '<div class="busy">Adding photo\u2026</div>'); }
+  if (!on && b){ b.remove(); }
+  var er = $('.err', slotEl[id]); er.hidden = !msg; er.textContent = msg || '';
+}
+function addFiles(startId, fileList){
+  var files = Array.prototype.slice.call(fileList).filter(isImage);
+  var sec = slotEl[startId].closest('.fpage');
+  if (!files.length){ setBusy(startId, false, 'That is not a photo. Use a JPG or PNG file.'); return; }
+  var ids = sectionSlotIds(startId), queue = [{id: startId, file: files.shift()}];
+  var from = ids.indexOf(startId);
+  for (var i = from + 1; i < ids.length && files.length; i++){
+    if (!urls[ids[i]]) queue.push({id: ids[i], file: files.shift()});
+  }
+  while (files.length && sec.classList.contains('cover') && state.coverCount < COVER_MAX){
+    state.coverCount++; paintCoverSlots(); queue.push({id: 'c' + state.coverCount, file: files.shift()});
+  }
+  var leftover = files.length, fitted = queue.length;
+  queue.reduce(function(chain, q){ return chain.then(function(){ return setPhoto(q.id, q.file); }); }, Promise.resolve())
+    .then(function(){ if (leftover) setBusy(startId, false, 'Only ' + fitted + ' of those photos fitted on this page.'); });
+}
+
+function loadBitmap(file){
+  if (window.createImageBitmap){
+    return createImageBitmap(file, {imageOrientation: 'from-image'}).catch(function(){ return viaImg(file); });
+  }
+  return viaImg(file);
+}
+function viaImg(file){
+  return new Promise(function(res, rej){
+    var u = URL.createObjectURL(file), im = new Image();
+    im.onload = function(){ URL.revokeObjectURL(u); res(im); };
+    im.onerror = function(){ URL.revokeObjectURL(u); rej(new Error('decode')); };
+    im.src = u;
+  });
+}
+function shrink(file){
+  return loadBitmap(file).then(function(bmp){
+    var w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight, s = Math.min(1, MAX_SIDE / Math.max(w, h));
+    var c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    if (bmp.close) bmp.close();
+    return new Promise(function(res, rej){ c.toBlob(function(b){ b ? res(b) : rej(new Error('encode')); }, 'image/jpeg', 0.88); });
+  });
+}
+function setPhoto(id, file){
+  setBusy(id, true);
+  var exifP = (AUTO_EXIF && DEF[id].value && /jpe?g/i.test((file.type || '') + file.name))
+    ? file.slice(0, 262144).arrayBuffer().then(readExif).catch(function(){ return null; })
+    : Promise.resolve(null);
+  return Promise.all([shrink(file), exifP]).then(function(r){
+    var blob = r[0], x = r[1];
+    if (urls[id]) URL.revokeObjectURL(urls[id]);
+    urls[id] = URL.createObjectURL(blob); blobs[id] = blob;
+    var m = meta(id), d = DEF[id];
+    if (x && d.value && !(m.value || '').trim()){
+      var val = exifToValue(d.value.kind, x);
+      if (val){ m.value = val; m.auto = true; $('.f-value', slotEl[id]).value = val; }
+    }
+    setBusy(id, false);
+    saveState(); paintSlot(id); updateProgress();
+    return storageOK ? putPhoto(id, blob).catch(showStorageWarn) : null;
+  }).catch(function(){
+    setBusy(id, false, 'I could not read that file. Try a JPG or PNG photo.');
+  });
+}
+function removePhoto(id){
+  if (!window.confirm('Remove this photo from your folio?')) return;
+  if (urls[id]) URL.revokeObjectURL(urls[id]);
+  delete urls[id]; delete blobs[id];
+  if (storageOK) delPhoto(id).catch(function(){});
+  paintSlot(id); updateProgress(); saveState();
+}
+
+$('#fileInput').addEventListener('change', function(e){
+  if (pickTarget && e.target.files.length) addFiles(pickTarget, e.target.files);
+});
+/* stop a missed drop from opening the photo in the browser */
+['dragover', 'drop'].forEach(function(t){ window.addEventListener(t, function(e){ e.preventDefault(); }); });
+
+/* ---------- progress ---------- */
+function folioIds(){ var out = []; FOLIO.forEach(function(s){ if (!s.cover) s.slots.forEach(function(x){ out.push(x.id); }); }); return out; }
+function updateProgress(){
+  var ids = folioIds(), have = ids.filter(function(i){ return urls[i]; }).length;
+  $('#progText').textContent = have + ' of ' + ids.length + ' photos';
+  $('#progFill').style.width = (have / ids.length * 100) + '%';
+  FOLIO.forEach(function(sec){
+    var el = $('[data-sec="' + sec.id + '"] [data-count]');
+    if (!el) return;
+    var list = sec.cover ? Array.apply(null, {length: state.coverCount}).map(function(_, i){ return 'c' + (i + 1); }) : sec.slots.map(function(s){ return s.id; });
+    var n = list.filter(function(i){ return urls[i]; }).length;
+    el.textContent = n + ' of ' + (sec.cover ? '5+' : list.length) + ' added';
+    el.classList.toggle('full', sec.cover ? n >= 5 : n === list.length);
+  });
+  var nm = (state.name || '').trim() || 'Student Name';
+  $('#printName').textContent = nm + ' \u2013 Photography Folio';
+  $$('.run-head').forEach(function(r){ r.textContent = nm + ' \u00b7 Photography Folio'; });
+}
+
+/* ---------- build the page now, so the name box and buttons exist ---------- */
+loadState();
+build();
+updateProgress();
+
+/* ---------- name and cover ---------- */
+$('#nameInput').addEventListener('input', function(e){ state.name = e.target.value; saveState(); updateProgress(); });
+$('#addCover').addEventListener('click', function(){ if (state.coverCount < COVER_MAX){ state.coverCount++; paintCoverSlots(); saveState(); updateProgress(); } });
+
+/* ---------- save to PDF ---------- */
+function problems(){
+  var out = [];
+  if (!(state.name || '').trim()) out.push('Your name is missing. It goes on your cover page.');
+  var coverN = Array.apply(null, {length: state.coverCount}).filter(function(_, i){ return urls['c' + (i + 1)]; }).length;
+  if (coverN < 5) out.push('Your cover page has ' + coverN + ' photos. It needs 5 or more.');
+  FOLIO.forEach(function(sec){
+    if (sec.cover) return;
+    var noPhoto = sec.slots.filter(function(s){ return !urls[s.id]; }).length;
+    var noLabel = sec.slots.filter(function(s){ return urls[s.id] && missing(s.id).length; }).length;
+    if (noPhoto) out.push(sec.title + ': ' + noPhoto + (noPhoto === 1 ? ' photo is' : ' photos are') + ' missing.');
+    if (noLabel) out.push(sec.title + ': ' + noLabel + (noLabel === 1 ? ' photo needs' : ' photos need') + ' a label.');
+  });
+  return out;
+}
+function doPrint(){
+  var old = document.title;
+  document.title = ((state.name || '').trim() || 'Student') + ' - Photography Folio';
+  window.onafterprint = function(){ document.title = old; window.onafterprint = null; };
+  window.print();
+}
+$('#saveBtn').addEventListener('click', function(){
+  var p = problems();
+  if (!p.length) return doPrint();
+  $('#checkBody').innerHTML = '<p>You can still save, but your teacher will see these gaps:</p><ul>' + p.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+  $('#checkDlg').showModal();
+});
+$('#fixBtn').addEventListener('click', function(){ $('#checkDlg').close(); });
+$('#anywayBtn').addEventListener('click', function(){ $('#checkDlg').close(); setTimeout(doPrint, 150); });
+
+/* ---------- start again ---------- */
+$('#resetBtn').addEventListener('click', function(){ $('#resetDlg').showModal(); });
+$('#resetNo').addEventListener('click', function(){ $('#resetDlg').close(); });
+$('#resetYes').addEventListener('click', function(){
+  try { localStorage.removeItem(LS_KEY); } catch(e){}
+  (storageOK ? clearPhotos() : Promise.resolve()).catch(function(){}).then(function(){ location.reload(); });
+});
+
+/* ---------- start up (photos come back from the browser's storage) ---------- */
+db().then(function(){ return loadPhotos(); }).then(function(all){
+  Object.keys(all).forEach(function(id){
+    if (!slotEl[id]){
+      var n = parseInt(id.slice(1), 10);
+      if (id.charAt(0) === 'c' && n > state.coverCount && n <= COVER_MAX){ state.coverCount = n; paintCoverSlots(); }
+    }
+    if (slotEl[id]){ blobs[id] = all[id]; urls[id] = URL.createObjectURL(all[id]); paintSlot(id); }
+  });
+  updateProgress();
+}).catch(showStorageWarn).then(function(){
+  if (location.hash){ var t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(function(){ t.scrollIntoView(); }, 50); }
+});
+</script>
+</body>
+</html>
