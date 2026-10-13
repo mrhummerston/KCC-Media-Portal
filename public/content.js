@@ -20,11 +20,20 @@
    ===================================================================== */
 window.PORTAL = {
   years: {
-    "8": {
-      page: "",
-      assignments: [],
-      resources: []
-    },
+   "8": {
+page: "",
+assignments: [
+{ title: "Photography Unit",
+text: "Learn one photography idea at a time: shots, composition, aperture, shutter speed, ISO and more.",
+url: "/photography-unit.html",
+image: "" },
+{ title: "My Photography Folio",
+text: "Drag and drop your best photos, add your labels, then save it as a PDF to hand in.",
+url: "/photography-folio.html",
+image: "" }
+],
+resources: []
+},
     "9": {
       page: "",
       assignments: [],
