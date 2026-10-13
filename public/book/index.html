@@ -357,6 +357,22 @@ body.wide .borrow{grid-template-columns:minmax(0,1fr) 300px;gap:20px}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
 .keypad button{min-height:64px;border-radius:16px;border:1.5px solid var(--line);background:var(--bg);font-family:var(--display);font-size:26px;font-weight:700}
 .keypad .kp-alt{font-family:var(--body);font-size:16px;color:var(--muted)}
+.hist-tools{justify-content:center}
+.hist-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-l)}
+.hist{width:100%;border-collapse:collapse;min-width:760px;font-size:15px}
+.hist th{position:sticky;top:0;background:var(--ink);color:var(--surface);text-align:left;padding:12px 14px;font-weight:700;font-size:14px;white-space:nowrap}
+.hist td{padding:9px 14px;border-top:1px solid var(--line);vertical-align:top}
+.hist tr.first td{border-top:2px solid var(--line)}
+.hist td.who b{display:block}
+.hist td.who small{color:var(--muted)}
+.hist td.when{white-space:nowrap;color:var(--muted)}
+.hist .ok{color:var(--go);font-weight:800}
+.hist .no{color:var(--rec);font-weight:800}
+.hist .part{color:var(--warn);font-weight:800}
+.hist .wait{color:var(--sky);font-weight:700;font-size:13px}
+.hist .undo{margin-left:8px;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted)}
+.hist .undo.sure{border-color:var(--rec);color:var(--rec)}
+.hist tbody tr:hover td{background:var(--bg)}
 .t-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin-bottom:18px}
 .t-head .lede{margin-left:auto;margin-right:auto;margin-bottom:0}
 #tab-return > h2,#tab-return > .lede{text-align:center;margin-left:auto;margin-right:auto}
@@ -414,6 +430,7 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="borrow" aria-selected="true">Borrow gear</button>
     <button role="tab" data-tab="return" aria-selected="false">Return gear</button>
+    <button role="tab" data-tab="history" aria-selected="false" id="historyTab">Loan history</button>
     <button role="tab" data-tab="teacher" aria-selected="false" id="teacherTab">Teacher <span class="badge" id="waitCount" hidden>0</span></button>
   </nav>
 </header>
@@ -442,6 +459,25 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
     <p class="lede" id="returnLede"></p>
     <div class="toolbar"><input class="search" id="peopleSearch" type="search" placeholder="Search for your name" aria-label="Search names" autocomplete="off"><button class="btn btn-ink" id="findMe" hidden>Find my loans</button></div>
     <div class="people" id="people"></div>
+  </section>
+
+  <section id="tab-history" hidden>
+    <div id="histLockSlot"></div>
+    <div id="histBody" hidden>
+      <div class="t-head"><div><h2>Loan history</h2>
+      <p class="lede">Every loan, newest first. Ticks show what has been returned and when.</p></div></div>
+      <div class="toolbar hist-tools">
+        <input class="search" id="histSearch" type="search" placeholder="Search by name or equipment" aria-label="Search loan history">
+        <div class="seg" role="group" aria-label="Show">
+          <button data-hf="all" aria-pressed="true">All</button><button data-hf="out" aria-pressed="false">Still out</button><button data-hf="back" aria-pressed="false">Returned</button>
+        </div>
+      </div>
+      <p class="hint" id="histCount" style="text-align:center;margin:-4px 0 12px"></p>
+      <div class="hist-wrap"><table class="hist">
+        <thead><tr><th>Date of loan</th><th>Student / staff</th><th>Equipment borrowed</th><th>Returned</th><th>Return date</th></tr></thead>
+        <tbody id="histRows"></tbody>
+      </table></div>
+    </div>
   </section>
 
   <section id="tab-teacher" hidden>
@@ -731,6 +767,8 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("clic
   document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
   $("#basket").classList.remove("open"); renderBasket();
+  if(b.dataset.tab==="history") $("#histLockSlot").appendChild($("#lock")); else if(b.dataset.tab==="teacher") $("#tab-teacher").prepend($("#lock"));
+  if(b.dataset.tab==="history") renderHistory();
   document.body.classList.toggle("wide",layout==="columns"&&b.dataset.tab==="borrow");
 }));
 const currentTab=()=>document.querySelector('nav.tabs [aria-selected="true"]').dataset.tab;
@@ -1337,7 +1375,8 @@ $("#scanDone").onclick=$("#scanClose").onclick=closeScanner;
 let unlocked=false; try{unlocked=!!localStorage.getItem("kcc-code");}catch(e){}   // remembered on this device until "Lock" is tapped
 let checking=false;
 function showLock(){
-  $("#lock").hidden=unlocked; $("#teacherBody").hidden=!unlocked;
+  $("#lock").hidden=unlocked; $("#teacherBody").hidden=!unlocked; $("#histBody").hidden=!unlocked;
+  $("#historyTab").textContent=unlocked?"Loan history":"🔒 Loan history";
   $("#lockBtn").hidden=false; $("#autoNote").hidden=true;
 }
 function lockTeacher(){ unlocked=false; isTeacher=false; try{localStorage.removeItem("kcc-code");}catch(e){} showLock(); applySiteLock(); db&&db.refresh(); renderAll(); }
@@ -1357,7 +1396,42 @@ $("#pwForm").onsubmit=async e=>{
 };
 $("#lockBtn").onclick=()=>{ lockTeacher(); toast("Teacher tab locked on this device"); };
 
-function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();}
+/* ---------- Loan history (teacher only) ---------- */
+let histFilter="all";
+function renderHistory(){
+  if(!isTeacher||$("#tab-history").hidden) return;
+  const q=$("#histSearch").value.trim().toLowerCase();
+  const groups=[];
+  const byId={};
+  allLines().forEach(l=>{ const bid=l.lineId.replace(/_\d+$/,""); if(!byId[bid]){ byId[bid]={bid,name:l.name,year:l.year,email:l.email,borrowedAt:l.borrowedAt,lines:[]}; groups.push(byId[bid]); } byId[bid].lines.push(l); });
+  groups.sort((a,b)=>new Date(b.borrowedAt)-new Date(a.borrowedAt));
+  const shown=groups.filter(g=>{
+    if(q&&!(g.name+" "+g.lines.map(l=>l.itemName).join(" ")).toLowerCase().includes(q)) return false;
+    const allBack=g.lines.every(l=>l.outstanding===0);
+    return histFilter==="all"||(histFilter==="back"?allBack:!allBack);
+  });
+  const fmtD=d=>new Date(d).toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric"});
+  $("#histCount").textContent=`${shown.length} loan${shown.length===1?"":"s"} shown`;
+  if(!shown.length){ $("#histRows").innerHTML=`<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">No loans match.</td></tr>`; return; }
+  $("#histRows").innerHTML=shown.map(g=>g.lines.map((l,i)=>{
+    const r=returns[l.lineId]||{}; const back=l.confirmed;
+    const status=back>=l.qty?`<span class="ok">✓ Returned</span>`:back>0?`<span class="part">${back} of ${l.qty} returned</span>`:`<span class="no">✗ Not returned</span>`;
+    const waiting=l.waiting>0?`<div class="wait">Student says handed back</div>`:"";
+    const undo=(back>0||l.waiting>0)?`<button class="undo" data-undo="${esc(l.lineId)}">Undo</button>`:"";
+    return `<tr class="${i===0?"first":""}">${i===0?`<td class="when" rowspan="${g.lines.length}">${fmtD(g.borrowedAt)}</td><td class="who" rowspan="${g.lines.length}"><b>${esc(g.name)}</b><small>${g.year==="Staff"?"Staff":"Year "+esc(g.year)}${g.email?" · "+esc(g.email):""}</small></td>`:""}
+      <td>${l.qty>1?l.qty+" × ":""}${esc(l.itemName)}</td><td>${status}${undo}${waiting}</td><td class="when">${r.confirmedAt&&back>0?fmtD(r.confirmedAt):"—"}</td></tr>`;
+  }).join("")).join("");
+  $("#histRows").querySelectorAll("[data-undo]").forEach(b=>b.onclick=async()=>{
+    if(!b.classList.contains("sure")){ b.classList.add("sure"); b.textContent="Tap again to undo"; setTimeout(()=>{ b.classList.remove("sure"); b.textContent="Undo"; },3000); return; }
+    b.disabled=true; const id=b.dataset.undo;
+    try{ await db.doc("returns/"+id).delete(); await db.doc("handbacks/"+id).delete(); delete returns[id]; delete handbacks[id]; renderAll(); toast("Return undone. It's back on loan."); }
+    catch(e){ b.disabled=false; toast("Couldn't undo. Check the internet connection."); }
+  });
+}
+$("#histSearch").addEventListener("input",renderHistory);
+document.querySelectorAll("[data-hf]").forEach(b=>b.onclick=()=>{ histFilter=b.dataset.hf; document.querySelectorAll("[data-hf]").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderHistory(); });
+
+function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();}
 
 /* ---------- Boot (online, live) ---------- */
 const STORE_KEY="kcc-media-loans-online";
