@@ -21,6 +21,26 @@ async function init(db) {
     stmts.push(db.prepare("INSERT OR IGNORE INTO meta (k, v) VALUES ('version', 1)"));
     await db.batch(stmts);
   }
+  // one-off inventory changes (run once, then remembered)
+  const MIG = "mig-2026-10-audio";
+  if (!(await db.prepare("SELECT v FROM meta WHERE k=?").bind(MIG).first())) {
+    const { results } = await db.prepare("SELECT path, json FROM docs WHERE path LIKE 'inventory/%'").all();
+    const now = Date.now(), stmts = [];
+    const inv = results.map(r => ({ path: r.path, d: JSON.parse(r.json) }));
+    for (const it of inv) {
+      if (/snowball/i.test(it.d.name || "") && it.d.cat !== "audio") {
+        it.d.cat = "audio"; it.d.icon = "snowball"; it.d.order = 34.8;
+        stmts.push(db.prepare("UPDATE docs SET json=?, updated=? WHERE path=?").bind(JSON.stringify(it.d), now, it.path));
+      }
+    }
+    if (!inv.some(it => /boom/i.test(it.d.name || "")))
+      stmts.push(db.prepare("INSERT OR IGNORE INTO docs (path, json, updated) VALUES (?, ?, ?)").bind("inventory/boom-pole", JSON.stringify({ cat: "audio", icon: "boompole", name: "Boom pole", note: "", order: 34.9, qty: 1 }), now));
+    if (!inv.some(it => /light(ing)?\s*stand/i.test(it.d.name || "")))
+      stmts.push(db.prepare("INSERT OR IGNORE INTO docs (path, json, updated) VALUES (?, ?, ?)").bind("inventory/lighting-stand", JSON.stringify({ cat: "light", icon: "lightstand", name: "Lighting stand", note: "", order: 33.5, qty: 1 }), now));
+    stmts.push(db.prepare("INSERT OR REPLACE INTO meta (k, v) VALUES (?, 1)").bind(MIG));
+    stmts.push(db.prepare("UPDATE meta SET v = v + 1 WHERE k='version'"));
+    await db.batch(stmts);
+  }
   ready = true;
 }
 
