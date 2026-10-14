@@ -460,6 +460,39 @@ body.wide .borrow{grid-template-columns:minmax(0,1fr) 300px;gap:20px}
 .stk.extra .stk-badge{color:var(--warn)}
 .linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;padding:0}
 @media (max-width:900px){.stk{grid-template-columns:52px minmax(0,1fr) 150px}.stk .stk-num{display:none}.stk-st{grid-column:2/4}}
+.rq{border:2px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px;background:var(--surface)}
+.rq.packed{border-color:var(--go);background:var(--go-soft)}
+.rq-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.rq-who{flex:1;min-width:200px}
+.rq-who b{display:block;font-size:17px}
+.rq-who small{display:block;color:var(--muted)}
+.rq-items{list-style:none;margin:10px 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.rq-items li{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:12px;padding:4px 12px 4px 4px;font-weight:700;font-size:15px}
+.rq-items .ico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center}
+.rq-items .ico svg{width:26px;height:26px}
+.rq-items .ico img{height:30px}
+.rq-act{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.pickup{display:grid;gap:8px}
+.pickup label{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg);cursor:pointer;font-weight:700}
+.pickup label:has(input:checked){border-color:var(--ink);background:var(--surface)}
+.pickup input{width:20px;height:20px;accent-color:var(--rec)}
+.pickup select{margin-left:auto;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);font-weight:700}
+.collect-note{background:var(--sky-soft);color:var(--ink);border-radius:14px;padding:12px 14px;font-size:15px;margin:14px 0 4px}
+.collect-note b{display:block;margin-bottom:2px}
+.hl-del{margin-top:10px;display:flex;justify-content:flex-end}
+#tab-stock .panel{border:3px solid #C7D0DB;box-shadow:0 2px 0 #C7D0DB;padding:26px 24px;margin-bottom:22px}
+#tab-stock .panel > h3{text-align:center;font-size:24px;margin:0 0 6px;padding-bottom:12px;border-bottom:2px dashed var(--line)}
+#tab-stock .panel > .lede{max-width:none;text-align:center;margin:12px 0 18px!important}
+.sp-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.sp-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:8px 10px 8px 14px}
+.sp-row.on{border-color:var(--ink)}
+.sp-row b{font-family:var(--display);font-size:17px}
+.sp-row small{color:var(--muted);margin-right:auto}
+.sp-tick{width:28px;height:28px;border-radius:50%;background:var(--go);color:#fff;display:grid;place-items:center;font-weight:800}
+.sp-start{text-align:center;background:var(--surface);border:3px dashed #C7D0DB;border-radius:var(--radius-l);padding:26px;margin-bottom:22px}
+.sp-start p{margin:0 0 12px;color:var(--muted)}
+#stockEditor.readonly .stk-step{opacity:.6}
+.stk-list{border:0!important;padding:0!important}
 #teacherBody .panel{scroll-margin-top:96px}
 #autoNote[hidden]{display:none}
 
@@ -569,19 +602,24 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
   <section id="tab-stock" hidden>
     <div id="stockLockSlot"></div>
     <div id="stockBody" hidden>
-      <div class="t-head"><div><h2 id="stockTitle">Media Inventory Stocktake</h2>
-        <p class="lede">Count what's on the shelf and type the actual number, or tap <b>✓ All here</b> if it matches. Anything on loan is subtracted automatically, so you'll only see items that are genuinely missing.</p></div></div>
-      <div class="stk-top">
-        <select id="stockYear" aria-label="Choose stocktake year"></select>
-        <button class="btn btn-ghost btn-sm" id="stockNew">+ New year</button>
-        <button class="btn btn-ghost btn-sm" id="stockCsv">Download as spreadsheet</button>
-        <button class="btn btn-ink btn-sm" id="stockFinish">Mark stocktake finished</button>
+      <div class="t-head"><div><h2>Media Inventory Stocktake</h2>
+        <p class="lede">Count what's on the shelf once a year. Items on loan are subtracted automatically, so you only see what's genuinely missing. Finished stocktakes shrink to one row you can download.</p></div></div>
+      <div id="stockPast" class="sp-list"></div>
+      <div id="stockStart"></div>
+      <div class="panel" id="stockEditor" hidden>
+        <h3 id="stockTitle">Stocktake</h3>
+        <p class="lede">Type the actual number on the shelf, or tap <b>✓ All here</b> if it matches. Two teachers can count different shelves at the same time.</p>
+        <div class="stk-top">
+          <button class="btn btn-ghost btn-sm" id="stockCsv">⬇ Download as spreadsheet</button>
+          <button class="btn btn-ink btn-sm" id="stockFinish">Mark stocktake finished</button>
+        </div>
+        <div class="summary" id="stockSummary" style="justify-content:center"></div>
+        <div class="stk-bar"><i id="stockFill"></i></div>
+        <div class="toolbar" style="justify-content:center"><input class="search" id="stockSearch" type="search" placeholder="Search equipment" aria-label="Search equipment">
+          <div class="seg" role="group" aria-label="Show"><button data-sf="all" aria-pressed="true">All</button><button data-sf="todo" aria-pressed="false">Not counted</button><button data-sf="miss" aria-pressed="false">Problems</button><button data-sf="loan" aria-pressed="false">On loan</button></div></div>
+        <div id="stockRows" class="stk-list"></div>
       </div>
-      <div class="summary" id="stockSummary" style="justify-content:center"></div>
-      <div class="stk-bar"><i id="stockFill"></i></div>
-      <div class="toolbar" style="justify-content:center"><input class="search" id="stockSearch" type="search" placeholder="Search equipment" aria-label="Search equipment">
-        <div class="seg" role="group" aria-label="Show"><button data-sf="all" aria-pressed="true">All</button><button data-sf="todo" aria-pressed="false">Not counted</button><button data-sf="miss" aria-pressed="false">Problems</button><button data-sf="loan" aria-pressed="false">On loan</button></div></div>
-      <div id="stockRows" class="stk-list"></div>
+      <div id="invSlot"></div>
     </div>
   </section>
 
@@ -602,10 +640,16 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
     </div>
     <div id="teacherBody" hidden>
     <div class="t-head"><div><h2>Teacher view</h2>
-    <p class="lede">Current loans, returns to check and the inventory. Returns only count once you confirm them here.</p></div>
+    <p class="lede">Borrow requests, current loans, returns and records. Nothing goes on loan, and nothing counts as returned, until a teacher confirms it here.</p></div>
     <span class="pill ok" id="autoNote" hidden title="You don't need the password while signed in with a teacher account">Signed in as teacher</span><button class="btn btn-ghost btn-sm" id="lockBtn" title="Lock the Teacher tab on this device">Lock</button></div>
 
     <nav class="jump" id="jumpBar" aria-label="Teacher sections"></nav>
+
+    <div class="panel" id="sec-req">
+      <h3>Borrow requests</h3>
+      <p class="lede">Students' requests and pre-orders. Nothing is on loan until you tap <b>Confirm and hand over</b>. Pre-orders show the day they'll collect, so you can pack them ahead.</p>
+      <div id="reqList"></div>
+    </div>
 
     <div class="panel" id="sec-loans">
       <h3>Current loans and returns</h3>
@@ -686,7 +730,7 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
 
     <div class="panel" id="sec-inv">
       <h3>Inventory</h3>
-      <p class="lede" style="margin-bottom:6px">Change names, notes, categories or quantities and they save straight away. The picture comes from the category. Untick "Can borrow" to keep an item in the stocktake but hide it from students. Cameras, handycams and GoPros are numbered 1 to the quantity.</p>
+      <p class="lede" style="margin-bottom:6px">Your full equipment list. Change names, notes, categories or quantities and they save straight away. The picture comes from the category. Untick "Can borrow" to keep an item in the stocktake but hide it from students. Cameras, handycams and GoPros are numbered 1 to the quantity.</p>
       <div id="invList"></div>
       <div class="add-row">
         <input id="newName" placeholder="Item name, e.g. Canon 70D">
@@ -705,21 +749,23 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
 
 <div class="overlay" id="checkout" role="dialog" aria-modal="true" aria-labelledby="coTitle">
   <div class="sheet">
-    <h3 id="coTitle">Your details</h3>
+    <h3 id="coTitle">Request to borrow</h3>
     <ul class="picked" id="coItems"></ul>
     <div class="field"><label for="coName">Full name</label><input id="coName" autocomplete="name" placeholder="First and last name"></div>
     <div class="field"><label>Year group</label><div class="years" id="years"></div></div>
     <div class="field"><label for="coEmail">School email</label>
       <div class="email-row"><input id="coEmail" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="your username"><span id="coDomain">@student.kcc.wa.edu.au</span></div>
       <small class="hint">Type the first part only. Your teacher uses this to remind you if it's overdue.</small></div>
-    <div class="dates">
-      <div><small>Borrowed</small><b id="coToday"></b></div>
-      <div><small>Due back</small><b id="coDue"></b></div>
-    </div>
+    <div class="field"><label>When do you need it?</label>
+      <div class="pickup">
+        <label><input type="radio" name="pick" value="now" checked> I'm in the media room collecting it now</label>
+        <label><input type="radio" name="pick" value="later"> Pre-order for pickup <select id="coPickup" aria-label="Pickup day"></select></label>
+      </div></div>
+    <div class="collect-note"><b>How collecting works</b>You can come into the media room to collect your equipment. If you pre-order, it will be ready for pickup on a <b>Wednesday or Friday after school</b>. A teacher confirms every loan before you take it, and it's due back one week after you collect it.</div>
     <div class="err" id="coErr"></div>
     <div class="row-actions">
       <button class="btn btn-ghost" id="coCancel">Back</button>
-      <button class="btn btn-rec" id="coConfirm">Borrow gear</button>
+      <button class="btn btn-rec" id="coConfirm">Send borrow request</button>
     </div>
   </div>
 </div>
@@ -848,7 +894,7 @@ const uLabel=(i,n)=>i.labels?.[n-1]??String(n);   // e.g. mics labelled A–E
 const shelf=()=>inventory.filter(i=>i.borrowable!==false);
 const allItems=()=>inventory;
 const selCount=id=>Object.entries(selection).filter(([k])=>k===id||k.startsWith(id+"#")).reduce((s,[,v])=>s+v,0);
-const outUnits=id=>new Set(activeLines().filter(l=>l.itemId===id&&l.unit).map(l=>l.unit));
+const outUnits=id=>new Set(heldLines().filter(l=>l.itemId===id&&l.unit).map(l=>l.unit));
 let openPeople=new Set(), ticked={};   // ticked: lineId -> number of units ticked
 
 /* A "line" is one kind of item in one booking.
@@ -863,7 +909,7 @@ function allLines(src){
         const lineId=`${b.id}_${i}`;
         const confirmed=Math.min(it.qty, returns[lineId]?.qty||0);
         const claimed=Math.max(confirmed, Math.min(it.qty, handbacks[lineId]?.qty||0));
-        out.push({lineId,owner,name:b.name||"",year:b.year||"",email:b.email||"",borrowedAt:b.borrowedAt,dueAt:b.dueAt,
+        out.push({lineId,owner,status:b.status||"approved",pickup:b.pickup||"",name:b.name||"",year:b.year||"",email:b.email||"",borrowedAt:b.borrowedAt,dueAt:b.dueAt,
           itemId:it.itemId,unit:it.unit||null,icon:it.icon||null,kitLens:it.kitLens||null,itemName:it.name,note:it.note||"",cat:it.cat,qty:it.qty,claimed,confirmed,
           outstanding:it.qty-confirmed, waiting:claimed-confirmed, still:it.qty-claimed});
       });
@@ -871,8 +917,9 @@ function allLines(src){
   }
   return out.sort((a,b)=>new Date(a.borrowedAt)-new Date(b.borrowedAt));
 }
-const activeLines=()=>allLines().filter(l=>l.outstanding>0);
-const outCount=id=>activeLines().filter(l=>l.itemId===id||l.kitLens===id).reduce((s,l)=>s+l.outstanding,0);
+const activeLines=()=>allLines().filter(l=>l.outstanding>0&&l.status==="approved");
+const heldLines=()=>allLines().filter(l=>l.outstanding>0&&(l.status==="approved"||l.status==="requested"));
+const outCount=id=>heldLines().filter(l=>l.itemId===id||l.kitLens===id).reduce((s,l)=>s+l.outstanding,0);
 const available=i=>i.unlimited?99:Math.max(0,(i.qty||0)-outCount(i.id));
 function status(l){
   if(l.still===0&&l.waiting>0) return {cls:"wait",txt:"Waiting for teacher check"};
@@ -1083,7 +1130,7 @@ function renderUnits(){
     const it=list.find(x=>x.id===b.dataset.id); const key=`${it.id}#${b.dataset.n}`;
     if(selection[key]) delete selection[key];
     else {
-      const out=outUnits(it.id), generic=activeLines().filter(l=>l.itemId===it.id&&!l.unit).reduce((s,l)=>s+l.outstanding,0);
+      const out=outUnits(it.id), generic=heldLines().filter(l=>l.itemId===it.id&&!l.unit).reduce((s,l)=>s+l.outstanding,0);
       if(selCount(it.id)+generic+out.size>=it.qty){toast(`All ${it.name} are out right now`);return;}
       if(it.kitLens){ const lens=inventory.find(x=>x.id===it.kitLens);
         const lensSel=selItems().filter(s=>s.itemId===it.kitLens||s.kitLens===it.kitLens).reduce((a,s)=>a+s.qty,0);
@@ -1136,7 +1183,7 @@ $("#years").querySelectorAll("button").forEach(b=>b.onclick=()=>{chosenYear=b.da
 $("#openCheckout").onclick=()=>{
   const now=new Date();
   $("#coItems").innerHTML=selItems().map(i=>`<li>${i.qty>1?i.qty+" × ":""}${esc(i.name)}${i.note?` (${esc(i.note)})`:""}</li>`).join("");
-  $("#coToday").textContent=fmt(now); $("#coDue").textContent=fmt(addDays(now,LOAN_DAYS));
+  $("#coPickup").innerHTML=pickupDays().map(d=>`<option value="${d.toISOString()}">${d.toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"short"})}</option>`).join("");
   $("#coErr").textContent=""; $("#checkout").classList.add("show"); setTimeout(()=>$("#coName").focus(),50);
 };
 $("#coCancel").onclick=()=>$("#checkout").classList.remove("show");
@@ -1152,7 +1199,8 @@ $("#coConfirm").onclick=async()=>{
   for(const i of items){if(i.custom) continue; const inv=inventory.find(x=>x.id===i.itemId);if((i.unit&&outUnits(i.itemId).has(i.unit))||(!i.unit&&i.qty>available(inv))){$("#coErr").textContent=`Someone just borrowed ${i.name}. Go back and check what's left.`;return;}}
   if(busy) return; busy=true; $("#coConfirm").disabled=true;
   const now=new Date();
-  const booking={id:newId(),name,year:chosenYear,email,borrowedAt:now.toISOString(),dueAt:addDays(now,LOAN_DAYS).toISOString(),items:items.map(({key,...rest})=>rest)};
+  const pick=(document.querySelector('input[name="pick"]:checked')||{}).value==="later"?$("#coPickup").value:"now";
+  const booking={id:newId(),status:"requested",pickup:pick,name,year:chosenYear,email,borrowedAt:now.toISOString(),dueAt:addDays(pick==="now"?now:new Date(pick),LOAN_DAYS).toISOString(),items:items.map(({key,...rest})=>rest)};
   const mine=loanDocs[me]||{bookings:[]};
   const fullyBack=b=>(b.items||[]).every((it,i)=>((returns[`${b.id}_${i}`]||{}).qty||0)>=it.qty);
   const next={bookings:[...(mine.bookings||[]),booking]};
@@ -1161,7 +1209,7 @@ $("#coConfirm").onclick=async()=>{
     selection={}; customSel={}; view="home"; query="";
     $("#checkout").classList.remove("show"); $("#basket").classList.remove("open");
     $("#coName").value=""; $("#coEmail").value=""; $("#coDomain").textContent="@student.kcc.wa.edu.au"; chosenYear=null; $("#years").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
-    renderAll(); toast(`Booked. Due back ${fmt(booking.dueAt)}.`);
+    renderAll(); toast(pick==="now"?"Request sent! Ask your teacher to confirm it before you take the gear.":`Pre-order sent! It'll be ready ${new Date(pick).toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"short"})} after school.`);
   }catch(e){$("#coErr").textContent="That didn't save. Check your connection and tap Borrow gear again.";}
   busy=false; $("#coConfirm").disabled=false;
 };
@@ -1242,7 +1290,7 @@ function renderPeople(){
   $("#peopleSearch").placeholder=T?"Search for a student":"Type your first and last name";
   $("#findMe").hidden=T;
   if(!T&&mineBookings===null){ $("#people").innerHTML=`<div class="empty">For privacy, loans aren't listed. Type your first and last name above and tap <b>Find my loans</b>.</div>`; return; }
-  const lines=T?activeLines():allLines(mineBookings).filter(l=>l.outstanding>0), q=T?$("#peopleSearch").value.trim().toLowerCase():"";
+  const lines=T?activeLines():allLines(mineBookings).filter(l=>l.outstanding>0&&l.status==="approved"), q=T?$("#peopleSearch").value.trim().toLowerCase():"";
   const groups={};
   for(const l of lines){const k=l.name.toLowerCase();(groups[k]=groups[k]||{name:l.name,year:l.year,lines:[]}).lines.push(l);}
   const list=Object.entries(groups).filter(([k])=>!q||k.includes(q)).sort((a,b)=>a[1].name.localeCompare(b[1].name));
@@ -1322,7 +1370,7 @@ function renderTeacher(){
   const lines=activeLines(), waiting=lines.filter(l=>l.waiting>0);
   if(false) $("#waitList").innerHTML=waiting.length?waiting.map(l=>loanRow(l,`<button class="btn btn-go btn-sm" data-cf="${esc(l.lineId)}">Confirm ${l.waiting>1?l.waiting+" returned":"return"}</button>`,l.waiting)).join(""):`<div class="empty">Nothing waiting. When a student ticks items as brought back they appear here.</div>`;
 
-  const wb=$("#waitCount"); wb.hidden=!waiting.length; wb.textContent=waiting.length;
+  const wb=$("#waitCount"), nreq=bookingsWith("requested").length; wb.hidden=!(waiting.length+nreq); wb.textContent=waiting.length+nreq;
   const late=lines.filter(l=>l.still>0&&daysOut(l.borrowedAt)>=LOAN_DAYS);
   renderReminders(late);
   const find=id=>lines.find(x=>x.lineId===id);
@@ -1433,7 +1481,7 @@ function renderReminders(late){
 let ledgerBusy=false;
 async function syncLedger(){
   if(!isTeacher||ledgerBusy) return; ledgerBusy=true;
-  for(const l of allLines()){
+  for(const l of allLines().filter(x=>x.status==="approved")){
     if(!ledger[l.lineId]){
       const copy={owner:l.owner,name:l.name,year:l.year,borrowedAt:l.borrowedAt,dueAt:l.dueAt,itemId:l.itemId,itemName:l.itemName,note:l.note,cat:l.cat,qty:l.qty};
       try{await db.doc("ledger/"+l.lineId).set(copy);ledger[l.lineId]=copy;}catch(e){break;}
@@ -1587,7 +1635,8 @@ function renderHistory(){
   $("#histRows").innerHTML=shown.length?shown.map(g=>{
     const open=openHist.has(g.bid), can=g.lines.filter(undoable), allOn=can.length&&can.every(l=>histSel.has(l.lineId));
     const tot=g.lines.reduce((n,l)=>n+l.qty,0), back=g.lines.reduce((n,l)=>n+Math.min(l.confirmed,l.qty),0);
-    const st=back>=tot?`<span class="pill ok">✓ All returned</span>`:back>0?`<span class="pill due">${back} of ${tot} returned</span>`:`<span class="pill late">✗ Not returned</span>`;
+    const bs=g.lines[0].status;
+    const st=bs==="requested"?`<span class="pill wait">Requested</span>`:bs==="declined"?`<span class="pill">Declined</span>`:back>=tot?`<span class="pill ok">✓ All returned</span>`:back>0?`<span class="pill due">${back} of ${tot} returned</span>`:`<span class="pill late">✗ Not returned</span>`;
     const items=g.lines.map(l=>{
       const r=returns[l.lineId]||{}, b=l.confirmed;
       const s=b>=l.qty?`<span class="ok">✓ Returned</span>`:b>0?`<span class="part">${b} of ${l.qty} returned</span>`:`<span class="no">✗ Not returned</span>`;
@@ -1598,13 +1647,16 @@ function renderHistory(){
     return `<div class="hl ${open?"open":""}">
       <div class="hl-head">${can.length?`<input type="checkbox" data-pickall="${esc(g.bid)}" ${allOn?"checked":""} aria-label="Select all of this loan's returned items">`:`<span class="ckgap"></span>`}
         <button class="hl-btn" data-hl="${esc(g.bid)}" aria-expanded="${open}"><span class="hl-date">${fmtD(g.borrowedAt)}</span><span class="hl-who"><b>${esc(g.name)}</b> <small>${g.year==="Staff"?"Staff":"Year "+esc(g.year)}</small></span><span class="hl-n">${tot} item${tot===1?"":"s"}</span>${st}${CHEV}</button></div>
-      <div class="hl-body"><div class="hi hi-h"><span></span><span>Equipment</span><span>Returned</span><span>Return date</span><span></span></div>${items}${g.email?`<p class="hint" style="margin:8px 0 0">${esc(g.email)}</p>`:""}</div>
+      <div class="hl-body"><div class="hi hi-h"><span></span><span>Equipment</span><span>Returned</span><span>Return date</span><span></span></div>${items}${g.email?`<p class="hint" style="margin:8px 0 0">${esc(g.email)}</p>`:""}<div class="hl-del"><button class="btn btn-ghost btn-sm" data-hdel="${esc(g.bid)}">🗑 Delete this loan from history</button></div></div>
     </div>`;
   }).join(""):`<div class="empty">No loans match.</div>`;
   const groups=Object.fromEntries(shown.map(g=>[g.bid,g]));
   $("#histRows").querySelectorAll("[data-hl]").forEach(b=>b.onclick=()=>{ const k=b.dataset.hl; openHist.has(k)?openHist.delete(k):openHist.add(k); renderHistory(); });
   $("#histRows").querySelectorAll("[data-pick]").forEach(c=>c.onchange=()=>{ c.checked?histSel.add(c.dataset.pick):histSel.delete(c.dataset.pick); renderHistory(); });
   $("#histRows").querySelectorAll("[data-pickall]").forEach(c=>c.onchange=()=>{ groups[c.dataset.pickall].lines.filter(undoable).forEach(l=>c.checked?histSel.add(l.lineId):histSel.delete(l.lineId)); renderHistory(); });
+  $("#histRows").querySelectorAll("[data-hdel]").forEach(b=>b.onclick=async()=>{
+    if(!b.dataset.sure){ b.dataset.sure="1"; b.textContent="Tap again to delete for good"; b.classList.add("btn-rec"); setTimeout(()=>{ if(b.isConnected){ b.dataset.sure=""; b.textContent="🗑 Delete this loan from history"; b.classList.remove("btn-rec"); } },3000); return; }
+    b.disabled=true; try{ await deleteBooking(b.dataset.hdel); openHist.delete(b.dataset.hdel); renderAll(); toast("Loan deleted from history"); }catch(e){ b.disabled=false; toast("Couldn't delete. Check the internet connection."); } });
   $("#histRows").querySelectorAll("[data-undo]").forEach(b=>b.onclick=async()=>{
     b.disabled=true;
     try{ await undoReturn(b.dataset.undo); histSel.delete(b.dataset.undo); renderAll(); toast("Marked not returned. It's back on loan."); }
@@ -1624,52 +1676,68 @@ $("#bulkUndo").onclick=async()=>{
 };
 
 /* ---------- Teacher jump bar ---------- */
-const JUMPS=[["sec-loans","📋","Loans & returns","wait"],["sec-overdue","⚠️","Overdue","late"],["sec-history","🗂️","Loan history"],["sec-qr","🔳","QR codes"],["sec-backup","💾","Backup"],["sec-missing","🔎","Missing records"],["sec-inv","📦","Inventory"]];
+const JUMPS=[["sec-req","📨","Requests","req"],["sec-loans","📋","Loans & returns","wait"],["sec-overdue","⚠️","Overdue","late"],["sec-history","🗂️","Loan history"],["sec-qr","🔳","QR codes"],["sec-backup","💾","Backup"],["sec-missing","🔎","Missing records"]];
 function renderJump(){
-  const lines=activeLines(), counts={wait:lines.reduce((n,l)=>n+l.waiting,0), late:new Set(lines.filter(l=>l.still>0&&daysOut(l.borrowedAt)>=LOAN_DAYS).map(l=>l.name.toLowerCase())).size};
+  const lines=activeLines(), counts={req:bookingsWith("requested").length, wait:lines.reduce((n,l)=>n+l.waiting,0), late:new Set(lines.filter(l=>l.still>0&&daysOut(l.borrowedAt)>=LOAN_DAYS).map(l=>l.name.toLowerCase())).size};
   $("#jumpBar").innerHTML=JUMPS.filter(([id])=>$("#"+id)&&!$("#"+id).closest("[hidden]")).map(([id,ic,t,c])=>`<a href="#${id}" data-jump-to="${id}"><span aria-hidden="true">${ic}</span>${t}${c&&counts[c]?`<span class="n">${counts[c]}</span>`:""}</a>`).join("");
   $("#jumpBar").querySelectorAll("a").forEach(a=>a.onclick=e=>{ e.preventDefault(); const t=$("#"+a.dataset.jumpTo); t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"}); });
 }
 /* put the teacher panels in a sensible order */
-(()=>{ const box=$("#adminPanels"); ["sec-overdue","sec-history","sec-qr","sec-backup","sec-missing","sec-inv"].forEach(id=>{ const el=$("#"+id); if(el) box.appendChild(el); }); })();
+(()=>{ const box=$("#adminPanels"); ["sec-overdue","sec-history","sec-qr","sec-backup","sec-missing"].forEach(id=>{ const el=$("#"+id); if(el) box.appendChild(el); }); })();
 if("IntersectionObserver" in window){
   const io=new IntersectionObserver(es=>{ es.forEach(en=>{ if(en.isIntersecting){ document.querySelectorAll("#jumpBar a").forEach(a=>a.classList.toggle("on",a.dataset.jumpTo===en.target.id)); } }); },{rootMargin:"-40% 0px -55% 0px"});
   JUMPS.forEach(([id])=>{ const el=$("#"+id); if(el) io.observe(el); });
 }
 
 /* ---------- Media Inventory Stocktake (teacher only) ---------- */
-let stockDocs={}, stockYear=String(new Date().getFullYear()), stockFilter="all";
-const stockKey=id=>`${stockYear}__${id}`;
+let stockDocs={}, stockFilter="all", stockView=null;
+const stockYears=()=>[...new Set(Object.keys(stockDocs).map(k=>k.split("__")[0]))].sort().reverse();
+const stockMeta=y=>stockDocs[y+"__meta"]||{};
+const isFinished=y=>!!stockMeta(y).finishedAt;
+function activeYear(){ return stockView||stockYears().find(y=>!isFinished(y))||null; }
 function stockItems(){ return inventory.filter(i=>!i.unlimited).slice().sort((a,b)=>CAT_KEYS.indexOf(a.cat)-CAT_KEYS.indexOf(b.cat)||(a.order??999)-(b.order??999)||a.name.localeCompare(b.name)); }
-function stockRow(i){
-  const counted=stockDocs[stockKey(i.id)], actual=counted?counted.actual:null;
+function stockRow(i,year){
+  const counted=stockDocs[`${year}__${i.id}`], actual=counted?counted.actual:null;
   const loans=activeLines().filter(l=>l.itemId===i.id||l.kitLens===i.id);
   const onLoan=loans.reduce((n,l)=>n+l.outstanding,0);
   const expected=i.qty||0, shelf=Math.max(0,expected-onLoan);
   let st="todo", txt="Not counted yet";
-  if(actual!==null){
-    const diff=actual-shelf;
-    if(diff===0) { st=onLoan?"loan":"ok"; txt=onLoan?`All accounted for (${onLoan} on loan)`:"All here"; }
+  if(actual!==null){ const diff=actual-shelf;
+    if(diff===0){ st=onLoan?"loan":"ok"; txt=onLoan?`All accounted for (${onLoan} on loan)`:"All here"; }
     else if(diff>0){ st="extra"; txt=`${diff} more than expected`; }
-    else { st="miss"; txt=`${-diff} missing, not on loan`; }
-  }
-  return {i,actual,onLoan,expected,shelf,loans,st,txt,counted};
+    else { st="miss"; txt=`${-diff} missing, not on loan`; } }
+  return {i,actual,onLoan,expected,shelf,loans,st,txt};
+}
+function stockCsvRows(year){
+  const snap=stockMeta(year).snapshot; if(snap) return snap;
+  return stockItems().map(i=>stockRow(i,year)).map(r=>[CATS[r.i.cat]?.label||"",r.i.name,r.i.note||"",r.expected,r.onLoan,r.shelf,r.actual??"",r.txt,r.loans.map(l=>`${l.itemName}: ${l.name}`).join("; ")]);
+}
+function downloadStock(year){
+  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const rows=[["Category","Item","Note","Expected","On loan","Should be here","Actual","Result","On loan to"],...stockCsvRows(year)];
+  downloadFile(`media-stocktake-${year}.csv`,rows.map(r=>r.map(q).join(",")).join("\n"),"text/csv");
 }
 function renderStock(){
   if(!isTeacher||!$("#stockRows")||$("#tab-stock").hidden) return;
-  const years=[...new Set(Object.keys(stockDocs).map(k=>k.split("__")[0]).concat([String(new Date().getFullYear())]))].sort().reverse();
-  $("#stockYear").innerHTML=years.map(y=>`<option value="${y}" ${y===stockYear?"selected":""}>${y} stocktake</option>`).join("");
-  const meta=stockDocs[stockYear+"__meta"]||{};
-  $("#stockTitle").textContent=`${stockYear} Media Inventory Stocktake`;
-  const rows=stockItems().map(stockRow);
-  const done=rows.filter(r=>r.actual!==null).length, miss=rows.filter(r=>r.st==="miss"), loan=rows.filter(r=>r.onLoan>0);
-  const missN=miss.reduce((n,r)=>n+(r.shelf-r.actual),0);
-  $("#stockSummary").innerHTML=`<div class="stat"><b>${done}/${rows.length}</b><span>items counted</span></div>
-    <div class="stat"><b style="color:${missN?"var(--rec)":"inherit"}">${missN}</b><span>missing (not on loan)</span></div>
-    <div class="stat"><b style="color:${loan.length?"var(--sky)":"inherit"}">${loan.reduce((n,r)=>n+r.onLoan,0)}</b><span>still on loan</span></div>
-    <div class="stat"><b>${meta.finishedAt?"✓":"–"}</b><span>${meta.finishedAt?"finished "+fmtS(meta.finishedAt):"in progress"}</span></div>`;
-  $("#stockFill").style.width=(rows.length?Math.round(done/rows.length*100):0)+"%";
-  $("#stockFinish").textContent=meta.finishedAt?"Reopen stocktake":"Mark stocktake finished";
+  const years=stockYears(), year=activeYear(), now=new Date().getFullYear();
+  // finished stocktakes shrink to one small row each
+  $("#stockPast").innerHTML=years.filter(isFinished).map(y=>{ const m=stockMeta(y), s=m.summary||{};
+    return `<div class="sp-row ${stockView===y?"on":""}"><span class="sp-tick">✓</span><b>${y} Stocktake</b><small>Finished ${fmtS(m.finishedAt)}${s.counted!=null?` · ${s.counted}/${s.total} counted · ${s.missing} missing`:""}</small>
+      <button class="btn btn-ghost btn-sm" data-sdl="${y}">⬇ Download</button><button class="btn btn-ghost btn-sm" data-sview="${y}">${stockView===y?"Close":"View"}</button></div>`; }).join("");
+  const nextYear=String(years.includes(String(now))?Math.max(...years.map(Number))+1:now);
+  $("#stockStart").innerHTML=year?"":`<div class="sp-start"><p>${years.length?"All stocktakes are finished.":"No stocktake started yet."}</p><button class="btn btn-rec" id="stockBegin">Start the ${nextYear} stocktake</button></div>`;
+  $("#stockBegin")&&($("#stockBegin").onclick=async()=>{ try{ await db.doc(`stocktake/${nextYear}__meta`).set({startedAt:new Date().toISOString()}); stockView=null; renderStock(); }catch(e){ toast("Couldn't start. Check the internet connection."); } });
+  $("#stockPast").querySelectorAll("[data-sdl]").forEach(b=>b.onclick=()=>downloadStock(b.dataset.sdl));
+  $("#stockPast").querySelectorAll("[data-sview]").forEach(b=>b.onclick=()=>{ stockView=stockView===b.dataset.sview?null:b.dataset.sview; renderStock(); });
+  $("#stockEditor").hidden=!year; if(!year) return;
+  const done=isFinished(year);
+  $("#stockTitle").textContent=`${year} Media Inventory Stocktake`;
+  $("#stockFinish").textContent=done?"Reopen this stocktake":"Mark stocktake finished";
+  $("#stockEditor").classList.toggle("readonly",done);
+  const rows=stockItems().map(i=>stockRow(i,year));
+  const counted=rows.filter(r=>r.actual!==null).length, missN=rows.filter(r=>r.st==="miss").reduce((n,r)=>n+(r.shelf-r.actual),0), loanN=rows.reduce((n,r)=>n+r.onLoan,0);
+  $("#stockSummary").innerHTML=`<div class="stat"><b>${counted}/${rows.length}</b><span>items counted</span></div><div class="stat"><b style="color:${missN?"var(--rec)":"inherit"}">${missN}</b><span>missing (not on loan)</span></div><div class="stat"><b style="color:${loanN?"var(--sky)":"inherit"}">${loanN}</b><span>still on loan</span></div>`;
+  $("#stockFill").style.width=(rows.length?Math.round(counted/rows.length*100):0)+"%";
   const q=$("#stockSearch").value.trim().toLowerCase();
   const shown=rows.filter(r=>(!q||(r.i.name+" "+(r.i.note||"")).toLowerCase().includes(q))&&(stockFilter==="all"||(stockFilter==="todo"?r.actual===null:stockFilter==="miss"?(r.st==="miss"||r.st==="extra"):r.onLoan>0)));
   let lastCat="";
@@ -1679,32 +1747,85 @@ function renderStock(){
     return cat+`<div class="stk ${r.st}">
       <span class="ico cat-${esc(r.i.cat)}">${icon(r.i.icon||r.i.cat)}</span>
       <div class="stk-name"><b>${esc(r.i.name)}</b>${r.i.note?`<small>${esc(r.i.note)}</small>`:""}${r.i.borrowable===false?`<small>Not for loan</small>`:""}${who}</div>
-      <div class="stk-num"><small>Expected</small>${r.expected}</div>
-      <div class="stk-num"><small>On loan</small>${r.onLoan}</div>
-      <div class="stk-num"><small>Should be here</small>${r.shelf}</div>
-      <div class="stk-count"><small>Actual</small><div class="stk-step"><button data-sd="${esc(r.i.id)}" data-v="-1" aria-label="One fewer">−</button><input type="number" min="0" inputmode="numeric" data-sa="${esc(r.i.id)}" value="${r.actual===null?"":r.actual}" placeholder="?" aria-label="Actual number of ${esc(r.i.name)}"><button data-sd="${esc(r.i.id)}" data-v="1" aria-label="One more">+</button></div></div>
-      <div class="stk-st"><span class="stk-badge">${esc(r.txt)}</span>${r.actual===null?`<button class="btn btn-go btn-sm" data-sok="${esc(r.i.id)}" data-shelf="${r.shelf}">✓ All ${r.shelf} here</button>`:`<button class="linkbtn" data-sclr="${esc(r.i.id)}">Clear</button>`}</div>
+      <div class="stk-num"><small>Expected</small>${r.expected}</div><div class="stk-num"><small>On loan</small>${r.onLoan}</div><div class="stk-num"><small>Should be here</small>${r.shelf}</div>
+      <div class="stk-count"><small>Actual</small><div class="stk-step"><button data-sd="${esc(r.i.id)}" data-v="-1" aria-label="One fewer" ${done?"disabled":""}>−</button><input type="number" min="0" inputmode="numeric" data-sa="${esc(r.i.id)}" value="${r.actual===null?"":r.actual}" placeholder="?" aria-label="Actual number of ${esc(r.i.name)}" ${done?"disabled":""}><button data-sd="${esc(r.i.id)}" data-v="1" aria-label="One more" ${done?"disabled":""}>+</button></div></div>
+      <div class="stk-st"><span class="stk-badge">${esc(r.txt)}</span>${done?"":r.actual===null?`<button class="btn btn-go btn-sm" data-sok="${esc(r.i.id)}" data-shelf="${r.shelf}">✓ All ${r.shelf} here</button>`:`<button class="linkbtn" data-sclr="${esc(r.i.id)}">Clear</button>`}</div>
     </div>`;
   }).join(""):`<div class="empty">Nothing matches.</div>`;
-  const save=async(id,val)=>{ const ref=db.doc("stocktake/"+stockKey(id)); try{ if(val===null) await ref.delete(); else await ref.set({actual:val,at:new Date().toISOString()}); renderStock(); }catch(e){ toast("Couldn't save. Check the internet connection."); } };
+  const save=async(id,val)=>{ const ref=db.doc(`stocktake/${year}__${id}`); try{ if(val===null) await ref.delete(); else await ref.set({actual:val,at:new Date().toISOString()}); renderStock(); }catch(e){ toast("Couldn't save. Check the internet connection."); } };
   $("#stockRows").querySelectorAll("[data-sok]").forEach(b=>b.onclick=()=>save(b.dataset.sok,Number(b.dataset.shelf)));
   $("#stockRows").querySelectorAll("[data-sclr]").forEach(b=>b.onclick=()=>save(b.dataset.sclr,null));
-  $("#stockRows").querySelectorAll("[data-sd]").forEach(b=>b.onclick=()=>{ const inp=$(`[data-sa="${CSS.escape(b.dataset.sd)}"]`); const v=Math.max(0,(inp.value===""?0:Number(inp.value))+Number(b.dataset.v)); save(b.dataset.sd,v); });
+  $("#stockRows").querySelectorAll("[data-sd]").forEach(b=>b.onclick=()=>{ const inp=$(`[data-sa="${CSS.escape(b.dataset.sd)}"]`); save(b.dataset.sd,Math.max(0,(inp.value===""?0:Number(inp.value))+Number(b.dataset.v))); });
   $("#stockRows").querySelectorAll("[data-sa]").forEach(inp=>inp.onchange=()=>save(inp.dataset.sa,inp.value===""?null:Math.max(0,Math.round(Number(inp.value)))));
 }
-$("#stockYear").onchange=()=>{ stockYear=$("#stockYear").value; renderStock(); };
-$("#stockNew").onclick=()=>{ const y=prompt("Which year is this stocktake for?",String(new Date().getFullYear()+(new Date().getMonth()>=9?1:0))); if(y&&/^\d{4}$/.test(y.trim())){ stockYear=y.trim(); renderStock(); } };
 $("#stockSearch").addEventListener("input",renderStock);
 document.querySelectorAll("[data-sf]").forEach(b=>b.onclick=()=>{ stockFilter=b.dataset.sf; document.querySelectorAll("[data-sf]").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderStock(); });
-$("#stockFinish").onclick=async()=>{ const k="stocktake/"+stockYear+"__meta", m=stockDocs[stockYear+"__meta"]||{}; try{ await db.doc(k).set({finishedAt:m.finishedAt?null:new Date().toISOString()}); toast(m.finishedAt?"Stocktake reopened":"Stocktake marked finished"); renderStock(); }catch(e){ toast("Couldn't save."); } };
-$("#stockCsv").onclick=()=>{
-  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
-  const rows=[["Category","Item","Note","Expected","On loan","Should be here","Actual","Result","On loan to"]];
-  stockItems().map(stockRow).forEach(r=>rows.push([CATS[r.i.cat]?.label||"",r.i.name,r.i.note||"",r.expected,r.onLoan,r.shelf,r.actual??"",r.txt,r.loans.map(l=>`${l.itemName}: ${l.name}`).join("; ")]));
-  downloadFile(`media-stocktake-${stockYear}.csv`,rows.map(r=>r.map(q).join(",")).join("\n"),"text/csv");
+$("#stockCsv").onclick=()=>{ const y=activeYear(); if(y) downloadStock(y); };
+$("#stockFinish").onclick=async()=>{
+  const y=activeYear(); if(!y) return; const done=isFinished(y);
+  if(!done){
+    const b=$("#stockFinish"); if(!b.dataset.sure){ b.dataset.sure="1"; b.textContent="Tap again to finish"; setTimeout(()=>{ b.dataset.sure=""; renderStock(); },3000); return; } b.dataset.sure="";
+    const rows=stockItems().map(i=>stockRow(i,y));
+    const snapshot=rows.map(r=>[CATS[r.i.cat]?.label||"",r.i.name,r.i.note||"",r.expected,r.onLoan,r.shelf,r.actual??"",r.txt,r.loans.map(l=>`${l.itemName}: ${l.name}`).join("; ")]);
+    const summary={counted:rows.filter(r=>r.actual!==null).length,total:rows.length,missing:rows.filter(r=>r.st==="miss").reduce((n,r)=>n+(r.shelf-r.actual),0)};
+    try{ await db.doc(`stocktake/${y}__meta`).set({...stockMeta(y),finishedAt:new Date().toISOString(),snapshot,summary}); stockView=null; toast(`${y} stocktake finished and saved`); renderStock(); }catch(e){ toast("Couldn't save."); }
+  } else {
+    try{ const m={...stockMeta(y)}; delete m.finishedAt; delete m.snapshot; delete m.summary; await db.doc(`stocktake/${y}__meta`).set(m); stockView=null; toast("Stocktake reopened"); renderStock(); }catch(e){ toast("Couldn't save."); }
+  }
 };
 
-function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();if(isTeacher&&$("#jumpBar"))renderJump();renderStock();}
+/* ---------- Borrow requests (teacher confirms before anything is handed over) ---------- */
+function pickupDays(){
+  const out=[], d=new Date(); d.setHours(0,0,0,0);
+  for(let i=0;out.length<4&&i<21;i++){ const x=new Date(d); x.setDate(d.getDate()+i); const wd=x.getDay(); if((wd===3||wd===5)&&(i>0||new Date().getHours()<15)) out.push(x); }
+  return out;
+}
+function bookingsWith(status){
+  const out=[];
+  for(const [owner,doc] of Object.entries(loanDocs)) for(const b of (doc.bookings||[])) if((b.status||"approved")===status) out.push({owner,b});
+  return out;
+}
+async function patchBooking(owner,bid,patch){
+  const doc=JSON.parse(JSON.stringify(loanDocs[owner]||{bookings:[]}));
+  const b=doc.bookings.find(x=>x.id===bid); if(!b) throw new Error("missing");
+  Object.assign(b,patch); await db.doc("loans/"+owner).set(doc); loanDocs[owner]=doc;
+}
+function renderRequests(){
+  if(!isTeacher||!$("#reqList")) return;
+  const reqs=bookingsWith("requested").sort((a,b)=>new Date(a.b.pickup&&a.b.pickup!=="now"?a.b.pickup:a.b.borrowedAt)-new Date(b.b.pickup&&b.b.pickup!=="now"?b.b.pickup:b.b.borrowedAt));
+  const fmtP=b=>b.pickup&&b.pickup!=="now"?`Pre-order · ready ${new Date(b.pickup).toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"short"})} after school`:"Collecting now";
+  $("#reqList").innerHTML=reqs.length?reqs.map(({owner,b})=>`<div class="rq ${b.packed?"packed":""}">
+      <div class="rq-top"><span class="avatar">${esc(initials(b.name||"?"))}</span>
+        <div class="rq-who"><b>${esc(b.name)}</b><small>${b.year==="Staff"?"Staff":"Year "+esc(b.year)}${b.email?" · "+esc(b.email):""}</small><small>Requested ${fmt(b.borrowedAt)}</small></div>
+        <span class="pill ${b.pickup&&b.pickup!=="now"?"due":"wait"}">${esc(fmtP(b))}</span></div>
+      <ul class="rq-items">${(b.items||[]).map(it=>`<li><span class="ico cat-${esc(it.cat)}">${icon(it.icon||it.cat)}</span>${it.qty>1?it.qty+" × ":""}${esc(it.name)}</li>`).join("")}</ul>
+      <div class="rq-act">
+        <button class="btn btn-ghost btn-sm" data-rdecline="${esc(owner)}|${esc(b.id)}">Decline</button>
+        ${b.pickup&&b.pickup!=="now"?`<button class="btn btn-ghost btn-sm" data-rpack="${esc(owner)}|${esc(b.id)}">${b.packed?"✓ Packed and ready":"Mark as packed"}</button>`:""}
+        <button class="btn btn-go btn-sm" data-rok="${esc(owner)}|${esc(b.id)}">Confirm and hand over</button>
+      </div></div>`).join(""):`<div class="empty">No requests waiting. New borrow requests from students appear here.</div>`;
+  const split=s=>s.split("|");
+  $("#reqList").querySelectorAll("[data-rok]").forEach(btn=>btn.onclick=async()=>{ const [o,id]=split(btn.dataset.rok); btn.disabled=true; const now=new Date();
+    try{ await patchBooking(o,id,{status:"approved",approvedAt:now.toISOString(),borrowedAt:now.toISOString(),dueAt:addDays(now,LOAN_DAYS).toISOString()}); renderAll(); toast("Confirmed. It's now on loan, due back in a week."); }catch(e){ btn.disabled=false; toast("Couldn't save. Try again."); } });
+  $("#reqList").querySelectorAll("[data-rpack]").forEach(btn=>btn.onclick=async()=>{ const [o,id]=split(btn.dataset.rpack); const b=loanDocs[o].bookings.find(x=>x.id===id); btn.disabled=true;
+    try{ await patchBooking(o,id,{packed:!b.packed}); renderAll(); }catch(e){ btn.disabled=false; toast("Couldn't save. Try again."); } });
+  $("#reqList").querySelectorAll("[data-rdecline]").forEach(btn=>btn.onclick=async()=>{
+    if(!btn.dataset.sure){ btn.dataset.sure="1"; btn.textContent="Tap again to decline"; setTimeout(()=>{btn.dataset.sure="";btn.textContent="Decline";},3000); return; }
+    const [o,id]=split(btn.dataset.rdecline); btn.disabled=true;
+    try{ await patchBooking(o,id,{status:"declined",declinedAt:new Date().toISOString()}); renderAll(); toast("Request declined. The equipment is free again."); }catch(e){ btn.disabled=false; toast("Couldn't save. Try again."); } });
+}
+async function deleteBooking(bid){
+  for(const [owner,doc] of Object.entries(loanDocs)){
+    const b=(doc.bookings||[]).find(x=>x.id===bid); if(!b) continue;
+    const next={bookings:doc.bookings.filter(x=>x.id!==bid)};
+    for(let i=0;i<(b.items||[]).length;i++){ const id=bid+"_"+i; for(const c of ["returns","handbacks","ledger"]) await db.doc(c+"/"+id).delete(); delete returns[id]; delete handbacks[id]; delete ledger[id]; }
+    if(next.bookings.length) await db.doc("loans/"+owner).set(next); else await db.doc("loans/"+owner).delete();
+    if(next.bookings.length) loanDocs[owner]=next; else delete loanDocs[owner];
+    return;
+  }
+}
+
+function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();if(isTeacher&&$("#jumpBar"))renderJump();renderStock();renderRequests();}
 
 /* ---------- Boot (online, live) ---------- */
 const STORE_KEY="kcc-media-loans-online";
@@ -1761,6 +1882,7 @@ db.collection("inventory").onSnapshot(s=>{inventory=s.docs.map(x=>{ const it={id
 db.collection("loans").onSnapshot(s=>{loanDocs={};s.docs.forEach(x=>loanDocs[x.id]=x.data());renderAll();syncLedger();});
 db.collection("handbacks").onSnapshot(s=>{handbacks={};s.docs.forEach(x=>handbacks[x.id]=x.data());renderAll();});
 db.collection("returns").onSnapshot(s=>{returns={};s.docs.forEach(x=>returns[x.id]=x.data());renderAll();});
+$("#invSlot").appendChild($("#sec-inv"));
 db.collection("stocktake").onSnapshot(s=>{stockDocs={};s.docs.forEach(x=>stockDocs[x.id]=x.data());renderStock();});
 db.collection("ledger").onSnapshot(s=>{ledger={};s.docs.forEach(x=>ledger[x.id]=x.data());renderTeacher();syncLedger();});
 function downloadFile(name,text,type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }

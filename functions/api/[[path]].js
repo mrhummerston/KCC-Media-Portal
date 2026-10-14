@@ -50,7 +50,7 @@ const normName = s => String(s || "").trim().replace(/\s+/g, " ").toLowerCase();
 const anon = b => { const c = { ...b }; delete c.email; delete c.name; delete c.year; return c; };
 const PATH_OK = p => /^[a-z-]+\/[A-Za-z0-9_.:~@+\-]{1,200}$/.test(String(p));
 
-export async function onRequest({ request, env, params }) {
+export async function onRequest({ request, env, params, waitUntil }) {
   const db = env.DB;
   if (!db) return json({ error: "Database not connected. Add a D1 binding called DB, then redeploy." }, 500);
   if (!env.TEACHER_CODE) return json({ error: "The TEACHER_CODE secret is missing. Add it, then redeploy." }, 500);
@@ -129,7 +129,13 @@ export async function onRequest({ request, env, params }) {
         if (!teacher) {
           // keep every existing booking exactly as stored; only accept brand-new ones
           const known = new Set(prev.map(b => b.id));
-          doc.bookings = [...prev, ...doc.bookings.filter(b => b && b.id && !known.has(b.id))];
+          const fresh = doc.bookings.filter(b => b && b.id && !known.has(b.id)).map(b => ({ ...b, status: "requested" }));   // students can only ask; a teacher confirms
+          doc.bookings = [...prev, ...fresh];
+          if (fresh.length && env.NOTIFY_URL) {
+            const send = fetch(env.NOTIFY_URL, { method: "POST", headers: { "content-type": "application/json" },
+              body: JSON.stringify({ secret: env.NOTIFY_SECRET || "", site: new URL(request.url).origin, requests: fresh.map(b => ({ name: b.name, year: b.year, email: b.email, pickup: b.pickup || "now", items: (b.items || []).map(i => (i.qty > 1 ? i.qty + " x " : "") + i.name) })) }) }).catch(() => {});
+            if (typeof waitUntil === "function") waitUntil(send);
+          }
         } else {
           // teacher saves: put back any personal details the page didn't have
           const byId = {}; prev.forEach(b => byId[b.id] = b);
