@@ -428,6 +428,38 @@ body.wide .borrow{grid-template-columns:minmax(0,1fr) 300px;gap:20px}
 .hi .undo{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted)}
 @media (max-width:700px){.hl-btn{grid-template-columns:minmax(0,1fr) 22px;gap:4px 8px}.hl-btn .hl-date{grid-column:1}.hl-btn .hl-n{display:none}.hl-btn .pill{grid-column:1;justify-self:start}.hl-btn .chev{grid-row:1/3;grid-column:2}
   .hi{grid-template-columns:22px minmax(0,1fr) auto;}.hi .hi-st{grid-column:2}.hi .hi-date{display:none}.hi.hi-h{display:none}}
+.stk-top{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:6px 0 16px}
+.stk-top select{padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-weight:700;min-height:46px}
+.stk-bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.stk-bar i{display:block;height:100%;width:0;background:var(--go);transition:width .3s}
+.stk-list{background:var(--surface);border:3px solid #C7D0DB;border-radius:var(--radius-l);padding:8px 16px 14px}
+.stk-cat{font-family:var(--display);font-weight:800;font-size:18px;margin:16px 0 6px;padding-bottom:6px;border-bottom:2px dashed var(--line)}
+.stk{display:grid;grid-template-columns:52px minmax(0,2fr) repeat(3,74px) 150px minmax(170px,1.2fr);gap:12px;align-items:center;padding:10px 8px;border-radius:12px;border-left:5px solid transparent}
+.stk+.stk{border-top:1px solid var(--line)}
+.stk.ok,.stk.loan{border-left-color:var(--go)}
+.stk.miss{border-left-color:var(--rec);background:var(--rec-soft)}
+.stk.extra{border-left-color:var(--warn);background:var(--warn-soft)}
+.stk .ico{width:52px;height:52px;border-radius:12px;display:grid;place-items:center}
+.stk .ico svg{width:38px;height:38px}
+.stk .ico img{height:44px}
+.stk-name b{display:block;line-height:1.25}
+.stk-name small{display:block;color:var(--muted);font-size:13px}
+.stk-loans{display:flex;flex-direction:column;gap:2px;margin-top:4px;font-size:13px;color:var(--sky)}
+.stk-loans .late{color:var(--rec)}
+.stk-num{text-align:center;font-weight:800;font-size:18px}
+.stk-num small,.stk-count small{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.stk-count{text-align:center}
+.stk-step{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.stk-step button{border:0;background:var(--bg);width:38px;height:42px;font-size:20px;font-weight:800;cursor:pointer}
+.stk-step input{width:54px;height:42px;border:0;text-align:center;font-weight:800;font-size:18px;background:transparent;color:var(--ink)}
+.stk-st{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.stk-badge{font-weight:800;font-size:14px}
+.stk.todo .stk-badge{color:var(--muted);font-weight:700}
+.stk.ok .stk-badge,.stk.loan .stk-badge{color:var(--go)}
+.stk.miss .stk-badge{color:var(--rec)}
+.stk.extra .stk-badge{color:var(--warn)}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;padding:0}
+@media (max-width:900px){.stk{grid-template-columns:52px minmax(0,1fr) 150px}.stk .stk-num{display:none}.stk-st{grid-column:2/4}}
 #teacherBody .panel{scroll-margin-top:96px}
 #autoNote[hidden]{display:none}
 
@@ -503,6 +535,7 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="borrow" aria-selected="true">Borrow gear</button>
     <button role="tab" data-tab="return" aria-selected="false">Return gear</button>
+    <button role="tab" data-tab="stock" aria-selected="false" id="stockTab">Media Inventory Stocktake</button>
     <button role="tab" data-tab="teacher" aria-selected="false" id="teacherTab">Teacher <span class="badge" id="waitCount" hidden>0</span></button>
   </nav>
 </header>
@@ -531,6 +564,25 @@ textarea.mail{width:100%;min-height:190px;padding:12px;border:1.5px solid var(--
     <p class="lede" id="returnLede"></p>
     <div class="toolbar"><input class="search" id="peopleSearch" type="search" placeholder="Search for your name" aria-label="Search names" autocomplete="off"><button class="btn btn-ink" id="findMe" hidden>Find my loans</button></div>
     <div class="people" id="people"></div>
+  </section>
+
+  <section id="tab-stock" hidden>
+    <div id="stockLockSlot"></div>
+    <div id="stockBody" hidden>
+      <div class="t-head"><div><h2 id="stockTitle">Media Inventory Stocktake</h2>
+        <p class="lede">Count what's on the shelf and type the actual number, or tap <b>✓ All here</b> if it matches. Anything on loan is subtracted automatically, so you'll only see items that are genuinely missing.</p></div></div>
+      <div class="stk-top">
+        <select id="stockYear" aria-label="Choose stocktake year"></select>
+        <button class="btn btn-ghost btn-sm" id="stockNew">+ New year</button>
+        <button class="btn btn-ghost btn-sm" id="stockCsv">Download as spreadsheet</button>
+        <button class="btn btn-ink btn-sm" id="stockFinish">Mark stocktake finished</button>
+      </div>
+      <div class="summary" id="stockSummary" style="justify-content:center"></div>
+      <div class="stk-bar"><i id="stockFill"></i></div>
+      <div class="toolbar" style="justify-content:center"><input class="search" id="stockSearch" type="search" placeholder="Search equipment" aria-label="Search equipment">
+        <div class="seg" role="group" aria-label="Show"><button data-sf="all" aria-pressed="true">All</button><button data-sf="todo" aria-pressed="false">Not counted</button><button data-sf="miss" aria-pressed="false">Problems</button><button data-sf="loan" aria-pressed="false">On loan</button></div></div>
+      <div id="stockRows" class="stk-list"></div>
+    </div>
   </section>
 
   <section id="tab-teacher" hidden>
@@ -835,7 +887,9 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("clic
   document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
   $("#basket").classList.remove("open"); renderBasket();
+  if(b.dataset.tab==="stock") $("#stockLockSlot").appendChild($("#lock")); else if(b.dataset.tab==="teacher") $("#tab-teacher").prepend($("#lock"));
   if(b.dataset.tab==="teacher"){ renderHistory(); renderJump(); }
+  if(b.dataset.tab==="stock") renderStock();
   document.body.classList.toggle("wide",layout==="columns"&&b.dataset.tab==="borrow");
 }));
 const currentTab=()=>document.querySelector('nav.tabs [aria-selected="true"]').dataset.tab;
@@ -1488,7 +1542,8 @@ $("#scanDone").onclick=$("#scanClose").onclick=closeScanner;
 let unlocked=false; try{unlocked=!!localStorage.getItem("kcc-code");}catch(e){}   // remembered on this device until "Lock" is tapped
 let checking=false;
 function showLock(){
-  $("#lock").hidden=unlocked; $("#teacherBody").hidden=!unlocked;
+  $("#lock").hidden=unlocked; $("#teacherBody").hidden=!unlocked; $("#stockBody").hidden=!unlocked;
+  $("#stockTab").textContent=(unlocked?"":"🔒 ")+"Media Inventory Stocktake";
   $("#lockBtn").hidden=false; $("#autoNote").hidden=true;
 }
 function lockTeacher(){ unlocked=false; isTeacher=false; try{localStorage.removeItem("kcc-code");}catch(e){} showLock(); applySiteLock(); db&&db.refresh(); renderAll(); }
@@ -1582,7 +1637,74 @@ if("IntersectionObserver" in window){
   JUMPS.forEach(([id])=>{ const el=$("#"+id); if(el) io.observe(el); });
 }
 
-function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();if(isTeacher&&$("#jumpBar"))renderJump();}
+/* ---------- Media Inventory Stocktake (teacher only) ---------- */
+let stockDocs={}, stockYear=String(new Date().getFullYear()), stockFilter="all";
+const stockKey=id=>`${stockYear}__${id}`;
+function stockItems(){ return inventory.filter(i=>!i.unlimited).slice().sort((a,b)=>CAT_KEYS.indexOf(a.cat)-CAT_KEYS.indexOf(b.cat)||(a.order??999)-(b.order??999)||a.name.localeCompare(b.name)); }
+function stockRow(i){
+  const counted=stockDocs[stockKey(i.id)], actual=counted?counted.actual:null;
+  const loans=activeLines().filter(l=>l.itemId===i.id||l.kitLens===i.id);
+  const onLoan=loans.reduce((n,l)=>n+l.outstanding,0);
+  const expected=i.qty||0, shelf=Math.max(0,expected-onLoan);
+  let st="todo", txt="Not counted yet";
+  if(actual!==null){
+    const diff=actual-shelf;
+    if(diff===0) { st=onLoan?"loan":"ok"; txt=onLoan?`All accounted for (${onLoan} on loan)`:"All here"; }
+    else if(diff>0){ st="extra"; txt=`${diff} more than expected`; }
+    else { st="miss"; txt=`${-diff} missing, not on loan`; }
+  }
+  return {i,actual,onLoan,expected,shelf,loans,st,txt,counted};
+}
+function renderStock(){
+  if(!isTeacher||!$("#stockRows")||$("#tab-stock").hidden) return;
+  const years=[...new Set(Object.keys(stockDocs).map(k=>k.split("__")[0]).concat([String(new Date().getFullYear())]))].sort().reverse();
+  $("#stockYear").innerHTML=years.map(y=>`<option value="${y}" ${y===stockYear?"selected":""}>${y} stocktake</option>`).join("");
+  const meta=stockDocs[stockYear+"__meta"]||{};
+  $("#stockTitle").textContent=`${stockYear} Media Inventory Stocktake`;
+  const rows=stockItems().map(stockRow);
+  const done=rows.filter(r=>r.actual!==null).length, miss=rows.filter(r=>r.st==="miss"), loan=rows.filter(r=>r.onLoan>0);
+  const missN=miss.reduce((n,r)=>n+(r.shelf-r.actual),0);
+  $("#stockSummary").innerHTML=`<div class="stat"><b>${done}/${rows.length}</b><span>items counted</span></div>
+    <div class="stat"><b style="color:${missN?"var(--rec)":"inherit"}">${missN}</b><span>missing (not on loan)</span></div>
+    <div class="stat"><b style="color:${loan.length?"var(--sky)":"inherit"}">${loan.reduce((n,r)=>n+r.onLoan,0)}</b><span>still on loan</span></div>
+    <div class="stat"><b>${meta.finishedAt?"✓":"–"}</b><span>${meta.finishedAt?"finished "+fmtS(meta.finishedAt):"in progress"}</span></div>`;
+  $("#stockFill").style.width=(rows.length?Math.round(done/rows.length*100):0)+"%";
+  $("#stockFinish").textContent=meta.finishedAt?"Reopen stocktake":"Mark stocktake finished";
+  const q=$("#stockSearch").value.trim().toLowerCase();
+  const shown=rows.filter(r=>(!q||(r.i.name+" "+(r.i.note||"")).toLowerCase().includes(q))&&(stockFilter==="all"||(stockFilter==="todo"?r.actual===null:stockFilter==="miss"?(r.st==="miss"||r.st==="extra"):r.onLoan>0)));
+  let lastCat="";
+  $("#stockRows").innerHTML=shown.length?shown.map(r=>{
+    const cat=r.i.cat!==lastCat?`<div class="stk-cat">${esc(CATS[r.i.cat]?.label||"Other")}</div>`:""; lastCat=r.i.cat;
+    const who=r.loans.length?`<div class="stk-loans">${r.loans.map(l=>`<span class="${l.still>0&&daysOut(l.borrowedAt)>=LOAN_DAYS?"late":""}">${l.outstanding>1?l.outstanding+" × ":""}${esc(l.itemName)}: <b>${esc(l.name)}</b>${l.still>0&&daysOut(l.borrowedAt)>=LOAN_DAYS?" (overdue)":""}</span>`).join("")}</div>`:"";
+    return cat+`<div class="stk ${r.st}">
+      <span class="ico cat-${esc(r.i.cat)}">${icon(r.i.icon||r.i.cat)}</span>
+      <div class="stk-name"><b>${esc(r.i.name)}</b>${r.i.note?`<small>${esc(r.i.note)}</small>`:""}${r.i.borrowable===false?`<small>Not for loan</small>`:""}${who}</div>
+      <div class="stk-num"><small>Expected</small>${r.expected}</div>
+      <div class="stk-num"><small>On loan</small>${r.onLoan}</div>
+      <div class="stk-num"><small>Should be here</small>${r.shelf}</div>
+      <div class="stk-count"><small>Actual</small><div class="stk-step"><button data-sd="${esc(r.i.id)}" data-v="-1" aria-label="One fewer">−</button><input type="number" min="0" inputmode="numeric" data-sa="${esc(r.i.id)}" value="${r.actual===null?"":r.actual}" placeholder="?" aria-label="Actual number of ${esc(r.i.name)}"><button data-sd="${esc(r.i.id)}" data-v="1" aria-label="One more">+</button></div></div>
+      <div class="stk-st"><span class="stk-badge">${esc(r.txt)}</span>${r.actual===null?`<button class="btn btn-go btn-sm" data-sok="${esc(r.i.id)}" data-shelf="${r.shelf}">✓ All ${r.shelf} here</button>`:`<button class="linkbtn" data-sclr="${esc(r.i.id)}">Clear</button>`}</div>
+    </div>`;
+  }).join(""):`<div class="empty">Nothing matches.</div>`;
+  const save=async(id,val)=>{ const ref=db.doc("stocktake/"+stockKey(id)); try{ if(val===null) await ref.delete(); else await ref.set({actual:val,at:new Date().toISOString()}); renderStock(); }catch(e){ toast("Couldn't save. Check the internet connection."); } };
+  $("#stockRows").querySelectorAll("[data-sok]").forEach(b=>b.onclick=()=>save(b.dataset.sok,Number(b.dataset.shelf)));
+  $("#stockRows").querySelectorAll("[data-sclr]").forEach(b=>b.onclick=()=>save(b.dataset.sclr,null));
+  $("#stockRows").querySelectorAll("[data-sd]").forEach(b=>b.onclick=()=>{ const inp=$(`[data-sa="${CSS.escape(b.dataset.sd)}"]`); const v=Math.max(0,(inp.value===""?0:Number(inp.value))+Number(b.dataset.v)); save(b.dataset.sd,v); });
+  $("#stockRows").querySelectorAll("[data-sa]").forEach(inp=>inp.onchange=()=>save(inp.dataset.sa,inp.value===""?null:Math.max(0,Math.round(Number(inp.value)))));
+}
+$("#stockYear").onchange=()=>{ stockYear=$("#stockYear").value; renderStock(); };
+$("#stockNew").onclick=()=>{ const y=prompt("Which year is this stocktake for?",String(new Date().getFullYear()+(new Date().getMonth()>=9?1:0))); if(y&&/^\d{4}$/.test(y.trim())){ stockYear=y.trim(); renderStock(); } };
+$("#stockSearch").addEventListener("input",renderStock);
+document.querySelectorAll("[data-sf]").forEach(b=>b.onclick=()=>{ stockFilter=b.dataset.sf; document.querySelectorAll("[data-sf]").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderStock(); });
+$("#stockFinish").onclick=async()=>{ const k="stocktake/"+stockYear+"__meta", m=stockDocs[stockYear+"__meta"]||{}; try{ await db.doc(k).set({finishedAt:m.finishedAt?null:new Date().toISOString()}); toast(m.finishedAt?"Stocktake reopened":"Stocktake marked finished"); renderStock(); }catch(e){ toast("Couldn't save."); } };
+$("#stockCsv").onclick=()=>{
+  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const rows=[["Category","Item","Note","Expected","On loan","Should be here","Actual","Result","On loan to"]];
+  stockItems().map(stockRow).forEach(r=>rows.push([CATS[r.i.cat]?.label||"",r.i.name,r.i.note||"",r.expected,r.onLoan,r.shelf,r.actual??"",r.txt,r.loans.map(l=>`${l.itemName}: ${l.name}`).join("; ")]));
+  downloadFile(`media-stocktake-${stockYear}.csv`,rows.map(r=>r.map(q).join(",")).join("\n"),"text/csv");
+};
+
+function renderAll(){renderCatalog();renderBasket();renderLoans();renderPeople();renderTeacher();renderHistory();if(isTeacher&&$("#jumpBar"))renderJump();renderStock();}
 
 /* ---------- Boot (online, live) ---------- */
 const STORE_KEY="kcc-media-loans-online";
@@ -1639,6 +1761,7 @@ db.collection("inventory").onSnapshot(s=>{inventory=s.docs.map(x=>{ const it={id
 db.collection("loans").onSnapshot(s=>{loanDocs={};s.docs.forEach(x=>loanDocs[x.id]=x.data());renderAll();syncLedger();});
 db.collection("handbacks").onSnapshot(s=>{handbacks={};s.docs.forEach(x=>handbacks[x.id]=x.data());renderAll();});
 db.collection("returns").onSnapshot(s=>{returns={};s.docs.forEach(x=>returns[x.id]=x.data());renderAll();});
+db.collection("stocktake").onSnapshot(s=>{stockDocs={};s.docs.forEach(x=>stockDocs[x.id]=x.data());renderStock();});
 db.collection("ledger").onSnapshot(s=>{ledger={};s.docs.forEach(x=>ledger[x.id]=x.data());renderTeacher();syncLedger();});
 function downloadFile(name,text,type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }
 const stamp=()=>new Date().toISOString().slice(0,10);
