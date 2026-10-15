@@ -51,9 +51,9 @@ p{margin:0 0 .55rem}
 .hero p{color:var(--shell-soft);max-width:54ch;margin-top:.85rem}
 .split{display:flex;gap:4px;margin-top:1.25rem;max-width:50rem}
 .split div{border-radius:8px;padding:.5rem .8rem;font-weight:800;font-size:.8rem;line-height:1.25;color:#fff}
-.split .s1{flex:20;background:var(--pink)}
-.split .s2{flex:60;background:var(--blue)}
-.split .s3{flex:22;background:var(--violet)}
+.split .s1{flex:1;background:var(--pink)}
+.split .s2{flex:1;background:var(--blue)}
+.split .s3{flex:1;background:var(--violet)}
 .split span{display:block;font-weight:500;opacity:.85;font-size:.71rem}
 
 /* NAV */
@@ -75,11 +75,11 @@ p{margin:0 0 .55rem}
 .zone1{background:var(--pink-tint);--z:var(--pink);--z2:var(--pink-2)}
 .zone2{background:var(--blue-tint);--z:var(--blue);--z2:var(--blue-2)}
 .zone3{background:var(--violet-tint);--z:var(--violet);--z2:var(--violet-2)}
-.zhead{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-bottom:.3rem}
-.znum{width:2.3rem;height:2.3rem;border-radius:9px;display:grid;place-items:center;background:var(--z);color:#fff;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.12rem;flex:none}
-.zhead h2{font-size:clamp(1.3rem,4vw,1.95rem)}
+.zhead{display:flex;align-items:center;justify-content:center;text-align:center;gap:.85rem;flex-wrap:wrap;margin-bottom:.55rem}
+.znum{width:3.3rem;height:3.3rem;border-radius:13px;display:grid;place-items:center;background:var(--z);color:#fff;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.7rem;flex:none}
+.zhead h2{font-size:clamp(2rem,6.4vw,3.5rem)}
 .pill{font-weight:800;font-size:.73rem;padding:.24rem .65rem;border-radius:100px;color:#fff;background:var(--z)}
-.zsub{color:var(--ink-soft);max-width:62ch;font-size:.97rem;margin:0 0 1.15rem}
+.zsub{color:var(--ink-soft);max-width:62ch;font-size:1.02rem;margin:0 auto 1.5rem;text-align:center}
 
 /* FACTS */
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.6rem;margin-bottom:1.35rem}
@@ -143,17 +143,17 @@ input:focus,textarea:focus{border-color:var(--focus);outline:none}
 .hintline{font-size:.8rem;font-weight:700;color:var(--ink-soft);margin:.7rem 0 0}
 
 /* FLOATING EXAMPLES */
-.extras{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
-.extras button{font-family:inherit;font-size:.77rem;font-weight:700;background:var(--card);border:2px dashed var(--rule);border-radius:100px;padding:.22rem .65rem;cursor:pointer;color:var(--ink)}
-.extras button:hover{border-style:solid;border-color:var(--amber)}
-.extras button[aria-pressed=true]{border-style:solid;background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
-.exout{margin-top:.7rem;background:var(--card);border:2px solid var(--amber);border-radius:12px;padding:.8rem;display:grid;grid-template-columns:17rem 1fr;gap:.9rem;align-items:start}
-@media(max-width:700px){.exout{grid-template-columns:1fr}}
-.exout svg{width:100%;height:auto;border-radius:7px;display:block}
-.exout .ex-t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1rem;margin-bottom:.2rem}
-.exout .ex-d{font-size:.88rem;color:var(--ink-soft);margin-bottom:.5rem}
-.exout .ex-y{font-size:.86rem;background:var(--amber-tint);border-radius:8px;padding:.45rem .6rem}
-.exout .ex-y b{font-size:.72rem;font-weight:800;display:block;margin-bottom:.1rem}
+.exgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:.45rem}
+@media(max-width:860px){.exgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.exgrid{grid-template-columns:1fr}}
+.excard{background:var(--card);border:2px solid var(--amber);border-radius:12px;padding:.5rem .55rem .65rem}
+.excard svg{width:100%;height:auto;border-radius:7px;display:block;margin-bottom:.45rem}
+.excard .ex-t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:.92rem;margin-bottom:.1rem}
+.excard .ex-d{font-size:.78rem;color:var(--ink-soft);line-height:1.38;margin:0}
+
+/* GAPS BETWEEN PARTS */
+.gap{background:var(--shell);padding:1.9rem 1.1rem;display:flex;justify-content:center}
+.gap svg{width:min(100%,32rem);height:auto;display:block;border-radius:12px}
 
 /* WORKED EXAMPLE */
 .worked{margin-top:.9rem;border:2px solid var(--blue);border-radius:12px;overflow:hidden}
@@ -164,7 +164,7 @@ input:focus,textarea:focus{border-color:var(--focus);outline:none}
 .vidwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vidlink{font-size:.82rem;font-weight:700;margin-bottom:.8rem}
 .wnote{font-size:.83rem;color:var(--ink-soft);background:var(--blue-tint);border-radius:9px;padding:.55rem .7rem;margin-bottom:.7rem}
-.wrow{display:grid;grid-template-columns:9.5rem 1fr;gap:.7rem;padding:.55rem 0;border-top:1px solid var(--rule)}
+.wrow{display:grid;grid-template-columns:12rem 1fr;gap:.7rem;padding:.55rem 0;border-top:1px solid var(--rule)}
 .wrow:first-of-type{border-top:0}
 @media(max-width:700px){.wrow{grid-template-columns:1fr;gap:.15rem}}
 .wrow .wn{font-weight:800;font-size:.84rem}
@@ -206,6 +206,7 @@ input:focus,textarea:focus{border-color:var(--focus);outline:none}
 .vwhat{font-size:.87rem;color:var(--ink-soft);margin:.5rem 0 .1rem}
 .vwatch{font-size:.84rem;color:var(--ink-soft);margin:0 0 .7rem}
 .vwatch b{color:var(--ink);font-weight:800;font-size:.72rem}
+.swhint{display:block;font-size:.76rem;color:var(--ink-soft);margin:-.05rem 0 .4rem}
 .vgrid{display:grid;grid-template-columns:11rem 1fr;gap:.85rem;align-items:start}
 @media(max-width:700px){.vgrid{grid-template-columns:1fr}}
 .vsvg{width:100%;height:auto;border-radius:8px;display:block;margin-bottom:.5rem}
@@ -273,9 +274,9 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
     <h1>Turn your short film into a <em>trailer</em> people want to <b>watch</b></h1>
     <p>A trailer isn't a shortened film. It's a new text with its own rules. Today: the two rules that matter most, then the task itself.</p>
     <div class="split">
-      <div class="s1">Part 1 · Genre<span>20 min</span></div>
-      <div class="s2">Part 2 · Structure<span>60 min</span></div>
-      <div class="s3">Part 3 · The task<span>take home</span></div>
+      <div class="s1">Part 1 · Genre</div>
+      <div class="s2">Part 2 · Structure</div>
+      <div class="s3">Part 3 · The task</div>
     </div>
   </div>
 </header>
@@ -296,7 +297,7 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
 <!-- ============== PART 1 ============== -->
 <section class="zone zone1" id="p1">
   <div class="wrap">
-    <div class="zhead"><span class="znum">1</span><h2>What your genre promises</h2><span class="pill">20 min</span></div>
+    <div class="zhead"><span class="znum">1</span><h2>What your genre promises</h2></div>
     <p class="zsub">Your film already has a genre. Your trailer has to sell it to a stranger in about 90 seconds.</p>
 
     <div class="facts">
@@ -356,16 +357,18 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
   </div>
 </section>
 
+<div class="gap" id="gap1" aria-hidden="true"></div>
+
 <!-- ============== PART 2 ============== -->
 <section class="zone zone2" id="p2">
   <div class="wrap">
-    <div class="zhead"><span class="znum">2</span><h2>The structure of a film trailer</h2><span class="pill">60 min</span></div>
+    <div class="zhead"><span class="znum">2</span><h2>The structure of a film trailer</h2></div>
     <p class="zsub">Genre decides what it feels like. Structure decides what order it happens in — and nearly every trailer builds from the same set of beats.</p>
 
     <div class="facts">
       <div class="fact"><b>Energy order, not story order</b><span>Grab, settle, build, explode, stop, land. That's the whole shape.</span></div>
       <div class="fact"><b>Logos moved</b><span>They used to open the trailer. Now they sit after the hook — nobody ever kept watching for a logo.</span></div>
-      <div class="fact"><b>Silence sells the title</b><span>One beat of nothing before the title card. Free, and the biggest upgrade you can make.</span></div>
+      <div class="fact"><b>Silence sells the title</b><span>One beat of black and silence before the title card. Free, and the biggest upgrade you can make.</span></div>
     </div>
 
     <div class="task" data-task="skip">
@@ -374,12 +377,11 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
         <div class="bgrid" id="bgrid"></div>
         <p class="hintline" id="opened"></p>
         <p class="hintline" style="font-weight:600">Percentages are of total runtime, so they scale to your 90-second cut. No two trailers use them in exactly the same order.</p>
-        <span class="micro" style="margin-top:.7rem">Also floating about anywhere — tap one to see what it looks like on screen</span>
-        <div class="extras" id="extras"></div>
-        <div class="exout hid" id="exout" aria-live="polite"></div>
+        <span class="micro" style="margin-top:.9rem">Also floating about anywhere — these can drop in at any point in the trailer</span>
+        <div class="exgrid" id="exgrid"></div>
         <div class="worked">
-          <button class="wtog" id="wtog" type="button" aria-expanded="false">Worked example — Spider-Man: Brand New Day<span class="arrow" id="warrow">Show</span></button>
-          <div class="wbody hid" id="wbody"></div>
+          <button class="wtog" id="wtog" type="button" aria-expanded="true">Worked example — Spider-Man: Brand New Day<span class="arrow" id="warrow">Hide</span></button>
+          <div class="wbody" id="wbody"></div>
         </div>
       </div>
     </div>
@@ -408,6 +410,8 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
   </div>
 </section>
 
+<div class="gap" id="gap2" aria-hidden="true"></div>
+
 <!-- ============== PART 3 ============== -->
 <section class="zone zone3" id="p3">
   <div class="wrap">
@@ -421,7 +425,7 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
           <li>Same tools, but this time it's <b>your</b> trailer.</li>
           <li>Drag the beats into the order you want, and drag in any floating elements you'll use.</li>
           <li>For each one, write <b>which shot or footage from your short film</b> you'll use.</li>
-          <li>Tap the SWAT codes you'll be working with in that beat.</li>
+          <li>Tap the <b>genre conventions</b> that apply in that beat — narrative, plus the SWAT codes.</li>
           <li>List anything you haven't filmed yet in the box underneath. You're allowed to shoot extra footage for the trailer.</li>
           <li><b>Download the PDF once you're finished</b> and it'll give you your film trailer plan, laid out in order with your shot list.</li>
         </ol>
@@ -461,6 +465,51 @@ footer{font-size:.79rem;color:var(--ink-soft);padding-top:1rem}
 
 <div class="teach">
   <div class="wrap">
+    <details class="tn">
+      <summary>Teacher notes</summary>
+      <h4>Run sheet</h4>
+      <div class="rs">
+        <div><b>0–5</b><span>Settle, names in. A trailer is its own genre, not a short film.</span></div>
+        <div><b>5–10</b><span>Genre chips as a class. Play one suggested trailer on the board and call conventions out together.</span></div>
+        <div><b>10–20</b><span>Tasks 2–4. Push the muted watch — that's where technical and symbolic codes surface.</span></div>
+        <div><b>20–32</b><span>The eight beats, then the Spider-Man worked example with the embedded trailer. Call the beats live as it plays.</span></div>
+        <div><b>32–67</b><span>Task 5. Circulate. Most groups confuse Act 2 with Act 3 — the tell is cutting rate, not content.</span></div>
+        <div><b>67–78</b><span>Task 6, then the task sheet in Part 3. This is what they storyboard from.</span></div>
+        <div><b>78–80</b><span>Two groups share their opening hook. Everyone copies or saves before the bell.</span></div>
+      </div>
+      <h4>Syllabus</h4>
+      <ul>
+        <li>Narrative, codes and conventions — common codes and conventions and the meanings they construct; features of popular genres.</li>
+        <li>Audiences — links between media work and own context; basic audience profile.</li>
+        <li>Skills and processes — collecting information for a specific task; following a clear production process.</li>
+        <li>Feeds the marking key: purposeful use of codes and conventions of the film trailer genre, plus clear demonstration of trailer structure.</li>
+      </ul>
+      <h4>About the two timelines</h4>
+      <ul>
+        <li>Task 5 analyses someone else's trailer. Task 6 is the same tool turned on their own footage, so the transfer is immediate rather than abstract.</li>
+        <li>The order is draggable on purpose. Students who assume there's one correct sequence miss that the order is a marketing decision — worth naming out loud.</li>
+        <li>In Task 6 the tap buttons are genre conventions (narrative plus the SWAT codes); Task 5 stays on the SWAT codes for analysis.</li>
+        <li>Each card also has up and down buttons, so it works without dragging on a trackpad or for anyone using a keyboard.</li>
+        <li>Floating elements can be added more than once. A trailer with three separate tagline cards is common and worth spotting.</li>
+      </ul>
+      <h4>What changed from the old structure</h4>
+      <ul>
+        <li>Film studio logos and the classification card now sit after the opening hook. Students who've seen the old diagram will front-load their titles.</li>
+        <li>The fade to black and silence before the title is its own beat — cheapest possible upgrade to a student trailer.</li>
+        <li>The final hook after the title is standard in every genre now, not just comedy.</li>
+        <li>Voice-of-god narration has gone. Flag it so they don't copy it from older examples.</li>
+      </ul>
+      <h4>Trailer choices</h4>
+      <ul>
+        <li>All suggested titles are PG or M, with no drug references, coarse language or sexual content.</li>
+        <li>Students pick their own trailer in Task 5, so that one needs your approval. A trailer's classification can differ from the film's, and YouTube doesn't show Australian ratings.</li>
+      </ul>
+      <h4>Saving work</h4>
+      <ul>
+        <li>Answers save in each student's own browser as they type. Not shared, not visible to you.</li>
+        <li>They must use Copy answers or Save as file to hand anything in. The export includes both timelines in the order they built them.</li>
+      </ul>
+    </details>
     <footer>Media Production and Analysis (General) · Year 11 · Film Trailer Production · 10% of year mark</footer>
   </div>
 </div>
@@ -482,30 +531,30 @@ var GENRES=[
 ];
 
 var BEATS=[
- {t:"Cold open",w:"0–10%",d:"One moment, dropped in with no set-up. No logos, no narration.",l:"How long before you understand what you're looking at? Is the hook an image, a line, or a sound?",s:["Audio","Technical"],
-  ask:"What's the first thing you see and hear, and why does it hook you?",
-  mine:"Which shot from your film opens it? Does it raise a question instead of answering one?"},
- {t:"Idents & classification",w:"~10%",d:"Studio logos, then the classification card — usually after the hook, not before it.",l:"Are the logos treated — glitched, muted, graded, scored — to match the film's tone?",s:["Written","Symbolic"],
-  ask:"Which logos and cards appear? Are they treated to suit the film?",
-  mine:"What will your ident be — a school logo, an invented studio? How will you treat it?"},
- {t:"Act 1 — Setup",w:"10–30%",d:"Who, where, what normal looks like. Longer takes, sparse music.",l:"How many shots pass before the problem arrives? What's the establishing shot telling you?",s:["Technical","Symbolic"],
-  ask:"What do you learn about character and setting? Describe the cutting pace and the music.",
-  mine:"Which shots establish your character and world? How long will you hold them?"},
- {t:"Act 2 — The turn",w:"30–55%",d:"The problem arrives and the stakes get stated once. Music changes. Cuts speed up.",l:"Find the exact shot where the tone flips. What does the audio do at that precise moment?",s:["Audio","Technical"],
-  ask:"Timecode of the turn. What changes in the image, and what changes in the sound?",
-  mine:"Which shot or line flips the tone? What will the music do at that exact moment?"},
- {t:"Act 3 — Escalation",w:"55–80%",d:"Fastest cutting in the trailer. Biggest images. Dialogue shrinks to fragments.",l:"Count the cuts in ten seconds here, then ten seconds of Act 1. The difference is the point.",s:["Technical","Written"],
-  ask:"Roughly how many cuts per ten seconds? List any text cards or actor name cards.",
-  mine:"Which shots go in the montage? Roughly how fast will you cut, and what will you need to film?"},
- {t:"Drop-out & title",w:"80–88%",d:"Music falls away for a beat, then the title lands. The silence is what sells it.",l:"How long is the silence? Does the title have its own sound design? What typeface is it?",s:["Audio","Written"],
-  ask:"Describe the drop-out and the title reveal. How long is the gap?",
-  mine:"How long is your silence, and what will your title card look and sound like?"},
- {t:"The button",w:"88–95%",d:"One last beat after the title — a joke, a scare, a look. The quotable bit.",l:"What emotion does it leave you on, and does that match the genre the trailer has been selling?",s:["Audio","Symbolic"],
-  ask:"What is the button, and what emotion does it leave you on?",
-  mine:"What's the very last thing after your title? What should the audience be feeling?"},
- {t:"Billing & release",w:"final %",d:"Cast names, the squashed credits block, and the release line.",l:"Do the typefaces suit the genre, or are they just the studio's house style?",s:["Written"],
-  ask:"What release information is given, and how is it styled?",
-  mine:"Whose names go on it, and what's your release line — a screening date, a channel?"}
+  {t:"Opening Hook",w:"0–10%",d:"One moment, dropped in with no set-up. No logos, no narration.",l:"How long before you understand what you're looking at? Is the hook an image, a line, or a sound?",s:["Audio","Technical"],
+   ask:"What's the first thing you see and hear, and why does it hook you?",
+   mine:"Which shot from your film opens it? Does it raise a question instead of answering one?"},
+  {t:"Film Studio Logos",w:"~10%",d:"Studio logos, then the classification card — usually after the hook, not before it.",l:"Are the logos treated — glitched, muted, graded, scored — to match the film's tone?",s:["Written","Symbolic"],
+   ask:"Which logos and cards appear? Are they treated to suit the film?",
+   mine:"What will your studio logo be — a school logo, an invented studio? How will you treat it?"},
+  {t:"Act 1 - Setup (Genre Expectations, Setting and Characters)",w:"10–30%",d:"Who, where, what normal looks like — and the genre's expectations get set up. Longer takes, sparse music.",l:"How many shots pass before the problem arrives? What's the establishing shot telling you?",s:["Technical","Symbolic"],
+   ask:"What do you learn about genre, character and setting? Describe the cutting pace and the music.",
+   mine:"Which shots establish your genre, character and world? How long will you hold them?"},
+  {t:"Act 2 - The turn (conflict)",w:"30–55%",d:"The conflict arrives and the stakes get stated once. Music changes. Cuts speed up.",l:"Find the exact shot where the tone flips. What does the audio do at that precise moment?",s:["Audio","Technical"],
+   ask:"Timecode of the turn. What changes in the image, and what changes in the sound?",
+   mine:"Which shot or line flips the tone? What will the music do at that exact moment?"},
+  {t:"Act 3 - Escalation of Conflict (make viewers excited)",w:"55–80%",d:"Fastest cutting in the trailer. Biggest images. Dialogue shrinks to fragments.",l:"Count the cuts in ten seconds here, then ten seconds of Act 1. The difference is the point.",s:["Technical","Written"],
+   ask:"Roughly how many cuts per ten seconds? List any text cards or actor name cards.",
+   mine:"Which shots go in the montage? Roughly how fast will you cut, and what will you need to film?"},
+  {t:"Fade to Black and Title",w:"80–88%",d:"The picture fades to black and the music falls away for a beat, then the title lands. The silence is what sells it.",l:"How long are the black and the silence? Does the title have its own sound design? What typeface is it?",s:["Audio","Written"],
+   ask:"Describe the fade to black and the title reveal. How long is the gap?",
+   mine:"How long is your black and silence, and what will your title card look and sound like?"},
+  {t:"Final Hook",w:"88–95%",d:"One last beat after the title — a joke, a scare, a look. The quotable bit.",l:"What emotion does it leave you on, and does that match the genre the trailer has been selling?",s:["Audio","Symbolic"],
+   ask:"What is the final hook, and what emotion does it leave you on?",
+   mine:"What's the very last thing after your title? What should the audience be feeling?"},
+  {t:"Billing and Release Date",w:"final %",d:"Cast names, the squashed credits block, and the release line.",l:"Do the typefaces suit the genre, or are they just the studio's house style?",s:["Written"],
+   ask:"What release information is given, and how is it styled?",
+   mine:"Whose names go on it, and what's your release line — a screening date, a channel?"}
 ];
 var SWAT=["Symbolic","Written","Audio","Technical"];
 
@@ -580,7 +629,7 @@ var EXTRAS=[
 
 var SPIDEY=[
  "Peter Parker on his own, watching an Instagram Live of Ned and MJ on his phone — they've moved on and have no idea who he is. Then he's falling from a skyscraper, and what you're given isn't music, it's his breathing: a long breath out that sounds more sad than frightened. No logos, no context. The hook is a sound.",
- "The Sony and Marvel Studios idents. Watch where they fall relative to that opening and whether they're scored or silent — a modern trailer almost always holds them until after the hook has landed.",
+ "The Sony and Marvel Studios logos. Watch where they fall relative to that opening and whether they're scored or silent — a modern trailer almost always holds them until after the hook has landed.",
  "The world without him. Spider-Man accepts the key to the city on television while nobody knows the person under the mask. Peter, in an Empire State University hoodie, goes to Bruce Banner for help with what's happening to his body. He visits Aunt May's grave in the rain, alone, in a black jacket. Longer takes, muted colour grade, atmosphere carrying more than dialogue.",
  "The threat arrives. A figure in a yellow hood, and shots of people's minds being taken over. Tramell Tillman's character warns Spider-Man about a danger they can't even see. Frank Castle tells him he's losing it. Peter's eyes go fully black. The narration starts and the tone flips from lonely drama to something wrong with Peter himself.",
  "The narration runs underneath — \u201cand for those Spiders who make it through, it amounts to a kind of\u2026\u201d — over the fastest cutting in the trailer. The swing with someone tucked under his arm, recreating the Amazing Fantasy #15 cover. Slow motion against Boomerang. A fight on a boat with Tarantula while police watch. Scorpion revealed in green armour. MJ and Spider-Man face to face. Dialogue reduced to fragments.",
@@ -715,30 +764,52 @@ function countOpened(){
 }
 
 /* ================= FLOATING EXAMPLES ================= */
-var exWrap=document.getElementById("extras"), exOut=document.getElementById("exout");
+var exGrid=document.getElementById("exgrid");
 EXTRAS.forEach(function(x){
-  var b=document.createElement("button");
-  b.type="button"; b.setAttribute("aria-pressed","false"); b.textContent=x.n;
-  b.addEventListener("click",function(){
-    var on=b.getAttribute("aria-pressed")==="true";
-    Array.prototype.forEach.call(exWrap.children,function(c){c.setAttribute("aria-pressed","false");});
-    if(on){ exOut.classList.add("hid"); return; }
-    b.setAttribute("aria-pressed","true");
-    exOut.innerHTML='<div>'+x.svg+'</div><div><div class="ex-t"></div><div class="ex-d"></div><div class="ex-y"><b>In your trailer</b><span></span></div></div>';
-    exOut.querySelector(".ex-t").textContent=x.n;
-    exOut.querySelector(".ex-d").textContent=x.d;
-    exOut.querySelector(".ex-y span").textContent=x.y;
-    exOut.querySelector("svg").setAttribute("aria-label","Example of a "+x.n.toLowerCase()+" card on screen");
-    exOut.classList.remove("hid");
-  });
-  exWrap.appendChild(b);
+  var c=document.createElement("div"); c.className="excard";
+  c.innerHTML=x.svg+'<div class="ex-t"></div><p class="ex-d"></p>';
+  c.querySelector(".ex-t").textContent=x.n;
+  c.querySelector(".ex-d").textContent=x.d;
+  c.querySelector("svg").setAttribute("aria-label","Example of a "+x.n.toLowerCase()+" card on screen");
+  exGrid.appendChild(c);
 });
+
+/* ================= GAPS BETWEEN PARTS ================= */
+function trailerGap(id,c1,c2,pct,time){
+  var perf="", i;
+  for(i=0;i<27;i++){
+    var x=(14+i*23).toFixed(1);
+    perf+='<rect x="'+x+'" y="9" width="12" height="9" rx="2.5"/><rect x="'+x+'" y="242" width="12" height="9" rx="2.5"/>';
+  }
+  var win=[[100,152],[100,162],[118,134],[118,144],[240,156],[240,166],[362,146],[362,158],[526,154],[526,166]]
+    .map(function(w){return '<rect x="'+w[0]+'" y="'+w[1]+'" width="4" height="4" fill="#FFD36B" opacity=".85"/>';}).join("");
+  var fillW=(470*pct).toFixed(1), dotX=(64+470*pct).toFixed(1);
+  return '<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" role="img">'+
+    '<defs><linearGradient id="gs'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient>'+
+    '<clipPath id="gc'+id+'"><rect x="24" y="28" width="592" height="204" rx="3"/></clipPath></defs>'+
+    '<rect width="640" height="260" rx="12" fill="#05060B"/>'+
+    '<g fill="#242A42">'+perf+'</g>'+
+    '<g clip-path="url(#gc'+id+')">'+
+      '<rect x="24" y="28" width="592" height="204" fill="url(#gs'+id+')"/>'+
+      '<circle cx="536" cy="92" r="46" fill="#fff" opacity=".14"/><circle cx="536" cy="92" r="28" fill="#FFF3D6" opacity=".92"/>'+
+      '<path fill="#070914" d="M24,232 L24,178 L52,178 L52,160 L70,160 L70,186 L96,186 L96,146 L112,146 L112,128 L128,128 L128,146 L146,146 L146,182 L176,182 L176,164 L204,164 L204,190 L236,190 L236,150 L252,150 L252,172 L286,172 L286,196 L330,196 L330,170 L356,170 L356,140 L372,140 L372,156 L398,156 L398,184 L430,184 L430,162 L458,162 L458,192 L496,192 L496,168 L520,168 L520,148 L538,148 L538,176 L566,176 L566,158 L592,158 L592,186 L616,186 L616,232 Z"/>'+
+      win+
+      '<text x="320" y="106" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque,Figtree,Helvetica,Arial,sans-serif" font-size="27" font-weight="800" letter-spacing="9">COMING SOON</text>'+
+      '<line x1="262" y1="122" x2="378" y2="122" stroke="#fff" stroke-width="1" opacity=".55"/>'+
+      '<rect x="24" y="206" width="592" height="26" fill="#000" opacity=".5"/>'+
+      '<path d="M40,212 L40,226 L52,219 Z" fill="#fff"/>'+
+      '<rect x="64" y="217.3" width="470" height="3.4" rx="1.7" fill="#fff" opacity=".3"/>'+
+      '<rect x="64" y="217.3" width="'+fillW+'" height="3.4" rx="1.7" fill="#fff"/>'+
+      '<circle cx="'+dotX+'" cy="219" r="5" fill="#fff"/>'+
+      '<text x="596" y="222.5" text-anchor="end" fill="#fff" font-family="Figtree,Helvetica,Arial,sans-serif" font-size="10" font-weight="700" opacity=".9">'+time+' / 1:30</text>'+
+    '</g></svg>';
+}
 
 /* ================= WORKED EXAMPLE ================= */
 var wtog=document.getElementById("wtog"), wbody=document.getElementById("wbody"), warrow=document.getElementById("warrow");
 wbody.innerHTML='<div class="vidwrap"><iframe src="https://www.youtube-nocookie.com/embed/8TZMtslA3UY" title="Spider-Man: Brand New Day — Official Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>'+
   '<p class="vidlink">Video not loading? <a href="https://www.youtube.com/watch?v=8TZMtslA3UY" target="_blank" rel="noopener">Open the trailer on YouTube</a></p>'+
-  '<div class="wnote">Built from published trailer breakdowns rather than a frame-by-frame reading, so treat the running order as a starting point. Play the trailer and check it as a class — where it disagrees with this, the trailer wins.</div>';
+  '';
 SPIDEY.forEach(function(txt,i){
   var row=document.createElement("div"); row.className="wrow";
   var l=document.createElement("div"); l.className="wn"; l.textContent=(i+1)+". "+BEATS[i].t;
@@ -756,7 +827,7 @@ wtog.addEventListener("click",function(){
 /* ================= BUILDER FACTORY ================= */
 var builders=[];
 function makeBuilder(root,cfg){
-  var ns=cfg.ns;
+  var ns=cfg.ns, codes=cfg.codes||SWAT, codeWord=cfg.codeWord||"Codes";
   var oKey=ns+"order", sKey=ns+"open";
   if(!Array.isArray(store[oKey]) || !store[oKey].length) store[oKey]=defaultOrder();
   var openKey=store[sKey]||null;
@@ -826,9 +897,10 @@ function makeBuilder(root,cfg){
 
         var right=document.createElement("div");
         var sl=document.createElement("span"); sl.className="micro"; sl.textContent=cfg.swatLabel;
+        var sh=null; if(cfg.swatHint){ sh=document.createElement("span"); sh.className="swhint"; sh.textContent=cfg.swatHint; }
         var sw=document.createElement("div"); sw.className="swat";
         var cur=(store[swK(key)]||"").split(",").filter(Boolean);
-        SWAT.forEach(function(code){
+        codes.forEach(function(code){
           var cb=document.createElement("button");
           cb.type="button"; cb.className="sw"; cb.textContent=code;
           cb.setAttribute("aria-pressed", cur.indexOf(code)>-1?"true":"false");
@@ -846,7 +918,7 @@ function makeBuilder(root,cfg){
           store[ntK(key)]=nt.value; persist(); flash("Saved");
           c.classList.toggle("ok", !!nt.value.trim()); tick();
         });
-        right.appendChild(sl); right.appendChild(sw); right.appendChild(nl); right.appendChild(nt);
+        right.appendChild(sl); if(sh) right.appendChild(sh); right.appendChild(sw); right.appendChild(nl); right.appendChild(nt);
         g.appendChild(right); body.appendChild(g); c.appendChild(body);
       }
       list.appendChild(c);
@@ -961,7 +1033,7 @@ function makeBuilder(root,cfg){
       store[oKey].forEach(function(k,i){
         var m=meta(k);
         L.push((i+1)+". "+m.name.toUpperCase()+(m.type==="float"?"  (floating element)":"")+
-          "  ["+(store[tcK(k)]||"no timing")+"]  Codes: "+(store[swK(k)]||"none selected"));
+          "  ["+(store[tcK(k)]||"no timing")+"]  "+codeWord+": "+(store[swK(k)]||"none selected"));
         L.push("   "+(store[ntK(k)]||""));
       });
       return L;
@@ -985,7 +1057,9 @@ var bB=makeBuilder(document.querySelector('[data-builder="B"]'),{
   trayLabel:"FLOATING ELEMENTS — drag in the ones your trailer will use",
   listLabel:"YOUR TRAILER'S TIMELINE — drag the handle to reorder",
   tcLabel:"ROUGHLY WHEN (IN YOUR 90 SECONDS)", tcPlaceholder:"e.g. 0:00–0:08",
-  swatLabel:"WHICH SWAT CODES WILL YOU USE HERE? TAP ALL THAT APPLY",
+  codes:["Narrative"].concat(SWAT), codeWord:"Conventions",
+  swatLabel:"WHICH GENRE CONVENTIONS APPLY? TAP ALL THAT APPLY",
+  swatHint:"Narrative is the story you're telling and how you order it. Symbolic, Written, Audio and Technical are the SWAT codes.",
   noteLabel:"WHICH SHOT OR FOOTAGE FROM YOUR FILM — AND WHAT YOU STILL NEED TO FILM"
 });
 
@@ -1124,7 +1198,7 @@ function buildPDF(){
   function rule(){ ensure(8); doc.setDrawColor(220,223,232); doc.setLineWidth(.6); doc.line(M,y,M+LW,y); y+=9; }
   function gap(n){ y+=(n||8); }
 
-  function beatRows(rows,rgb){
+  function beatRows(rows,rgb,lab){
     rows.forEach(function(r){
       var noteLines=doc.splitTextToSize(r.note||"\u2014", LW-34);
       ensure(34+noteLines.length*12);
@@ -1140,7 +1214,7 @@ function buildPDF(){
       }
       y+=17;
       doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(rgb[0],rgb[1],rgb[2]);
-      doc.text("CODES: "+(r.codes||"none selected").split(",").join(", ").toUpperCase(),M+24,y+7); y+=13;
+      doc.text((lab||"CODES")+": "+(r.codes||"none selected").split(",").join(", ").toUpperCase(),M+24,y+7); y+=13;
       doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(SOFT[0],SOFT[1],SOFT[2]);
       for(var i=0;i<noteLines.length;i++){ ensure(13); doc.text(noteLines[i],M+24,y+7); y+=12; }
       y+=6; rule();
@@ -1163,7 +1237,7 @@ function buildPDF(){
 
   /* --- our structure first: it's the thing they'll use --- */
   band("OUR FILM TRAILER \u2014 STRUCTURE IN ORDER",VIOLET);
-  beatRows(bB.rows(),VIOLET);
+  beatRows(bB.rows(),VIOLET,"CONVENTIONS");
   gap(4);
 
   /* --- shots still to film --- */
@@ -1251,6 +1325,8 @@ document.getElementById("btnClear").addEventListener("click",function(){
 });
 
 /* ================= BOOT ================= */
+document.getElementById("gap1").innerHTML=trailerGap("1","#E3006E","#0047FF",1/3,"0:30");
+document.getElementById("gap2").innerHTML=trailerGap("2","#0047FF","#6B21E8",2/3,"1:00");
 countOpened();
 tick();
 
