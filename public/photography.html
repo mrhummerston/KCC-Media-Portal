@@ -288,6 +288,8 @@ dialog.lb img{max-width:100%;max-height:72vh;border-radius:12px}
 .tech .ex-title{margin:28px 0 14px;font:800 1.55rem var(--display);text-align:center}
 .skill-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:22px;align-items:center}
 .skill-body .visual{margin:0}
+.skillfigs{display:grid;gap:16px}
+.tpbadge{font-size:1.05rem;padding:6px 16px}
 .cam .sub{margin:0 0 14px}
 .cam-task{display:grid;gap:10px;justify-items:center;text-align:center;margin:0 0 16px}
 .cam-q{font:800 clamp(1.3rem,2.6vw,1.8rem) var(--display)}
@@ -350,7 +352,8 @@ ol.steps li.stepw::before{content:none;display:none}
 .widget .cam-btns{margin-top:10px}
 .wfb{margin:10px 0 0;font-weight:700;min-height:1.5em}
 .wfb.ok{color:var(--ok)} .wfb.bad{color:var(--bad)}
-.lens-svg{display:block;width:100%;height:auto;max-width:340px;margin:0 auto;user-select:none}
+.lens-svg{display:block;width:100%;height:auto;max-width:520px;margin:0 auto;user-select:none}
+.widget.lenswide{max-width:520px}
 .cam-photo{max-width:980px;margin:0 auto}
 
 .cam-dialsvg{display:block;width:100%;max-width:300px;height:auto;margin:0 auto;cursor:pointer;user-select:none}
@@ -1270,7 +1273,7 @@ var CONCEPTS = [
     interactive:'camera',
     layout:['interactive','steps','stepsTip','cards'],
     steps:{h:'Get set up', center:true, items:[
-      'Write your name and your partner\u2019s name on the sheet attached to the camera trolley.',
+      'Everyone has their own camera, but you travel in groups of 1 to 3. Write your name, your camera number and your SD card number on the sheet attached to the camera trolley.',
       'Check the battery is in, the SD card is the same number as the camera, and the strap is around your neck.',
       {t:'Rotate the mode dial to <b>Auto</b>.'},
       {widget:'dial', target:'A+', key:'camera'},
@@ -1312,10 +1315,10 @@ var CONCEPTS = [
     hero:{img:'shots_chart', cap:'Shot sizes (top) and camera angles (bottom), shown with a toy figure.'},
     layout:['hero','steps','stepsTip','compare','galleries'],
     steps:{h:'Task: Warm-up 24 photos', items:[
-      'Collect a camera and fill in the sheet on the camera trolley.',
+      'Collect your own camera and fill in the sheet on the camera trolley.',
       'Choose one spot close to the classroom and keep your feet planted there.',
       'Take 24 different shots without leaving that spot. Change the shot size and angle each time.',
-      'Swap with your partner, who will find a new spot to do the task.',
+      'Stay in your group of 1 to 3. Everyone uses their own camera, so each person takes their own 24 photos.',
       'Come back and show Mr Hummerston. You may be sent out to take more.',
       'Choose your best shot photo and best angle photo for your folio.']},
     stepsTip:'Check your progress every five photos: in focus, framed well and bright enough?',
@@ -1331,11 +1334,12 @@ var CONCEPTS = [
     idea:'This week we are going to look at 3 composition techniques: <b>rule of thirds</b>, <b>leading lines</b> and <b>frame within a frame</b>. There are many more you can try, but this is a good start.',
     layout:['skill','techs','steps'],
     skill:{h:'New skill: turning the grid feature on', steps:[
-      'Turn the Mode Dial to <b>Av</b>. (P, Tv or M work too.)',
-      'Press the <b>Live View</b> button on the back of the camera. The picture shows on the screen.',
+      'Turn the mode dial to <b>M</b> (M for Manual means we can change a lot more of the settings than when on Auto).',
+      'Press the <b>Live View</b> button (circled in the first picture) on the back of the camera. The picture shows on the screen.',
       'Press <b>MENU</b> and find <b>Grid display</b> in the Live View settings.',
       'Choose <b>Grid 1</b> and press <b>SET</b>.',
       'Press <b>MENU</b> again to go back. Now the grid lines show on the screen. Line up your subject with them.'],
+      cap0:'The Live View button is on the back of the camera, just to the right of the viewfinder. (This is a drawing, not a photo.)',
       cap:'On the Canon 1500D the grid shows on the back screen in Live View. (This is a drawing, not a photo.)'},
     techs:[
       {h:'Rule of thirds', visual:'thirds',
@@ -1358,7 +1362,7 @@ var CONCEPTS = [
         {img:'ll_horiz', cap:'Horizontal lines: jets flying in a row, and a brick wall.'},
         {img:'ll_curve', cap:'Curved lines: a winding coastal road, and a spiral staircase.'},
         {img:'ll_diag', cap:'Diagonal lines: a person climbing stairs, and a covered bridge.'}]},
-      {h:'Frame within a frame',
+      {h:'Frame within a frame', badge:'Time Permitting (not marked)',
        desc:'Frame within a frame means using something in the scene, like a window, doorway, arch or trees, to make a frame around your subject. It draws the eye to your subject and adds depth to your photo.',
        items:['Natural frames: trees and branches. Man-made frames: windows, doorways and arches.','It is not a folio box, but it makes other photos stronger.'],
        exTitle:'Frame within a frame examples',
@@ -1369,7 +1373,7 @@ var CONCEPTS = [
         {img:'fr_mirror', cap:'A round mirror frames a window and a tree branch.'},
         {img:'fr_cat', cap:'Leaves frame a cat in silhouette against the sky.'}]}
     ],
-    steps:{h:'Try it', items:['Turn the Grid on.','Find a subject, like a tree, a friend or a staircase.','Take it three ways: centred, on a crossing point, and with a leading line.','Choose your best photos.']} },
+    steps:{h:'Lesson Instructions', items:['Turn the Grid on.','Take many photos using <b>Rule of Thirds</b> (you\u2019ll need 2 of your best, but take many more!)','Take many photos using the composition technique of <b>\u201CLeading Lines\u201D</b> (you\u2019ll need 2 of your best but take many more!)']} },
 
   { id:'triangle', group:'learn', week:'Week 3', icon:'🔺', color:'#F28C28', wide:true,
     title:'The Exposure Triangle', short:'How aperture, shutter speed and ISO work together to control light.',
@@ -1477,10 +1481,10 @@ var CONCEPTS = [
     title:'Prison or Paradise', short:'Make our school look like both.',
     idea:'Today your challenge as a journalistic photographer is to make Kingsway Christian College look like a paradise AND like a prison.',
     steps:{h:'Your task', items:[
-      'Work in a pair.',
+      'Work in your group of 1 to 3. Everyone uses their own camera.',
       'Take at least <b>5 photos</b> that make the school look like <b>paradise</b>.',
       'Take at least <b>5 photos</b> that make it look like a <b>prison</b>.',
-      'Each person takes at least 5 photos. That is 10 or more in total.',
+      'Each person takes their own photos, so that is 10 or more in total for each person.',
       'Upload your best photos to the <b>Prison or Paradise</b> folder in <b>Uploads</b> on the Media (O:) drive.']},
     galleries:[{h:'Idea starters', items:[
       {img:'pp_paradise', cap:'Paradise: a bright, sunny, green sports field.'},
@@ -1498,7 +1502,7 @@ var CONCEPTS = [
     steps:[
       {h:'Task 1: Write your name in light', items:[
         'Use a white torch. There are enough for each group to have one.',
-        'Choose a way: you write your name yourself (but you will not appear in the final photo, because you are moving too quickly), <b>or</b> you stay <b>VERY</b> still and your partner writes your name above your head (you will appear).',
+        'Choose a way: you write your name yourself (but you will not appear in the final photo, because you are moving too quickly), <b>or</b> you stay <b>VERY</b> still and someone in your group writes your name above your head (you will appear).',
         'Aim for writing that is neat and easy to read.',
         'Leave gaps between each letter. To do this, turn the torch off and on between each letter.']},
       {h:'Task 2: Make one of these', items:[
@@ -1522,7 +1526,7 @@ var CONCEPTS = [
     idea:'Rather than slow shutter speed in the dark (light painting), this is slow shutter speed in the light!',
     layout:['steps','cards','galleries','steps2'],
     steps:{h:'Your task', items:[
-      'Set up a wide shot, then create the coolest motion blur using the people in your group (1 to 4 people in each group).',
+      'Set up a wide shot, then create the coolest motion blur using the people in your group (1 to 3 people in each group).',
       'You can also use props and costumes to create the coolest scene possible.',
       'Put your camera on <b>M</b> for Manual and experiment with ISO, shutter speed and aperture.']},
     cards:[{h:'A good starting point for outside daylight', table:[['ISO','800'],['Aperture','5.6'],['Shutter speed','Start with 0.5" then try slower (1 second, 1")']]}],
@@ -1579,10 +1583,10 @@ var CONCEPTS = [
 
   { id:'azhunt', group:'more', week:'Weeks 7 to 10', icon:'🔤', color:'#E9B02F',
     title:'A to Z photo hunt', short:'Find a creative photo for every letter.',
-    idea:'In pairs, you hunt for exciting, interesting and creative photographs starting with each letter of the alphabet, using your Canon cameras.',
+    idea:'In your group of 1 to 3, you hunt for exciting, interesting and creative photographs starting with each letter of the alphabet. Everyone uses their own Canon camera.',
     layout:['steps','galleries','steps2'],
     steps:{h:'Your task', items:[
-      'Work in a pair and hunt for a creative photograph for each letter, A to Z.',
+      'Work in your group of 1 to 3 and hunt for a creative photograph for each letter, A to Z. Everyone uses their own camera.',
       'Use the skills you have learnt, like aperture, leading lines, focus, and different angles and shot types.',
       'Change the mode at the top of the camera from Auto to other modes. <b>Av</b> lets you change just the aperture, so you can have a blurred background and a focused foreground (the camera controls shutter speed and ISO). <b>Tv</b> lets you capture motion, frozen or blurred.',
       'Be back in the classroom on time to upload your photos.',
@@ -1591,7 +1595,7 @@ var CONCEPTS = [
       {img:'az_sheet', cap:'The A to Z Creative Photography Hunt sheet.'},
       {img:'az_reflect', cap:'Idea: a water reflection turned upside down.'}]}],
     steps2:{h:'When you finish', items:[
-      'With your partner (you can share the Word document with them), drag your best photograph onto the A to Z sheet next to its letter, and label what it is.',
+      'With your group (you can share the Word document with them), drag your best photograph onto the A to Z sheet next to its letter, and label what it is.',
       'Upload your best photos to the <b>A-Z Completed Scavenger Hunt</b> folder in <b>Uploads</b> on the Media (O:) drive.']} }
 ];
 
@@ -1821,13 +1825,32 @@ function gridSkillSVG(){
   s += '<text x="579" y="294" text-anchor="middle" font-size="17" font-weight="700" fill="var(--text)">2. Live View with the grid on</text>';
   return s + '</svg>';
 }
+function liveViewSVG(){
+  var f = 'font-family="DejaVu Sans,Atkinson Hyperlegible,Segoe UI,sans-serif"', s;
+  s = '<svg viewBox="0 0 440 320" role="img" aria-label="The back of a Canon camera. The Live View button, to the right of the viewfinder, is circled." ' + f + '>';
+  s += '<rect x="0" y="0" width="440" height="320" rx="16" fill="#dfe3ea"/>';
+  s += '<rect x="30" y="34" width="380" height="270" rx="34" fill="#1d1f24"/>';
+  s += '<path d="M150 34 V22 Q150 14 158 14 H282 Q290 14 290 22 V34 Z" fill="#26292f"/>';
+  s += '<rect x="178" y="42" width="84" height="46" rx="12" fill="#0e0f12"/><rect x="192" y="52" width="56" height="26" rx="7" fill="#2a3b4a"/>';
+  s += '<text x="220" y="104" text-anchor="middle" font-size="11" font-weight="700" fill="#aeb2bb">viewfinder</text>';
+  s += '<rect x="56" y="54" width="46" height="20" rx="6" fill="#2d3037"/><text x="79" y="68" text-anchor="middle" font-size="10" font-weight="700" fill="#cfd0d6">MENU</text>';
+  s += '<rect x="108" y="54" width="46" height="20" rx="6" fill="#2d3037"/><text x="131" y="68" text-anchor="middle" font-size="10" font-weight="700" fill="#cfd0d6">INFO</text>';
+  s += '<circle cx="316" cy="62" r="17" fill="#2d3037" stroke="#4b4f58" stroke-width="2"/><circle cx="316" cy="62" r="6" fill="#d83a2f"/>';
+  s += '<circle cx="358" cy="62" r="12" fill="#2d3037" stroke="#4b4f58" stroke-width="2"/><circle cx="380" cy="94" r="12" fill="#2d3037" stroke="#4b4f58" stroke-width="2"/>';
+  s += '<rect x="56" y="118" width="196" height="150" rx="7" fill="#c9c9c3"/><text x="154" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#555">screen</text>';
+  s += '<circle cx="334" cy="212" r="56" fill="#26282d" stroke="#3a3d44" stroke-width="3"/><circle cx="334" cy="212" r="22" fill="#33363d" stroke="#4b4f58" stroke-width="2"/><text x="334" y="217" text-anchor="middle" font-size="13" font-weight="800" fill="#e4e5ea">SET</text>';
+  s += '<ellipse cx="316" cy="62" rx="31" ry="31" fill="none" stroke="#f28c28" stroke-width="5"/>';
+  s += '<rect x="238" y="120" width="156" height="30" rx="15" fill="#f28c28"/><text x="316" y="140" text-anchor="middle" font-size="15" font-weight="800" fill="#1b1d24">Live View button</text><path d="M316 120 V94" stroke="#f28c28" stroke-width="4" fill="none"/>';
+  return s + '</svg>';
+}
 function skillHTML(sk){
   return '<section class="panel wide skill"><h2 class="ctr">⭐ ' + esc(sk.h) + '</h2><div class="skill-body"><ol class="steps">' +
-    sk.steps.map(function(i){ return '<li><span>' + i + '</span></li>'; }).join('') + '</ol>' +
-    '<figure class="visual skillfig">' + gridSkillSVG() + '<figcaption>' + esc(sk.cap) + '</figcaption></figure></div></section>';
+    sk.steps.map(function(i){ return '<li><span>' + i + '</span></li>'; }).join('') + '</ol><div class="skillfigs">' +
+    (sk.cap0 ? '<figure class="visual skillfig">' + liveViewSVG() + '<figcaption>' + esc(sk.cap0) + '</figcaption></figure>' : '') +
+    '<figure class="visual skillfig">' + gridSkillSVG() + '<figcaption>' + esc(sk.cap) + '</figcaption></figure></div></div></section>';
 }
 function techHTML(t){
-  var h = '<section class="panel wide tech"><h2 class="tech-title">' + esc(t.h) + '</h2>';
+  var h = '<section class="panel wide tech"><h2 class="tech-title">' + esc(t.h) + '</h2>' + (t.badge ? '<p class="ctr"><span class="badge tpbadge">' + esc(t.badge) + '</span></p>' : '');
   if (t.visual) h += visualHTML(t.visual);
   h += '<p class="desc">' + t.desc + '</p>';
   if (t.items) h += listHTML(t.items);
@@ -1846,7 +1869,7 @@ var CAMERA = {
   view: {x:80, y:36, w:500, h:466},
   modes: ['Av','Tv','P','A+','CA','SCN','Mov','M'],     /* clockwise around the dial; the first one starts under the pointer */
   targets: {
-    power:{x:524,y:339,rx:13,ry:9}, shutter:{x:147,y:114,rx:10,ry:9}, main:{x:145,y:103,rx:11,ry:6},
+    power:{x:524,y:339,rx:15,ry:11}, shutter:{x:147,y:114,rx:10,ry:9}, main:{x:145,y:103,rx:11,ry:6},
     playback:{x:472,y:467,rx:13,ry:9}, viewfinder:{x:416,y:350,rx:40,ry:22}
   },
   decoys: [
@@ -1892,8 +1915,8 @@ function judgeRing(pts, T, others, lim){
   if (w > lim || h > lim) return 'big';
   var inN = 0, n = 13, k;
   if (pip(T.x, T.y, pts)) inN++;
-  for (k = 0; k < 12; k++){ var a = k * Math.PI / 6; if (pip(T.x + 0.8 * T.rx * Math.cos(a), T.y + 0.8 * T.ry * Math.sin(a), pts)) inN++; }
-  if (inN / n < 0.85) return 'miss';
+  for (k = 0; k < 12; k++){ var a = k * Math.PI / 6; if (pip(T.x + 0.75 * T.rx * Math.cos(a), T.y + 0.75 * T.ry * Math.sin(a), pts)) inN++; }
+  if (inN / n < 0.75) return 'miss';
   /* if the circle also holds another part, the circle must be centred on the right one */
   var cx = (minx + maxx) / 2, cy = (miny + maxy) / 2, dT = Math.hypot(T.x - cx, T.y - cy);
   for (k = 0; k < others.length; k++){ if (pip(others[k].x, others[k].y, pts) && Math.hypot(others[k].x - cx, others[k].y - cy) < dT) return 'tight'; }
@@ -1902,7 +1925,7 @@ function judgeRing(pts, T, others, lim){
 function judgeCircle(pts, id){
   var T = CAMERA.targets[id], others = CAMERA.decoys.slice();
   Object.keys(CAMERA.targets).forEach(function(o){ if (o !== id) others.push(CAMERA.targets[o]); });
-  return judgeRing(pts, T, others, Math.min(260, Math.max(70, 6 * Math.max(T.rx, T.ry))));
+  return judgeRing(pts, T, others, Math.min(260, Math.max(110, 7 * Math.max(T.rx, T.ry))));
 }
 function wireCamera(root){
   var box = $('.cam', root); if (!box) return;
@@ -1975,15 +1998,31 @@ function dialSVG(){
   return s + '<circle cx="' + cx + '" cy="' + cy + '" r="18" fill="#555a6a"/></g></svg>';
 }
 function lensSVG(){
-  var s = '<svg class="lens-svg" viewBox="0 0 360 200" role="img" aria-label="The side of a camera lens with the AF and MF focus switch. Click the switch to slide it." font-family="Atkinson Hyperlegible,Segoe UI,sans-serif">';
-  s += '<rect x="10" y="78" width="340" height="108" rx="16" fill="#2c2f3a"/>';
-  for (var i = 0; i < 12; i++) s += '<rect x="' + (26 + i * 9) + '" y="92" width="4" height="80" rx="2" fill="#4a4e5e"/>';
-  for (var j = 0; j < 12; j++) s += '<rect x="' + (214 + j * 10) + '" y="92" width="4" height="80" rx="2" fill="#3d4150"/>';
-  s += '<text x="82" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#9ea3b3"></text>';
-  s += '<g id="lensSwitch" style="cursor:pointer"><rect x="146" y="12" width="190" height="62" rx="12" fill="#1b1d24" stroke="#6c7183" stroke-width="2"/>';
-  s += '<text x="172" y="52" text-anchor="middle" font-size="24" font-weight="800" fill="#fff">AF</text><text x="310" y="52" text-anchor="middle" font-size="24" font-weight="800" fill="#fff">MF</text>';
-  s += '<rect x="198" y="30" width="86" height="28" rx="14" fill="#0b0c10"/>';
-  s += '<g id="lensKnob" style="transition:transform .25s ease"><rect x="200" y="24" width="40" height="40" rx="10" fill="#cfd2dc" stroke="#8f94a3" stroke-width="2"/><rect x="212" y="30" width="16" height="28" rx="4" fill="#9aa0b2"/></g></g>';
+  var f = 'font-family="DejaVu Sans,Atkinson Hyperlegible,Segoe UI,sans-serif"', x, s;
+  s = '<svg class="lens-svg" viewBox="0 0 520 290" role="img" aria-label="The side of a Canon lens joined to the camera body, with the focusing ring and the AF and MF focus switch. Click the switch to slide it." ' + f + '>';
+  s += '<rect x="0" y="0" width="520" height="290" rx="18" fill="#dfe3ea"/>';
+  /* camera body on the right */
+  s += '<path d="M372 62 H498 Q512 62 512 76 V270 Q512 284 498 284 H372 Z" fill="#1c1e23"/><path d="M394 62 V44 Q394 34 404 34 H478 Q488 34 488 44 V62 Z" fill="#26292f"/>';
+  s += '<text x="441" y="57" text-anchor="middle" font-size="15" font-style="italic" font-weight="800" fill="#e9e9ec" letter-spacing="1">Canon</text>';
+  s += '<rect x="364" y="94" width="14" height="124" rx="3" fill="#aeb2bb"/><rect x="376" y="100" width="4" height="112" fill="#6a6e78"/>';
+  /* the lens: rear barrel, zoom ring, focusing ring, front ring */
+  s += '<rect x="282" y="98" width="84" height="116" rx="6" fill="#25272c"/>';
+  s += '<rect x="126" y="84" width="160" height="144" rx="8" fill="#16171a"/>';
+  for (x = 132; x <= 280; x += 6) s += '<rect x="' + x + '" y="90" width="2.6" height="132" rx="1" fill="#34373d"/>';
+  s += '<rect x="50" y="76" width="80" height="160" rx="8" fill="#101113"/>';
+  for (x = 56; x <= 124; x += 4.5) s += '<rect x="' + x + '" y="82" width="2" height="148" fill="#2b2d32"/>';
+  s += '<rect x="26" y="92" width="28" height="128" rx="6" fill="#1d1f23"/><rect x="20" y="96" width="8" height="120" rx="3" fill="#c9ccd4"/>';
+  /* switch panel */
+  s += '<rect x="290" y="104" width="68" height="104" rx="6" fill="#2e3138" stroke="#4b4f58" stroke-width="2"/>';
+  s += '<g id="lensSwitch" style="cursor:pointer"><rect x="288" y="106" width="72" height="54" fill="transparent"/>';
+  s += '<text x="306" y="124" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">AF</text><text x="344" y="124" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">MF</text>';
+  s += '<rect x="296" y="132" width="56" height="20" rx="10" fill="#0b0c0f"/>';
+  s += '<g id="lensKnob" style="transition:transform .25s ease"><rect x="297" y="128" width="24" height="28" rx="6" fill="#cfd2dc" stroke="#8f94a3" stroke-width="2"/><rect x="305" y="134" width="8" height="16" rx="2" fill="#9aa0b2"/></g></g>';
+  s += '<text x="324" y="176" text-anchor="middle" font-size="8" font-weight="700" fill="#cfd0d6">STABILIZER</text><rect x="296" y="180" width="56" height="16" rx="8" fill="#0b0c0f"/><rect x="297" y="178" width="24" height="20" rx="5" fill="#7b8090"/>';
+  s += '<text x="309" y="206" text-anchor="middle" font-size="8" font-weight="700" fill="#cfd0d6">ON</text><text x="339" y="206" text-anchor="middle" font-size="8" font-weight="700" fill="#cfd0d6">OFF</text>';
+  /* labels, like the snapshot */
+  s += '<text x="22" y="24" font-size="16" font-weight="800" fill="#1b1d24">Focusing ring</text><path d="M80 31 L90 72" stroke="#1b1d24" stroke-width="2.2" fill="none"/><circle cx="90" cy="74" r="3.5" fill="#1b1d24"/>';
+  s += '<text x="322" y="24" text-anchor="middle" font-size="16" font-weight="800" fill="#1b1d24">Auto/Manual focus switch</text><path d="M322 31 V100" stroke="#1b1d24" stroke-width="2.2" fill="none"/><circle cx="322" cy="102" r="3.5" fill="#1b1d24"/>';
   return s + '</svg>';
 }
 var DIALINFO = {
@@ -2001,7 +2040,7 @@ function widgetHTML(w, asLi){
       '<div class="cam-btns"><button class="btn small ghost wd-left" type="button">↺ Turn left</button><button class="btn small ghost wd-right" type="button">Turn right ↻</button></div>' +
       '<p class="wfb" aria-live="polite"></p></div></' + tag + '>';
   }
-  return '<' + tag + ' class="' + cls + '" data-noedit data-widget="lens"><div class="widget"><p class="wlabel">Slide the lens switch to <b>MF</b></p>' + lensSVG() +
+  return '<' + tag + ' class="' + cls + '" data-noedit data-widget="lens"><div class="widget lenswide"><p class="wlabel">Slide the lens switch to <b>MF</b></p>' + lensSVG() +
     '<div class="cam-btns"><button class="btn small ghost wl-af" type="button">Slide to AF</button><button class="btn small ghost wl-mf" type="button">Slide to MF</button></div>' +
     '<p class="wfb" aria-live="polite"></p></div></' + tag + '>';
 }
@@ -2029,7 +2068,7 @@ function wireStepWidgets(root){
   if (lw){
     var knob = $('#lensKnob', lw), lfb = $('.wfb', lw), lbox = $('.widget', lw);
     var setMF = function(mf, first){
-      C.mf = !!mf; knob.style.transform = C.mf ? 'translate(42px,0)' : 'translate(0,0)'; lbox.classList.toggle('done', C.mf);
+      C.mf = !!mf; knob.style.transform = C.mf ? 'translate(30px,0)' : 'translate(0,0)'; lbox.classList.toggle('done', C.mf);
       lfb.className = 'wfb' + (C.mf ? ' ok' : (first ? '' : ' bad'));
       lfb.textContent = C.mf ? '✓ MF (Manual Focus). Now you turn the focus ring on the lens yourself to make your subject sharp.' : 'The switch is on AF (Auto Focus), so the camera focuses for you. Slide it to MF.';
     };
