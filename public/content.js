@@ -23,6 +23,14 @@ years: {
 "8": {
 page: "",
 assignments: [
+{ title: "Western Genre Unit",
+text: "Watch Rango, learn the codes and conventions of the Western genre, then plan, film and edit your own Western short film.",
+url: "/western.html#unit",
+image: "" },
+{ title: "My Rango Notes and Response",
+text: "Take notes while you watch Rango, write your In-Class Response (Task 1) and save it as a PDF.",
+url: "/western.html#unit/rango",
+image: "" },
 { title: "Photography Unit",
 text: "Learn one photography idea at a time: shots, composition, aperture, shutter speed, ISO and more.",
 url: "/photography.html#unit",
