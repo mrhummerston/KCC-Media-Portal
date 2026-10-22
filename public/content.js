@@ -62,7 +62,19 @@ window.PORTAL = {
     }
   },
   "tutorials": [],
-  "competitions": [],
+  "competitions": [
+    {
+      "title": "News in my Neighbourhood",
+      "image": "/uploads/competitions/news-in-my-neighbourhood.jpg",
+      "file": "/uploads/competitions/news-in-my-neighbourhood.pdf",
+      "w": 1061,
+      "h": 1500,
+      "link": "",
+      "start": "",
+      "end": "",
+      "gen": false
+    }
+  ],
   "links": [
     {
       "title": "Stock Photo and Websites",
@@ -89,12 +101,6 @@ window.PORTAL = {
       ]
     },
     {
-      "title": "YouTube to MP4 downloader",
-      "text": "Save a video as an MP4 for editing. Only use footage you have permission to use.",
-      "url": "https://cobalt.tools",
-      "image": ""
-    },
-    {
       "title": "Pixabay Music",
       "text": "Free music for projects. Check the licence for each track.",
       "url": "https://pixabay.com/music/",
@@ -116,6 +122,108 @@ window.PORTAL = {
       "title": "Freesound",
       "text": "Sound effects and recordings shared by other people.",
       "url": "https://freesound.org",
+      "image": ""
+    },
+    {
+      "title": "Music Websites",
+      "text": "Links to copyright free music to use in your project/s.",
+      "items": [
+        {
+          "title": "Bensound",
+          "text": "",
+          "url": "https://www.bensound.com/free-music-for-videos",
+          "image": ""
+        },
+        {
+          "title": "incompetech Music",
+          "text": "",
+          "url": "https://incompetech.com/music/royalty-free/music.html",
+          "image": ""
+        },
+        {
+          "title": "Pixabay",
+          "text": "",
+          "url": "https://pixabay.com/music/",
+          "image": ""
+        },
+        {
+          "title": "Purple Planet",
+          "text": "",
+          "url": "https://www.purple-planet.com/home",
+          "image": ""
+        },
+        {
+          "title": "SoundBible.com",
+          "text": "",
+          "url": "https://soundbible.com/",
+          "image": ""
+        },
+        {
+          "title": "List of other music websites",
+          "text": "",
+          "url": "/uploads/resources/Music Websites/music-and-sound-effects---copyright-free-and-creative-commons-resources---subject-guides-at-monash-university.html",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "title": "Sound Effects Websites",
+      "text": "",
+      "items": [
+        {
+          "title": "Free Sound Clips",
+          "text": "",
+          "url": "https://soundbible.com/",
+          "image": ""
+        },
+        {
+          "title": "Freesound",
+          "text": "",
+          "url": "https://freesound.org/",
+          "image": ""
+        },
+        {
+          "title": "List of other sound effect websites",
+          "text": "",
+          "url": "/uploads/resources/Sound Effects Websites/music-and-sound-effects---copyright-free-and-creative-commons-resources---subject-guides-at-monash-university.html",
+          "image": ""
+        },
+        {
+          "title": "Pixabay",
+          "text": "",
+          "url": "https://pixabay.com/sound-effects/",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "title": "Stock Photo and Video Websites",
+      "text": "",
+      "items": [
+        {
+          "title": "Pexels",
+          "text": "",
+          "url": "https://www.pexels.com/",
+          "image": ""
+        },
+        {
+          "title": "Pixabay",
+          "text": "",
+          "url": "https://pixabay.com/videos/",
+          "image": ""
+        },
+        {
+          "title": "Unsplash",
+          "text": "",
+          "url": "https://unsplash.com/",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "title": "DaFont",
+      "text": "",
+      "url": "https://www.dafont.com/",
       "image": ""
     }
   ]
