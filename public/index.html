@@ -46,6 +46,7 @@
   --accent-soft:#3A1E21;
 }
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.55;overflow-x:hidden}
 a{color:inherit}
@@ -80,7 +81,7 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y
 .tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
 
 /* the big booking button */
-.book{display:grid;grid-template-columns:4fr 1fr 1fr;gap:12px;margin:18px auto 10px;max-width:900px;
+.book{display:grid;grid-template-columns:4fr 1fr;gap:12px;margin:18px auto 10px;max-width:900px;
   background:linear-gradient(135deg,#E2464C,var(--brand) 55%,#C42A31);border-radius:30px;padding:14px;
   box-shadow:0 12px 0 var(--brand-dark),0 26px 44px rgba(216,52,58,.30)}
 .book a{text-decoration:none;color:#fff}
@@ -100,12 +101,15 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y
 .book-return span{font-size:30px;line-height:1}
 .book-return:hover{transform:translateY(-2px)}
 .book-return:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
-.book-qr{appearance:none;border:0;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;color:var(--brand-dark);font-weight:800;font-size:15px;line-height:1.15;border-radius:20px;padding:10px;min-height:64px;box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
-.book-qr:hover{transform:translateY(-2px)}
-.book-qr:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
-.qrbox{display:block;width:100%;max-width:104px;aspect-ratio:1;background:#fff}
+.qr-under{display:flex;justify-content:center;margin:26px 0 0}
+.qr-tile{appearance:none;cursor:pointer;font:inherit;display:flex;align-items:center;gap:18px;background:var(--surface);color:var(--ink);border:3px solid var(--line);border-radius:24px;padding:14px 24px 14px 14px;text-align:left;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:transform .12s, box-shadow .12s}
+.qr-tile:hover{border-color:var(--ink);transform:translateY(-2px)}
+.qr-tile:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.qr-tile b{display:block;font-family:var(--display);font-weight:800;font-size:24px;line-height:1.05}
+.qr-tile small{display:block;color:var(--muted);font-size:16px;margin-top:4px}
+.qrbox{display:block;width:118px;flex:none;aspect-ratio:1;background:#fff;border:2px solid var(--line);border-radius:12px;overflow:hidden}
 .qrbox svg{display:block;width:100%;height:auto}
-.book a:focus-visible,.book button:focus-visible{outline:4px solid #fff;outline-offset:3px}
+.book a:focus-visible{outline:4px solid #fff;outline-offset:3px}
 .quick{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 0}
 .quick a{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:12px 20px;text-decoration:none;font-weight:700;min-height:50px}
 .quick a:hover{border-color:var(--ink)}
@@ -175,7 +179,9 @@ a.card:hover{border-color:var(--panel-c)}
 .poster:hover{transform:translateY(-4px)}
 .poster img{display:block;width:100%;height:100%;object-fit:cover;border-radius:19px;background:#fff}
 .poster .ph{width:100%;height:100%;border-radius:19px;background:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:56px;color:var(--c1)}
-.poster .pt{position:absolute;left:10px;right:10px;bottom:10px;padding:40px 16px 14px;border-radius:0 0 19px 19px;background:linear-gradient(transparent,rgba(10,12,30,.86));color:#fff;font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1;text-align:left}
+.poster .pt{position:absolute;left:10px;right:10px;bottom:10px;padding:40px 16px 14px;border-radius:0 0 19px 19px;background:linear-gradient(transparent,rgba(10,12,30,.86));color:#fff;font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1;text-align:center}
+.poster .pt b{display:block}
+.poster .pd{display:block;font-family:var(--body);font-weight:700;font-size:15px;margin-top:6px;opacity:.95}
 .stream-tools{display:flex;justify-content:center;margin-top:4px}
 
 /* ---- dialogs, buttons ---- */
@@ -217,13 +223,43 @@ body.t-on{padding-bottom:110px}
 .toast[hidden]{display:none}
 .hint{color:var(--muted);font-size:15px;margin:10px 0 0}
 
+/* ---- resource folders ---- */
+.cards>.cw.folder{grid-column:1/-1}
+.folder details{background:var(--surface);border:2px solid var(--line);border-radius:20px}
+.folder details[open]{border-color:var(--panel-c,var(--ink))}
+.folder summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 18px;min-height:68px;border-radius:18px}
+.folder summary::-webkit-details-marker{display:none}
+.folder.ed summary{padding-right:112px}
+.folder .fic{width:48px;height:48px;border-radius:14px;background:var(--panel-c,var(--brand));display:grid;place-items:center;flex:none}
+.folder .fic svg{width:26px;height:26px}
+.folder .ftx{flex:1;min-width:0}
+.folder .ftx b{display:block;font-family:var(--display);font-size:21px;line-height:1.1}
+.folder .ftx small{display:block;color:var(--muted);font-size:15px;margin-top:2px}
+.folder .chev{width:24px;height:24px;flex:none;transition:transform .15s}
+.folder details[open] .chev{transform:rotate(180deg)}
+.folder .inner{padding:4px 18px 18px;border-top:2px solid var(--line)}
+.folder .inner .cards{margin-top:14px}
+.folder .ctl{top:15px;right:14px}
+.folder.ed .ctl{right:14px}
+.folder.ed .chev{margin-right:0}
+dialog{max-height:90vh;overflow:auto}
+dialog .f .chk{display:flex;align-items:flex-start;gap:10px;font-weight:700;margin-top:16px}
+dialog .f .chk input{width:22px;height:22px;margin-top:2px;flex:none}
+dialog .f input[type=file]{padding:8px}
+.note img{display:block;max-width:100%;max-height:240px;margin:8px auto 0;border-radius:14px;border:2px solid var(--line)}
+.note p{margin:8px 0 0;color:var(--muted);font-size:16px}
+.linkform{width:100%}
+.linkform .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.linkform input{flex:1 1 260px;font:inherit;padding:11px 13px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);min-width:0}
+.dz.big{flex-direction:column;gap:12px}
+
 footer{margin:56px 0 30px;padding-top:20px;border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:15px}
 footer a,footer .linkbtn{font-weight:700}
 @media (max-width:560px){
-  .book{grid-template-columns:1fr 1fr;padding:12px;gap:10px}
-  .book-main{gap:14px;padding:10px;min-height:0;width:100%;grid-column:1/-1}
-  .book-qr{flex-direction:row;gap:10px;min-height:60px}
-  .book-qr .qrbox{width:44px;max-width:44px}
+  .book{grid-template-columns:1fr;padding:12px;gap:10px}
+  .book-main{gap:14px;padding:10px;min-height:0;width:100%}
+  .qr-tile{gap:14px;padding:10px 16px 10px 10px}
+  .qrbox{width:92px}
   .book-return{flex-direction:row;gap:10px;min-height:60px}
   .book-return span{font-size:22px}
   .book .ic{width:60px;height:60px}
@@ -259,8 +295,11 @@ footer a,footer .linkbtn{font-weight:700}
         <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
       </a>
       <a class="book-return" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
-      <button type="button" class="book-qr" id="qrBtn" data-act="qr" aria-label="Show the booking QR code bigger" hidden>
-        <span class="qrbox" id="qrMini"></span><span>Scan to book</span>
+    </div>
+    <div class="qr-under">
+      <button type="button" class="qr-tile" id="qrBtn" data-act="qr" aria-label="Show the booking QR code bigger" hidden>
+        <span class="qrbox" id="qrMini"></span>
+        <span><b>Scan to book</b><small>Tap the code to make it bigger</small></span>
       </button>
     </div>
   </section>
@@ -274,16 +313,16 @@ footer a,footer .linkbtn{font-weight:700}
     <p class="sub">Tap your year to find your assignments, resources and class web page. Tap it again to close.</p>
     <div class="years" id="yearGrid"></div>
     <div class="panel" id="yearPanel" aria-live="polite"></div>
-
-    <div class="tut-block" id="tutBlock" hidden>
-      <h2 class="sub-h" id="tutTitle">Media Equipment Tutorials</h2>
-      <p class="sub">Tap a tutorial to watch it. Tap it again to close.</p>
-      <div class="years" id="tutGrid"></div>
-      <div class="panel" id="tutPanel" aria-live="polite"></div>
-    </div>
   </section>
 
-  <!-- USEFUL LINKS -->
+  <section id="tutBlock" class="blk" aria-labelledby="tutTitle" hidden>
+    <h2 id="tutTitle" class="big-h">Media Equipment Tutorials</h2>
+    <p class="sub">Tap a tutorial to watch it. Tap it again to close.</p>
+    <div class="years" id="tutGrid"></div>
+    <div class="panel" id="tutPanel" aria-live="polite"></div>
+  </section>
+
+  <!-- USEFUL RESOURCES -->
   <section id="linksSec" class="blk" aria-labelledby="linksTitle" hidden></section>
 </main>
 
@@ -296,6 +335,7 @@ footer a,footer .linkbtn{font-weight:700}
 <div class="tbar" id="tbar" hidden></div>
 <div class="toast" id="toast" role="status" hidden></div>
 <input type="file" id="picker" multiple hidden>
+<input type="file" id="pickerDir" webkitdirectory hidden>
 
 <!-- dialogs -->
 <dialog id="qrDlg" aria-labelledby="qrT">
@@ -307,9 +347,10 @@ footer a,footer .linkbtn{font-weight:700}
 </dialog>
 
 <dialog id="lb" class="lb" aria-labelledby="lbT">
-  <img id="lbImg" alt="">
+  <img id="lbImg" alt="" referrerpolicy="no-referrer">
   <h3 id="lbT"></h3>
-  <div class="fbtns" style="justify-content:center"><a class="btn brand" id="lbPdf" target="_blank" rel="noopener" hidden>Open the PDF</a><button type="button" class="btn" data-act="closedlg">Close</button></div>
+  <p id="lbDates" class="hint" style="margin:0 0 10px"></p>
+  <div class="fbtns" style="justify-content:center"><a class="btn brand" id="lbLink" target="_blank" rel="noopener" hidden>Visit the competition page</a><a class="btn brand" id="lbPdf" target="_blank" rel="noopener" hidden>Open the PDF</a><button type="button" class="btn" data-act="closedlg">Close</button></div>
 </dialog>
 
 <dialog id="loginDlg" aria-labelledby="loginT">
@@ -326,9 +367,10 @@ footer a,footer .linkbtn{font-weight:700}
 <dialog id="formDlg" aria-labelledby="fTitle">
   <form id="formEl" class="f">
     <h3 id="fTitle"></h3>
+    <div id="fNote" class="note"></div>
     <div id="fBody"></div>
     <p class="err" id="fErr" role="alert"></p>
-    <div class="fbtns"><button type="button" class="btn ghost" data-act="closedlg">Cancel</button><button class="btn brand">Save</button></div>
+    <div class="fbtns"><button type="button" class="btn ghost" data-act="closedlg">Cancel</button><button class="btn brand" id="fSave">Save</button></div>
   </form>
 </dialog>
 
@@ -360,11 +402,11 @@ P.years=P.years||{}; P.tutorials=P.tutorials||[]; P.competitions=P.competitions|
 const ORDER=["8","9","10","11","12"].filter(y=>P.years[y]);
 ORDER.forEach(y=>{const Y=P.years[y];Y.assignments=Y.assignments||[];Y.resources=Y.resources||[];Y.equipment=Y.equipment||[];Y.page=Y.page||"";});
 
-const S={teacher:false,preview:false,dirty:0,saved:true,files:new Map(),openYear:"",openTut:-1};
+const S={teacher:false,preview:false,dirty:0,saved:true,files:new Map(),openYear:"",openTut:-1,openF:new Set()};
 const editing=()=>S.teacher&&!S.preview;
 {const saved=store.get("kcc-portal-year"); if(saved&&P.years[saved]) S.openYear=saved;}
 
-const FT={pdf:"PDF",doc:"Word",docx:"Word",ppt:"PowerPoint",pptx:"PowerPoint",key:"Keynote",xls:"Excel",xlsx:"Excel",csv:"Spreadsheet",mp4:"Video",mov:"Video",m4v:"Video",mp3:"Audio",wav:"Audio",zip:"ZIP",jpg:"Image",jpeg:"Image",png:"Image",gif:"Image",webp:"Image"};
+const FT={pdf:"PDF",doc:"Word",docx:"Word",ppt:"PowerPoint",pptx:"PowerPoint",key:"Keynote",xls:"Excel",xlsx:"Excel",csv:"Spreadsheet",html:"Web page",htm:"Web page",mp4:"Video",mov:"Video",m4v:"Video",mp3:"Audio",wav:"Audio",zip:"ZIP",jpg:"Image",jpeg:"Image",png:"Image",gif:"Image",webp:"Image"};
 const extOf=u=>{const m=String(u||"").split(/[?#]/)[0].match(/\.([a-z0-9]{2,5})$/i);return m?m[1].toLowerCase():""};
 const safeUrl=u=>/^(https?:\/\/|\/|blob:|mailto:)/i.test(u||"")?u:"#";
 const resolve=u=>{const f=S.files.get(u);return f?f.obj:u};
@@ -381,28 +423,56 @@ if(typeof qrcode==="function"){
 }
 
 /* =============================================================
+   LISTS, FOLDERS AND CARDS
+   A card is { title, text, url, image }. A folder is { title, text, items:[ ...cards/folders ] }.
+   Cards are addressed by sec ("assignments" | "resources" | "equipment" | "links"), year, and a path like "2.0"
+   ============================================================= */
+const rootList=(sec,y)=>sec==="links"?P.links:P.years[y][sec];
+function listAt(sec,y,path){
+  let l=rootList(sec,y); if(!path) return l;
+  for(const i of String(path).split(".")){const it=l[+i]; if(!it||!Array.isArray(it.items)) return null; l=it.items;}
+  return l;
+}
+function itemRef(sec,y,path){const parts=String(path).split("."),idx=+parts.pop();return{list:listAt(sec,y,parts.join(".")),idx};}
+const countItems=f=>f.items.reduce((n,i)=>n+(Array.isArray(i.items)?countItems(i):1),0);
+const kindOf=(kind,l)=>kind==="auto"?(/^https?:/i.test(l.url||"")?"Website":"File"):kind;
+
+const ctl=(sec,y,path)=>`<div class="ctl"><button type="button" data-act="edit" data-sec="${sec}" data-y="${y||""}" data-path="${path}" aria-label="Edit">✎</button><button type="button" data-act="del" data-sec="${sec}" data-y="${y||""}" data-path="${path}" aria-label="Remove">✕</button></div>`;
+
+function cardsHTML(kind,list,sec,y,base){
+  return list.map((l,i)=>{
+    const path=base?base+"."+i:""+i;
+    if(Array.isArray(l.items)) return folderHTML(kind,l,sec,y,path);
+    const ext=extOf(l.url), href=safeUrl(resolve(l.url||"")), blank=/^https?:/.test(l.url||"")||ext==="pdf";
+    const a=`<a class="card${l.image?" has-img":""}" href="${esc(href)}"${blank?' target="_blank" rel="noopener"':""}>${l.image?`<img class="card-img" src="${esc(resolve(l.image))}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}<span class="k">${kindOf(kind,l)}</span>${FT[ext]?`<span class="ft">${FT[ext]}</span>`:""}<b>${esc(l.title)}</b>${l.text?`<p>${esc(l.text)}</p>`:""}</a>`;
+    return `<div class="cw">${a}${editing()?ctl(sec,y,path):""}</div>`;
+  }).join("");
+}
+function folderHTML(kind,f,sec,y,path){
+  const key=`${sec}|${y||""}|${path}`, n=countItems(f);
+  return `<div class="cw folder${editing()?" ed":""}"><details data-fk="${esc(key)}"${S.openF.has(key)?" open":""}>
+    <summary><span class="fic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span>
+    <span class="ftx"><b>${esc(f.title)}</b><small>${f.text?esc(f.text)+" · ":""}${n} item${n===1?"":"s"}</small></span>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="inner">${f.items.length?`<div class="cards">${cardsHTML(kind,f.items,sec,y,path)}</div>`:""}${editing()?dzHTML(sec,y,path):""}</div></details>${editing()?ctl(sec,y,path):""}</div>`;
+}
+document.addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details[data-fk]")){d.open?S.openF.add(d.dataset.fk):S.openF.delete(d.dataset.fk);}},true);
+
+function dzHTML(sec,y,path){
+  const a=`data-sec="${sec}" data-y="${y||""}" data-path="${path||""}"`;
+  if(sec==="equipment") return `<div class="dz" ${a}><span><b>Drag a photo here</b> or add equipment</span><span class="dzb"><button type="button" class="btn" data-act="add" ${a}>+ Add equipment</button></span></div>`;
+  return `<div class="dz" ${a}><span><b>Drag files, folders or website links here</b> (Word, PDF, web pages, images, .url shortcuts)</span><span class="dzb"><button type="button" class="btn" data-act="browse" ${a}>Choose files</button><button type="button" class="btn ghost" data-act="browsedir" ${a}>Choose a folder</button><button type="button" class="btn ghost" data-act="add" ${a}>+ Add a link</button><button type="button" class="btn ghost" data-act="newfolder" ${a}>+ New folder</button></span></div>`;
+}
+
+/* =============================================================
    YEAR BUTTONS + PANEL
    ============================================================= */
 $("#yearGrid").innerHTML=ORDER.map(y=>`<button class="yr" style="--c:var(--y${y})" data-act="yr" data-y="${y}" aria-expanded="false" aria-controls="yearPanel"><span class="num">${y}</span><span class="lbl">Year ${y}</span></button>`).join("");
 
-const ctl=(sec,i,y)=>`<div class="ctl"><button type="button" data-act="edit" data-sec="${sec}" data-i="${i}" data-y="${y||""}" aria-label="Edit">✎</button><button type="button" data-act="del" data-sec="${sec}" data-i="${i}" data-y="${y||""}" aria-label="Remove">✕</button></div>`;
-
-function cardsHTML(kind,list,sec,y){
-  return list.map((l,i)=>{
-    const ext=extOf(l.url), href=safeUrl(resolve(l.url||"")), ext_=/^https?:/.test(l.url||"")||ext==="pdf";
-    const a=`<a class="card${l.image?" has-img":""}" href="${esc(href)}"${ext_?' target="_blank" rel="noopener"':""}>${l.image?`<img class="card-img" src="${esc(resolve(l.image))}" alt="" loading="lazy">`:""}<span class="k">${kind}</span>${FT[ext]&&sec!=="links"?`<span class="ft">${FT[ext]}</span>`:""}<b>${esc(l.title)}</b>${l.text?`<p>${esc(l.text)}</p>`:""}</a>`;
-    return `<div class="cw">${a}${editing()?ctl(sec,i,y):""}</div>`;
-  }).join("");
-}
-function dzHTML(sec,y){
-  if(sec==="links") return `<div class="dz" data-sec="links"><b>Add a handy link</b><span class="dzb"><button type="button" class="btn" data-act="add" data-sec="links">+ Add a link</button></span></div>`;
-  if(sec==="equipment") return `<div class="dz" data-sec="equipment" data-y="${y}"><span><b>Drag a photo here</b> or add equipment</span><span class="dzb"><button type="button" class="btn" data-act="add" data-sec="equipment" data-y="${y}">+ Add equipment</button></span></div>`;
-  return `<div class="dz" data-sec="${sec}" data-y="${y}"><span><b>Drag files here</b> (Word, PDF, slides, images, video)</span><span class="dzb"><button type="button" class="btn" data-act="browse" data-sec="${sec}" data-y="${y}">Choose files</button><button type="button" class="btn ghost" data-act="add" data-sec="${sec}" data-y="${y}">+ Add a link</button></span></div>`;
-}
 function secHTML(y,key,label,kind){
   const list=P.years[y][key];
-  if(!list.length&&!editing()) return "";            /* nothing to show = no heading, no "coming soon" */
-  return `<h4 class="sec">${label}</h4>${list.length?`<div class="cards">${cardsHTML(kind,list,key,y)}</div>`:""}${editing()?dzHTML(key,y):""}`;
+  if(!list.length&&!editing()) return "";            /* nothing to show = no heading, no placeholder */
+  return `<h4 class="sec">${label}</h4>${list.length?`<div class="cards">${cardsHTML(kind,list,key,y,"")}</div>`:""}${editing()?dzHTML(key,y,""):""}`;
 }
 function renderYears(){
   document.querySelectorAll("#yearGrid .yr").forEach(b=>b.setAttribute("aria-expanded",String(b.dataset.y===S.openYear)));
@@ -442,7 +512,7 @@ function renderTut(){
   const box=$("#tutBlock"), list=P.tutorials;
   if(!list.length&&!editing()){box.hidden=true;return;}
   box.hidden=false;
-  let tiles=list.map((t,i)=>`<div class="cw"><button type="button" class="yr tut" style="--c:var(--y${TC[i%5]})" data-act="tut" data-t="${i}" aria-expanded="${S.openTut===i}" aria-controls="tutPanel"><svg class="pl" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M19 15l16 9-16 9z" fill="var(--c)"/></svg><span class="lbl">${esc(t.title)}</span></button>${editing()?ctl("tut",i):""}</div>`).join("");
+  let tiles=list.map((t,i)=>`<div class="cw"><button type="button" class="yr tut" style="--c:var(--y${TC[i%5]})" data-act="tut" data-t="${i}" aria-expanded="${S.openTut===i}" aria-controls="tutPanel"><svg class="pl" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M19 15l16 9-16 9z" fill="var(--c)"/></svg><span class="lbl">${esc(t.title)}</span></button>${editing()?ctl("tut","",i):""}</div>`).join("");
   if(editing()) tiles+=`<button type="button" class="yr tut add" data-act="add" data-sec="tut">+ Add a tutorial</button>`;
   $("#tutGrid").innerHTML=tiles;
   const p=$("#tutPanel"), t=list[S.openTut];
@@ -460,12 +530,20 @@ function toggleTut(i){
 
 /* =============================================================
    COMPETITIONS (poster stream)
+   { title, image, file, w, h, link, start, end, gen }
    ============================================================= */
 const M={raf:0,last:0,pos:0,hover:false,touch:false,hold:0,paused:false,L:0};
+const fmtD=iso=>{if(!iso)return"";const d=new Date(iso+"T00:00:00");return isNaN(d)?iso:d.toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric"});};
+function compDates(p){
+  const o=[];if(p.start)o.push("Starts "+fmtD(p.start));
+  if(p.end){const past=new Date(p.end+"T23:59:59")<new Date();o.push((past?"Closed ":"Ends ")+fmtD(p.end));}
+  return o;
+}
 function posterHTML(p,i){
-  const [c1,c2]=PALS[i%PALS.length], ar=p.w&&p.h?`${p.w}/${p.h}`:"3/4";
-  const img=p.image?`<img src="${esc(resolve(p.image))}" alt="" decoding="async">`:`<span class="ph" aria-hidden="true">PDF</span>`;
-  return `<div class="cw"><button type="button" class="poster" data-act="poster" data-p="${i}" style="--c1:var(${c1});--c2:var(${c2});--ar:${ar}" aria-label="View poster: ${esc(p.title)}">${img}<span class="pt">${esc(p.title)}</span></button>${editing()?ctl("comp",i):""}</div>`;
+  const [c1,c2]=PALS[i%PALS.length], ar=p.w&&p.h?`${p.w}/${p.h}`:"3/4", dates=compDates(p);
+  const img=p.image?`<img src="${esc(resolve(p.image))}" alt="" decoding="async" referrerpolicy="no-referrer">`:`<span class="ph" aria-hidden="true">PDF</span>`;
+  const txt=p.gen&&p.image?"":`<span class="pt"><b>${esc(p.title)}</b>${dates.map(d=>`<span class="pd">${esc(d)}</span>`).join("")}</span>`;
+  return `<div class="cw"><button type="button" class="poster" data-act="poster" data-p="${i}" style="--c1:var(${c1});--c2:var(${c2});--ar:${ar}" aria-label="View poster: ${esc(p.title)}${dates.length?". "+esc(dates.join(", ")):""}">${img}${txt}</button>${editing()?ctl("comp","",i):""}</div>`;
 }
 function renderComp(){
   cancelAnimationFrame(M.raf);
@@ -474,10 +552,10 @@ function renderComp(){
   sec.hidden=false;
   const live=list.length&&!editing()&&!REDUCED;
   sec.innerHTML=`<h2 id="compTitle" class="big-h">Competitions</h2>
-    ${list.length?`<p class="sub">Tap a poster to see it bigger. Scroll sideways to browse.</p>
+    ${list.length?`<p class="sub">Tap a poster to see the dates and the competition page. Scroll sideways to browse.</p>
     <div class="stream" id="stream" tabindex="0" role="region" aria-label="Competition posters. Scroll sideways to browse."><div class="track">${list.map(posterHTML).join("")}</div></div>
     ${live?`<div class="stream-tools"><button type="button" class="mode" id="ppBtn" data-act="pp" aria-pressed="${M.paused}">${M.paused?"▶ Play":"❚❚ Pause"}</button></div>`:""}`:""}
-    ${editing()?`<div class="dz big" data-sec="comp"><span><b>Drag competition posters here</b> (images or PDFs). They show as large posters that scroll across the page.</span><span class="dzb"><button type="button" class="btn brand" data-act="browse" data-sec="comp">Choose files</button></span></div>`:""}`;
+    ${editing()?`<div class="dz big" data-sec="comp"><form class="linkform" id="compForm"><label for="compUrl"><b>Paste a competition link</b> and the poster, start date and end date are filled in for you to check.</label><div class="row"><input id="compUrl" type="url" inputmode="url" placeholder="https://..." autocomplete="off"><button class="btn brand">Add competition</button></div></form><span>or drag poster images or PDFs here <button type="button" class="btn ghost" data-act="browse" data-sec="comp">Choose files</button></span></div>`:""}`;
   if(live) setupStream();
 }
 function setupStream(){
@@ -512,31 +590,159 @@ function tick(t){
 }
 function openPoster(i){
   const p=P.competitions[i]; if(!p) return;
-  if(!p.image&&p.file){window.open(resolve(p.file),"_blank","noopener");return;}
-  $("#lbImg").src=resolve(p.image); $("#lbImg").alt=p.title; $("#lbT").textContent=p.title;
+  if(!p.image&&p.file&&!p.link){window.open(resolve(p.file),"_blank","noopener");return;}
+  const img=$("#lbImg"); if(p.image){img.src=resolve(p.image);img.alt=p.title;img.hidden=false;}else img.hidden=true;
+  $("#lbT").textContent=p.title; $("#lbDates").textContent=compDates(p).join("  ·  ");
   const a=$("#lbPdf"); if(p.file){a.href=resolve(p.file);a.hidden=false}else a.hidden=true;
+  const l=$("#lbLink"); if(p.link){l.href=safeUrl(p.link);l.hidden=false}else l.hidden=true;
   $("#lb").showModal();
 }
 
+/* ---- reading a competition web page ---- */
+const slug=s=>String(s).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"poster";
+const MON="jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?";
+const monIdx=s=>"jan feb mar apr may jun jul aug sep oct nov dec".split(" ").indexOf(s.slice(0,3).toLowerCase());
+const iso=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+/* finds a start and end date in text such as "Entries open 3 March 2026 and close 28 April 2026" */
+function scanDates(text,now=new Date()){
+  text=String(text||"").replace(/\s+/g," ");
+  const found=[];let r;
+  const add=(i,len,y,m,d)=>{if(m<0||m>11||d<1||d>31)return;found.push({i,len,y,m,d});};
+  const re1=new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?(${MON})\\b\\.?(?:,?\\s+(\\d{4})\\b)?`,"gi");
+  while((r=re1.exec(text)))add(r.index,r[0].length,r[3]?+r[3]:0,monIdx(r[2]),+r[1]);
+  const re2=new RegExp(`\\b(${MON})\\b\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?\\b(?:,?\\s+(\\d{4})\\b)?`,"gi");
+  while((r=re2.exec(text)))add(r.index,r[0].length,r[3]?+r[3]:0,monIdx(r[1]),+r[2]);
+  const re3=/\b(\d{4})-(\d{2})-(\d{2})\b/g;
+  while((r=re3.exec(text)))add(r.index,r[0].length,+r[1],+r[2]-1,+r[3]);
+  const re4=/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g;
+  while((r=re4.exec(text)))add(r.index,r[0].length,+r[3],+r[2]-1,+r[1]);
+  found.sort((a,b)=>a.i-b.i||b.len-a.len);
+  const ds=[];let end=-1;for(const f of found){if(f.i<end)continue;ds.push(f);end=f.i+f.len;}
+  const yr=now.getFullYear();
+  ds.forEach((d,k)=>{
+    if(!d.y){const nx=ds[k+1];if(nx&&nx.y&&nx.i-(d.i+d.len)<=40)d.y=nx.y;else{d.y=yr;if((now-new Date(d.y,d.m,d.d))/864e5>120)d.y++;}}
+  });
+  const lo=now.getTime()-400*864e5,hi=now.getTime()+800*864e5;
+  const ok=ds.filter(d=>{const t=new Date(d.y,d.m,d.d).getTime();return d.y>=2000&&t>=lo&&t<=hi&&new Date(d.y,d.m,d.d).getDate()===d.d;});
+  const START=/(open(?:s|ed|ing)?|start(?:s|ed|ing)?|begin(?:s|ning)?|launch(?:es|ed)?|commenc\w*|from)\b/gi, END=/(clos(?:e|es|ed|ing)|deadline|due|end(?:s|ed|ing)?|until|till|finals?)\b/gi;
+  const last=(re,s)=>{let m,p=-1;re.lastIndex=0;while((m=re.exec(s)))p=m.index;return p;};
+  ok.forEach(d=>{const pv=ds[ds.indexOf(d)-1],before=text.slice(Math.max(pv?pv.i+pv.len:0,d.i-60),d.i),a=last(START,before),b=last(END,before);d.role=a<0&&b<0?"":a>b?"start":"end";});
+  for(let k=0;k+1<ok.length;k++){const a=ok[k],b=ok[k+1],gap=text.slice(a.i+a.len,b.i);
+    if(gap.length<=14&&/^\s*(to|until|till|through|–|-|—)\s*$/i.test(gap)){a.role="start";b.role="end";}}
+  const T=d=>new Date(d.y,d.m,d.d).getTime();
+  let st=ok.filter(d=>d.role==="start").sort((a,b)=>T(a)-T(b))[0], en=ok.filter(d=>d.role==="end").sort((a,b)=>T(b)-T(a))[0];
+  if(!st&&!en&&ok.length===2){const s2=[...ok].sort((a,b)=>T(a)-T(b));st=s2[0];en=s2[1];}
+  return{start:st?iso(st.y,st.m,st.d):"",end:en?iso(en.y,en.m,en.d):""};
+}
+async function getWith(url,ms,kind){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error(r.status);return kind==="json"?await r.json():await r.text();}finally{clearTimeout(t);}
+}
+async function scanLink(url){
+  const [meta,page]=await Promise.allSettled([getWith("https://api.microlink.io/?url="+encodeURIComponent(url),15000,"json"),getWith("https://r.jina.ai/"+url,20000,"text")]);
+  const out={title:"",desc:"",image:"",text:"",ok:false};
+  if(meta.status==="fulfilled"&&meta.value&&meta.value.status==="success"){const d=meta.value.data||{};out.title=d.title||"";out.desc=d.description||"";out.image=(d.image&&d.image.url)||"";out.ok=true;}
+  if(page.status==="fulfilled"&&page.value){out.text=String(page.value).slice(0,80000);out.ok=true;if(!out.title){const m=/^Title:\s*(.+)$/m.exec(out.text);if(m)out.title=m[1].trim();}}
+  return out;
+}
+function cleanTitle(t,url){
+  t=String(t||"").trim();
+  if(t){t=t.split(/\s[|–—]\s/)[0];const parts=t.split(" - ");if(parts.length>1&&parts[parts.length-1].length<=30)parts.pop();t=parts.join(" - ").trim();}
+  if(!t){try{t=new URL(url).hostname.replace(/^www\./,"");}catch(e){t="Competition";}}
+  return t;
+}
+async function fetchImage(url){
+  try{const r=await fetch(url);if(!r.ok)throw 0;const b=await r.blob();if(!/^image\/(jpeg|png|webp)/.test(b.type))throw 0;return await prepImage(new File([b],"poster",{type:b.type}));}catch(e){return null;}
+}
+const probeImage=url=>new Promise(res=>{const im=new Image();im.referrerPolicy="no-referrer";im.onload=()=>res({w:im.naturalWidth,h:im.naturalHeight});im.onerror=()=>res(null);im.src=url;});
+
+/* ---- a made-up poster picture, used when the page has no official poster ---- */
+async function genPoster(title,start,end,link){
+  try{await document.fonts.load('800 80px "Bricolage Grotesque"');await document.fonts.load('700 34px "Atkinson Hyperlegible"');}catch(e){}
+  const W=900,H=1200,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const cs=getComputedStyle(document.documentElement);
+  let h=0;for(const ch of title)h+=ch.charCodeAt(0);
+  const pal=PALS[h%PALS.length].map(v=>cs.getPropertyValue(v).trim()||"#D8343A");
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,pal[0]);g.addColorStop(1,pal[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle="rgba(255,255,255,.14)";[[790,130,270],[80,1070,300],[830,990,110],[120,260,90]].forEach(([cx,cy,r])=>{x.beginPath();x.arc(cx,cy,r,0,7);x.fill();});
+  x.textAlign="center";x.textBaseline="alphabetic";
+  const DISP='"Bricolage Grotesque","Segoe UI",system-ui,sans-serif',BODY='"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif';
+  /* label pill */
+  x.font=`700 34px ${BODY}`;const lw=x.measureText("Competition").width+56;
+  x.fillStyle="#fff";x.beginPath();x.roundRect((W-lw)/2,120,lw,64,32);x.fill();
+  x.fillStyle=pal[0];x.fillText("Competition",W/2,164);
+  /* title, wrapped and centred */
+  const wrap=(font)=>{x.font=font;const out=[];let line="";for(const w of title.split(/\s+/)){const t=line?line+" "+w:w;if(x.measureText(t).width>760&&line){out.push(line);line=w;}else line=t;}out.push(line);return out;};
+  let size=112,lines;for(;size>=48;size-=8){lines=wrap(`800 ${size}px ${DISP}`);if(lines.length<=5&&lines.every(l=>x.measureText(l).width<=780))break;}
+  const lh=size*1.08,dates=compDates({start,end}),blockH=lines.length*lh;
+  let y0=(H-blockH)/2+size*0.8-(dates.length?50:0);
+  x.fillStyle="#fff";x.font=`800 ${size}px ${DISP}`;lines.forEach((l,i)=>x.fillText(l,W/2,y0+i*lh));
+  /* dates */
+  let yd=y0+blockH+30;x.font=`700 42px ${BODY}`;dates.forEach((d,i)=>x.fillText(d,W/2,yd+i*58));
+  /* site */
+  let host="";try{host=new URL(link).hostname.replace(/^www\./,"");}catch(e){}
+  if(host){x.font=`700 34px ${BODY}`;x.fillStyle="rgba(255,255,255,.9)";x.fillText(host,W/2,H-90);}
+  return{blob:await new Promise(r=>c.toBlob(r,"image/jpeg",.9)),w:W,h:H};
+}
+
+/* ---- the competition forms ---- */
+async function startCompFromLink(url){
+  toast("Reading the page. This can take a few seconds…");
+  let info={title:"",desc:"",image:"",text:"",ok:false};
+  try{info=await scanLink(url);}catch(e){}
+  const dates=scanDates([info.title,info.desc,info.text].join(" \n "));
+  $("#toast").hidden=true;
+  const title=cleanTitle(info.title,url);
+  let note=info.image?`<img src="${esc(info.image)}" alt="" referrerpolicy="no-referrer"><p>This is the picture found on the page. If it isn't the poster, choose your own picture below.</p>`
+    :`<p>No poster was found on that page, so a poster picture will be made from the title and dates.</p>`;
+  note+=`<p>${!info.ok?"I couldn't read that page (some sites block this). Please fill in the details yourself.":(dates.start||dates.end)?"Dates were found on the page. Please check they're right.":"I couldn't find dates on that page. Add them if you like."}</p>`;
+  const fields=[{k:"title",label:"Competition title",value:title},{k:"start",label:"Starts",type:"date",value:dates.start},{k:"end",label:"Ends",type:"date",value:dates.end},{k:"file",label:"Your own poster picture (optional)",type:"file",accept:"image/*"}];
+  if(info.image) fields.push({k:"useGen",label:"Make a poster picture instead of using the page's picture",type:"check"});
+  ask({title:"New competition",note,fields,async save(v){
+    if(!v.title)return"Give the competition a title.";
+    if(v.start&&v.end&&v.end<v.start)return"The end date is before the start date.";
+    let img=null,gen=false;
+    if(v.file){if(!isImg(v.file))return"Choose an image file.";const im=await prepImage(v.file);img={path:putFile("competitions",slug(v.title)+im.ext,im.blob),w:im.w,h:im.h};}
+    else if(info.image&&!v.useGen){
+      const got=await fetchImage(info.image);
+      if(got)img={path:putFile("competitions",slug(v.title)+got.ext,got.blob),w:got.w,h:got.h};
+      else{const pr=await probeImage(info.image);if(pr)img={path:info.image,w:pr.w,h:pr.h};}
+    }
+    if(!img){const g=await genPoster(v.title,v.start,v.end,url);img={path:putFile("competitions",slug(v.title)+"-poster.jpg",g.blob),w:g.w,h:g.h};gen=true;}
+    P.competitions.push({title:v.title,image:img.path,file:"",w:img.w,h:img.h,link:url,start:v.start,end:v.end,gen});changed();return null;
+  }});
+}
+function editComp(i){
+  const cur=P.competitions[i];
+  ask({title:"Edit competition",fields:[{k:"title",label:"Competition title",value:cur.title},{k:"start",label:"Starts",type:"date",value:cur.start||""},{k:"end",label:"Ends",type:"date",value:cur.end||""},{k:"link",label:"Competition web page (optional)",value:cur.link||"",ph:"https://..."},{k:"file",label:"Replace the poster picture (optional)",type:"file",accept:"image/*"}],
+    async save(v){
+      if(!v.title)return"Give the competition a title.";
+      if(v.start&&v.end&&v.end<v.start)return"The end date is before the start date.";
+      const link=normUrl(v.link);const rec={title:v.title,start:v.start,end:v.end,link};
+      if(v.file){if(!isImg(v.file))return"Choose an image file.";const im=await prepImage(v.file);Object.assign(rec,{image:putFile("competitions",slug(v.title)+im.ext,im.blob),w:im.w,h:im.h,gen:false});}
+      else if(cur.gen){const g=await genPoster(v.title,v.start,v.end,link);Object.assign(rec,{image:putFile("competitions",slug(v.title)+"-poster.jpg",g.blob),w:g.w,h:g.h});}
+      P.competitions[i]=Object.assign({},cur,rec);changed();return null;
+    }});
+}
+
 /* =============================================================
-   USEFUL LINKS
+   USEFUL RESOURCES
    ============================================================= */
 function renderLinks(){
   const sec=$("#linksSec"), list=P.links;
   if(!list.length&&!editing()){sec.hidden=true;sec.innerHTML="";return;}
   sec.hidden=false; sec.style.setProperty("--panel-c","var(--y8)");
-  sec.innerHTML=`<h2 id="linksTitle" class="big-h">Useful Links</h2><p class="sub">Handy sites for your media projects.</p>
-    ${list.length?`<div class="cards">${cardsHTML("Link",list,"links")}</div>`:""}${editing()?dzHTML("links"):""}`;
+  sec.innerHTML=`<h2 id="linksTitle" class="big-h">Useful Resources</h2><p class="sub">These are folders and websites that could help with your media project.</p>
+    ${list.length?`<div class="cards">${cardsHTML("auto",list,"links","","")}</div>`:""}${editing()?dzHTML("links","",""):""}`;
 }
 
 /* =============================================================
    TEACHER MODE
    ============================================================= */
-const listFor=(sec,y)=>sec==="tut"?P.tutorials:sec==="comp"?P.competitions:sec==="links"?P.links:P.years[y][sec];
 function renderAll(){renderComp();renderYears();renderTut();renderLinks();renderBar();}
 function changed(){S.dirty++;S.saved=false;renderAll();}
 let toastT=0;
-function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,4500);}
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,5000);}
 function renderBar(){
   const b=$("#tbar");
   if(!S.teacher){b.hidden=true;document.body.classList.remove("t-on");return;}
@@ -559,29 +765,51 @@ $("#loginForm").addEventListener("submit",e=>{
 
 /* --- form dialog --- */
 let ASK=null;
-function ask(o){
-  ASK=o;$("#fTitle").textContent=o.title;
-  $("#fBody").innerHTML=o.fields.map(f=>`<label for="f_${f.k}">${esc(f.label)}</label>${f.area?`<textarea id="f_${f.k}" rows="3" placeholder="${esc(f.ph||"")}">${esc(f.value||"")}</textarea>`:`<input id="f_${f.k}" type="text" value="${esc(f.value||"")}" placeholder="${esc(f.ph||"")}" autocomplete="off">`}`).join("");
-  $("#fErr").textContent="";$("#formDlg").showModal();$("#fBody").querySelector("input,textarea").focus();
+function fieldHTML(f){
+  const id="f_"+f.k;
+  if(f.type==="check")return`<label class="chk"><input id="${id}" type="checkbox"> <span>${esc(f.label)}</span></label>`;
+  if(f.type==="file")return`<label for="${id}">${esc(f.label)}</label><input id="${id}" type="file" accept="${esc(f.accept||"")}">`;
+  if(f.area)return`<label for="${id}">${esc(f.label)}</label><textarea id="${id}" rows="3" placeholder="${esc(f.ph||"")}">${esc(f.value||"")}</textarea>`;
+  return`<label for="${id}">${esc(f.label)}</label><input id="${id}" type="${f.type||"text"}" value="${esc(f.value||"")}" placeholder="${esc(f.ph||"")}" autocomplete="off">`;
 }
-$("#formEl").addEventListener("submit",e=>{
-  e.preventDefault();const v={};ASK.fields.forEach(f=>v[f.k]=$("#f_"+f.k).value.trim());
-  const err=ASK.save(v);if(err){$("#fErr").textContent=err;return;}$("#formDlg").close();
+function ask(o){
+  ASK=o;$("#fTitle").textContent=o.title;$("#fNote").innerHTML=o.note||"";
+  $("#fBody").innerHTML=o.fields.map(fieldHTML).join("");
+  $("#fErr").textContent="";$("#fSave").disabled=false;$("#formDlg").showModal();
+  const first=$("#fBody").querySelector("input:not([type=file]):not([type=checkbox]),textarea");if(first)first.focus();
+}
+$("#formEl").addEventListener("submit",async e=>{
+  e.preventDefault();const v={};
+  ASK.fields.forEach(f=>{const el=$("#f_"+f.k);v[f.k]=f.type==="check"?el.checked:f.type==="file"?(el.files[0]||null):el.value.trim();});
+  const btn=$("#fSave");btn.disabled=true;let err;
+  try{err=await ASK.save(v);}catch(ex){console.error(ex);err="Something went wrong. Please try again.";}
+  btn.disabled=false;
+  if(err){$("#fErr").textContent=err;return;}$("#formDlg").close();
 });
 const normUrl=u=>{u=(u||"").trim();if(!u)return"";if(/^(https?:\/\/|\/|mailto:)/i.test(u))return u;if(/^[\w-]+(\.[\w-]+)+(\/|$|\?|#)/.test(u))return"https://"+u;return"/"+u;};
 
-function editItem(sec,y,i){
-  const list=listFor(sec,y), cur=i>=0?list[i]:{}, adding=i<0;
-  const put=rec=>{if(adding)list.push(rec);else list[i]=Object.assign({},cur,rec);changed();};
-  if(sec==="tut") return ask({title:adding?"Add a tutorial":"Edit tutorial",fields:[{k:"title",label:"Button title",value:cur.title,ph:"e.g. Using the Sony camera"},{k:"url",label:"YouTube link",value:cur.url,ph:"Paste the YouTube link here"}],
-    save:v=>{if(!v.title)return"Give the tutorial a title.";if(!ytEmbed(v.url))return"That doesn't look like a YouTube link.";put({title:v.title,url:v.url});}});
-  if(sec==="comp") return ask({title:"Edit poster title",fields:[{k:"title",label:"Poster title",value:cur.title}],save:v=>{if(!v.title)return"Give the poster a title.";put({title:v.title});}});
-  const isEq=sec==="equipment";
+function tutDialog(i){
+  const cur=i>=0?P.tutorials[i]:{};
+  ask({title:i>=0?"Edit tutorial":"Add a tutorial",fields:[{k:"title",label:"Button title",value:cur.title,ph:"e.g. Using the Sony camera"},{k:"url",label:"YouTube link",value:cur.url,ph:"Paste the YouTube link here"}],
+    save:v=>{if(!v.title)return"Give the tutorial a title.";if(!ytEmbed(v.url))return"That doesn't look like a YouTube link.";const r={title:v.title,url:v.url};if(i>=0)P.tutorials[i]=r;else P.tutorials.push(r);changed();}});
+}
+function cardDialog(sec,y,path,adding){
+  let list,idx=-1,cur={};
+  if(adding)list=listAt(sec,y,path);else{const r=itemRef(sec,y,path);list=r.list;idx=r.idx;cur=list[idx];}
+  if(!list)return;
+  const folder=Array.isArray(cur.items),isEq=sec==="equipment";
+  const put=rec=>{if(adding)list.push(rec);else list[idx]=Object.assign({},cur,rec);changed();};
+  if(folder)return ask({title:"Edit folder",fields:[{k:"title",label:"Folder name",value:cur.title},{k:"text",label:"Description (optional)",value:cur.text,area:true}],save:v=>{if(!v.title)return"Give the folder a name.";put({title:v.title,text:v.text});}});
   ask({title:adding?(isEq?"Add equipment":"Add a link"):"Edit",fields:[
       {k:"title",label:"Title",value:cur.title,ph:isEq?"e.g. Sony A7 camera":"Short title"},
       {k:"text",label:"Description (optional)",value:cur.text,area:true,ph:"One or two short sentences"},
       {k:"url",label:isEq?"Link (defaults to the booking page)":"Link",value:cur.url||(adding&&isEq?"/book/":""),ph:"https://..."}],
     save:v=>{if(!v.title)return"Give it a title.";const u=normUrl(v.url||(isEq?"/book/":""));if(!u)return"Add a link.";put({title:v.title,text:v.text,url:u,image:cur.image||""});}});
+}
+function newFolder(sec,y,path){
+  const list=listAt(sec,y,path);if(!list)return;
+  ask({title:"New folder",fields:[{k:"title",label:"Folder name",ph:"e.g. Sound effects"},{k:"text",label:"Description (optional)",area:true}],
+    save:v=>{if(!v.title)return"Give the folder a name.";list.push({title:v.title,text:v.text,items:[]});S.openF.add(`${sec}|${y||""}|${path?path+".":""}${list.length-1}`);changed();}});
 }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b)return;const d=b.dataset;
@@ -595,31 +823,52 @@ document.addEventListener("click",e=>{
     case"logout":if(S.dirty&&!S.saved&&!confirm("You have changes that aren't downloaded yet. Log out and lose them?"))break;S.saved=true;location.reload();break;
     case"preview":S.preview=!S.preview;renderAll();break;
     case"pp":M.paused=!M.paused;b.setAttribute("aria-pressed",M.paused);b.textContent=M.paused?"▶ Play":"❚❚ Pause";break;
-    case"add":editItem(d.sec,d.y,-1);break;
-    case"edit":editItem(d.sec,d.y,+d.i);break;
-    case"del":{const l=listFor(d.sec,d.y);if(confirm(`Remove "${l[+d.i].title}"?`)){l.splice(+d.i,1);if(d.sec==="tut")S.openTut=-1;changed();}break;}
+    case"add":d.sec==="tut"?tutDialog(-1):cardDialog(d.sec,d.y,d.path||"",true);break;
+    case"newfolder":newFolder(d.sec,d.y,d.path||"");break;
+    case"edit":d.sec==="tut"?tutDialog(+d.path):d.sec==="comp"?editComp(+d.path):cardDialog(d.sec,d.y,d.path,false);break;
+    case"del":{
+      let title,remove;
+      if(d.sec==="tut"||d.sec==="comp"){const l=d.sec==="tut"?P.tutorials:P.competitions;title=l[+d.path].title;remove=()=>{l.splice(+d.path,1);if(d.sec==="tut")S.openTut=-1;};}
+      else{const r=itemRef(d.sec,d.y,d.path),it=r.list[r.idx];title=it.title+(Array.isArray(it.items)?" and everything in it":"");remove=()=>r.list.splice(r.idx,1);}
+      if(confirm(`Remove "${title}"?`)){remove();changed();}break;}
     case"pageurl":ask({title:"Class web page link",fields:[{k:"url",label:"Link (leave empty to remove the button)",value:P.years[d.y].page,ph:"https://..."}],save:v=>{P.years[d.y].page=normUrl(v.url);changed();}});break;
-    case"browse":pickTarget={sec:d.sec,y:d.y};$("#picker").value="";$("#picker").click();break;
+    case"browse":pickTarget={sec:d.sec,y:d.y,path:d.path||""};$("#picker").value="";$("#picker").click();break;
+    case"browsedir":pickTarget={sec:d.sec,y:d.y,path:d.path||""};$("#pickerDir").value="";$("#pickerDir").click();break;
     case"download":download();break;
   }
 });
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="compForm")return;e.preventDefault();
+  const url=normUrl($("#compUrl").value);
+  if(!/^https?:\/\/\S+\.\S+/i.test(url)){toast("Paste the full web address of the competition, like https://...");return;}
+  startCompFromLink(url);
+});
 document.addEventListener("click",e=>{const d=e.target;if(d.tagName==="DIALOG"){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});
 
-/* --- file handling --- */
+/* =============================================================
+   FILES: drag and drop, folders, .url shortcuts
+   ============================================================= */
 let pickTarget=null;
-$("#picker").addEventListener("change",e=>{if(pickTarget)handleFiles([...e.target.files],pickTarget);});
+$("#picker").addEventListener("change",e=>{if(pickTarget)runIngest([...e.target.files].map(f=>({name:f.name,file:f})),pickTarget);});
+$("#pickerDir").addEventListener("change",e=>{if(pickTarget)runIngest(treeFromFiles([...e.target.files]),pickTarget);});
 const isImg=f=>/^image\//.test(f.type)||/\.(jpe?g|png|gif|webp)$/i.test(f.name);
 const isPdf=f=>f.type==="application/pdf"||/\.pdf$/i.test(f.name);
+const isShortcut=f=>/\.(url|webloc)$/i.test(f.name);
 const baseName=n=>n.replace(/\.[^.]+$/,"");
 const pretty=n=>baseName(n).replace(/[_]+/g," ").replace(/\s+/g," ").trim()||"Untitled";
+const shortTitle=n=>{const t=pretty(n);return t.split(/\s[-–|]\s/)[0].trim()||t;};
+const hidden=n=>/^\.|^(Thumbs\.db|desktop\.ini)$/i.test(n);
+async function shortcutURL(f){const t=await f.text();const m=/^URL=(\S+)/mi.exec(t)||/<string>(https?:[^<]+)<\/string>/i.exec(t);return m?m[1].trim():"";}
 function safeName(n){
   const m=n.match(/\.([^.]+)$/),ext=m?"."+m[1].toLowerCase().replace(/[^a-z0-9]/g,""):"";
   const b=baseName(n).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9._-]+/g,"-").replace(/^[-.]+|[-.]+$/g,"")||"file";
   return b+ext;
 }
-function putFile(folder,name,blob){
-  let n=safeName(name),path=`/uploads/${folder}/${n}`,k=2;
-  while(S.files.has(path)){n=safeName(baseName(name)+"-"+k+(name.match(/\.[^.]+$/)||[""])[0]);path=`/uploads/${folder}/${n}`;k++;}
+const softName=n=>n.replace(/[\\/:*?"<>|#%]+/g,"-").trim()||"file";   /* inside dropped folders names stay as they were, so web pages keep working */
+function putFile(dir,name,blob,keep){
+  const nm=keep?softName(name):safeName(name),m=nm.match(/^(.*?)(\.[^.]*)?$/);
+  let path=`/uploads/${dir}/${nm}`,k=2;
+  while(S.files.has(path)){path=`/uploads/${dir}/${m[1]}-${k}${m[2]||""}`;k++;}
   S.files.set(path,{blob,obj:URL.createObjectURL(blob)});return path;
 }
 async function prepImage(f,max=1800){
@@ -647,29 +896,84 @@ async function pdfThumb(f){
   const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:x,viewport:v}).promise;
   return{blob:await new Promise(r=>c.toBlob(r,"image/jpeg",.88)),w:c.width,h:c.height};
 }
-async function handleFiles(files,t){
-  if(!files.length)return;toast("Adding "+(files.length>1?files.length+" files":files[0].name)+"…");let added=0;
+/* a dropped item is a node: { name, file } or { name, kids:[nodes] } */
+function treeFromFiles(files){
+  const root=[];
+  for(const f of files){
+    const parts=(f.webkitRelativePath||f.name).split("/");if(parts.some(hidden))continue;
+    let level=root;
+    parts.slice(0,-1).forEach(p=>{let n=level.find(x=>x.kids&&x.name===p);if(!n){n={name:p,kids:[]};level.push(n);}level=n.kids;});
+    level.push({name:parts[parts.length-1],file:f});
+  }
+  return root;
+}
+async function entriesToNodes(ents){
+  const out=[];
+  for(const en of ents){
+    if(!en||hidden(en.name))continue;
+    if(en.isFile){const f=await new Promise((res,rej)=>en.file(res,rej));out.push({name:en.name,file:f});}
+    else if(en.isDirectory){
+      const rd=en.createReader();let all=[];
+      for(;;){const b=await new Promise((res,rej)=>rd.readEntries(res,rej));if(!b.length)break;all=all.concat(b);}
+      out.push({name:en.name,kids:await entriesToNodes(all)});
+    }
+  }
+  return out;
+}
+const flatFiles=nodes=>nodes.flatMap(n=>n.kids?flatFiles(n.kids):[n.file]);
+function dirFor(t){
+  let dir=t.sec==="links"?"resources":"year"+t.y;
+  if(t.path){let l=rootList(t.sec,t.y);for(const i of String(t.path).split(".")){const it=l[+i];dir+="/"+softName(it.title);l=it.items;}}
+  return dir;
+}
+async function ingestFile(f,ctx){
+  if(ctx.count.n>=300){ctx.count.skipped=true;return 0;}ctx.count.n++;
+  if(isShortcut(f)){const u=await shortcutURL(f);if(!u){toast(`Couldn't read the shortcut "${f.name}".`);return 0;}ctx.list.push({title:shortTitle(f.name),text:"",url:u,image:""});return 1;}
+  if(ctx.sec==="equipment"){
+    if(!isImg(f)){toast(`"${f.name}" skipped. Equipment takes a photo (use "+ Add equipment" for text).`);return 0;}
+    const im=await prepImage(f),p=putFile(ctx.dir,baseName(f.name)+im.ext,im.blob,ctx.keep);ctx.list.push({title:pretty(f.name),text:"",url:"/book/",image:p});return 1;
+  }
+  if(isImg(f)){const im=await prepImage(f),p=putFile(ctx.dir,baseName(f.name)+im.ext,im.blob,ctx.keep);ctx.list.push({title:pretty(f.name),text:"",url:p,image:p});return 1;}
+  const p=putFile(ctx.dir,f.name,f,ctx.keep);ctx.list.push({title:pretty(f.name),text:"",url:p,image:""});return 1;
+}
+async function ingestNodes(nodes,ctx){
+  let n=0;
+  for(const nd of nodes){
+    if(nd.kids){
+      if(ctx.sec==="equipment"){toast(`Folder "${nd.name}" skipped. Equipment takes photos only.`);continue;}
+      const f={title:nd.name,text:"",items:[]};ctx.list.push(f);
+      n+=await ingestNodes(nd.kids,{...ctx,list:f.items,dir:ctx.dir+"/"+softName(nd.name),keep:true});n++;
+    }else n+=await ingestFile(nd.file,ctx);
+  }
+  return n;
+}
+async function addPosters(files){
+  let added=0;
   for(const f of files){
     try{
-      if(t.sec==="comp"){
-        if(isImg(f)){const im=await prepImage(f),p=putFile("competitions",baseName(f.name)+im.ext,im.blob);P.competitions.push({title:pretty(f.name),image:p,file:"",w:im.w,h:im.h});added++;}
-        else if(isPdf(f)){
-          const file=putFile("competitions",f.name,f);
-          try{const th=await pdfThumb(f),p=putFile("competitions",baseName(f.name)+".jpg",th.blob);P.competitions.push({title:pretty(f.name),image:p,file,w:th.w,h:th.h});}
-          catch(err){P.competitions.push({title:pretty(f.name),image:"",file,w:0,h:0});toast("Added the PDF without a preview picture. Previews need an internet connection.");}
-          added++;
-        }else toast(`"${f.name}" skipped. Competition posters need to be images or PDFs.`);
-      }else if(t.sec==="equipment"){
-        if(isImg(f)){const im=await prepImage(f),p=putFile("year"+t.y,baseName(f.name)+im.ext,im.blob);P.years[t.y].equipment.push({title:pretty(f.name),text:"",url:"/book/",image:p});added++;}
-        else toast(`"${f.name}" skipped. Equipment takes a photo (use "+ Add equipment" for text).`);
-      }else{
-        if(isImg(f)){const im=await prepImage(f),p=putFile("year"+t.y,baseName(f.name)+im.ext,im.blob);P.years[t.y][t.sec].push({title:pretty(f.name),text:"",url:p,image:p});}
-        else{const p=putFile("year"+t.y,f.name,f);P.years[t.y][t.sec].push({title:pretty(f.name),text:"",url:p,image:""});}
+      if(isImg(f)){const im=await prepImage(f),p=putFile("competitions",baseName(f.name)+im.ext,im.blob);P.competitions.push({title:pretty(f.name),image:p,file:"",w:im.w,h:im.h,link:"",start:"",end:"",gen:false});added++;}
+      else if(isPdf(f)){
+        const file=putFile("competitions",f.name,f);
+        try{const th=await pdfThumb(f),p=putFile("competitions",baseName(f.name)+".jpg",th.blob);P.competitions.push({title:pretty(f.name),image:p,file,w:th.w,h:th.h,link:"",start:"",end:"",gen:false});}
+        catch(err){P.competitions.push({title:pretty(f.name),image:"",file,w:0,h:0,link:"",start:"",end:"",gen:false});toast("Added the PDF without a preview picture. Previews need an internet connection.");}
         added++;
-      }
+      }else toast(`"${f.name}" skipped. Competition posters need to be images or PDFs.`);
     }catch(err){console.error(err);toast(`Couldn't add "${f.name}".`);}
   }
-  if(added){changed();if(t.sec!=="comp")toast(`Added ${added} file${added>1?"s":""}. Tap ✎ on a card to change its title.`);}
+  return added;
+}
+async function runIngest(nodes,t){
+  if(!nodes.length)return;toast("Adding…");let added=0;
+  try{
+    if(t.sec==="comp")added=await addPosters(flatFiles(nodes));
+    else{
+      const list=listAt(t.sec,t.y,t.path);if(!list){toast("Couldn't find that folder.");return;}
+      const count={n:0};added=await ingestNodes(nodes,{sec:t.sec,y:t.y,list,dir:dirFor(t),keep:false,count});
+      if(count.skipped)toast("Stopped at 300 files. Add the rest in a second go.");
+      if(t.path)S.openF.add(`${t.sec}|${t.y||""}|${t.path}`);
+    }
+  }catch(err){console.error(err);toast("Something went wrong adding those files.");}
+  if(added){changed();if(!$("#toast").textContent.startsWith("Stopped"))toast(`Added ${added} item${added>1?"s":""}. Tap ✎ on a card to change its title.`);}
 }
 /* drag and drop */
 addEventListener("dragover",e=>{
@@ -681,7 +985,11 @@ addEventListener("drop",e=>{
   if(!S.teacher||!e.dataTransfer||![...e.dataTransfer.types].includes("Files"))return;e.preventDefault();
   document.querySelectorAll(".dz.over").forEach(z=>z.classList.remove("over"));
   const z=e.target.closest&&e.target.closest(".dz");if(!z||!editing()){toast("Drop files onto a dashed box.");return;}
-  handleFiles([...e.dataTransfer.files],{sec:z.dataset.sec,y:z.dataset.y});
+  const t={sec:z.dataset.sec,y:z.dataset.y,path:z.dataset.path||""};
+  /* entries must be read now, while the drop event is still live */
+  const ents=[...(e.dataTransfer.items||[])].map(it=>it.kind==="file"&&it.webkitGetAsEntry?it.webkitGetAsEntry():null).filter(Boolean);
+  const files=[...e.dataTransfer.files];
+  (async()=>{const nodes=ents.length?await entriesToNodes(ents):files.map(f=>({name:f.name,file:f}));runIngest(nodes,t);})();
 });
 addEventListener("beforeunload",e=>{if(S.teacher&&S.dirty&&!S.saved){e.preventDefault();e.returnValue="";}});
 
@@ -694,10 +1002,12 @@ This file controls what students see. You can edit it by hand, or use
 years:        assignments, resources and equipment cards for each year,
               plus "page" (a link to the class web page, or "")
 tutorials:    buttons that open a YouTube video  { title, url }
-competitions: posters that scroll across the page { title, image, file, w, h }
-links:        Useful Links cards                  { title, text, url }
+competitions: posters that scroll across the page
+              { title, image, file, w, h, link, start, end }   (dates look like 2026-03-28)
+links:        the Useful Resources section (cards and folders)
 
-A card looks like  { "title": "...", "text": "...", "url": "...", "image": "" }
+A card looks like    { "title": "...", "text": "...", "url": "...", "image": "" }
+A folder looks like  { "title": "...", "text": "...", "items": [ ...cards... ] }
 Keep the quote marks, keep a comma after each }, and don't delete [ ] brackets.
 ===================================================================== */
 `;
@@ -721,7 +1031,7 @@ function makeZip(files){
 function saveBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);}
 async function download(){
   const js=HEADER+"window.PORTAL = "+JSON.stringify(P,null,2)+";\n", used=JSON.stringify(P);
-  const entries=[...S.files].filter(([p])=>used.includes(p));
+  const entries=[...S.files].filter(([p])=>used.includes(JSON.stringify(p).slice(1,-1)));
   let html;
   if(!entries.length){
     saveBlob(new Blob([js],{type:"text/javascript"}),"content.js");

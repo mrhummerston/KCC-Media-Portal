@@ -6,10 +6,12 @@ This file controls what students see. You can edit it by hand, or use
 years:        assignments, resources and equipment cards for each year,
               plus "page" (a link to the class web page, or "")
 tutorials:    buttons that open a YouTube video  { title, url }
-competitions: posters that scroll across the page { title, image, file, w, h }
-links:        Useful Links cards                  { title, text, url }
+competitions: posters that scroll across the page
+              { title, image, file, w, h, link, start, end }   (dates look like 2026-03-28)
+links:        the Useful Resources section (cards and folders)
 
-A card looks like  { "title": "...", "text": "...", "url": "...", "image": "" }
+A card looks like    { "title": "...", "text": "...", "url": "...", "image": "" }
+A folder looks like  { "title": "...", "text": "...", "items": [ ...cards... ] }
 Keep the quote marks, keep a comma after each }, and don't delete [ ] brackets.
 ===================================================================== */
 window.PORTAL = {
@@ -62,6 +64,30 @@ window.PORTAL = {
   "tutorials": [],
   "competitions": [],
   "links": [
+    {
+      "title": "Stock Photo and Websites",
+      "text": "Free photos and video footage for your project.",
+      "items": [
+        {
+          "title": "Pexels",
+          "text": "Free stock photos and videos.",
+          "url": "https://www.pexels.com/",
+          "image": ""
+        },
+        {
+          "title": "Pixabay",
+          "text": "Free stock video footage and clips.",
+          "url": "https://pixabay.com/videos/",
+          "image": ""
+        },
+        {
+          "title": "Unsplash",
+          "text": "Beautiful free photos.",
+          "url": "https://unsplash.com/",
+          "image": ""
+        }
+      ]
+    },
     {
       "title": "YouTube to MP4 downloader",
       "text": "Save a video as an MP4 for editing. Only use footage you have permission to use.",
