@@ -1,71 +1,96 @@
 /* =====================================================================
 MEDIA PORTAL CONTENT
-Edit this file to change what each year group sees. Nothing else
-on the site needs to change.
+This file controls what students see. You can edit it by hand, or use
+"Teacher login" on the portal page and download an updated copy.
 
-Each year has:
-page: a link to the class web page (or "" for none)
-assignments: a list of cards
-resources: a list of cards
+years:        assignments, resources and equipment cards for each year,
+              plus "page" (a link to the class web page, or "")
+tutorials:    buttons that open a YouTube video  { title, url }
+competitions: posters that scroll across the page { title, image, file, w, h }
+links:        Useful Links cards                  { title, text, url }
 
-A card looks like this (copy, paste, then change the words):
-{ title: "Short film task",
-text: "Due Week 6",
-url: "https://...", // or a file on this site, e.g. "/film-trailers.html"
-image: "/images/my-picture.jpg" // optional, upload pictures to public/images
-},
-
-Rules: keep the quote marks "like this", keep a comma after each },
-and don't delete the square brackets [ ].
+A card looks like  { "title": "...", "text": "...", "url": "...", "image": "" }
+Keep the quote marks, keep a comma after each }, and don't delete [ ] brackets.
 ===================================================================== */
 window.PORTAL = {
-years: {
-"8": {
-page: "",
-assignments: [
-{ title: "Western Genre Unit",
-text: "Watch Rango, learn the codes and conventions of the Western genre, then plan, film and edit your own Western short film.",
-url: "/western.html#unit",
-image: "" },
-{ title: "My Rango Notes and Response",
-text: "Take notes while you watch Rango, write your In-Class Response (Task 1) and save it as a PDF.",
-url: "/western.html#unit/rango",
-image: "" },
-{ title: "Photography Unit",
-text: "Learn one photography idea at a time: shots, composition, aperture, shutter speed, ISO and more.",
-url: "/photography.html#unit",
-image: "" },
-{ title: "My Photography Folio",
-text: "Drag and drop your best photos, add your labels, then save it as a PDF to hand in.",
-url: "/photography.html#folio",
-image: "" }
-],
-resources: []
-},
-"9": {
-page: "",
-assignments: [],
-resources: []
-},
-"10": {
-page: "",
-assignments: [],
-resources: []
-},
-"11": {
-page: "",
-assignments: [
-{ title: "Film Trailers: Genre and Structure",
-text: "Task 2 \u00b7 Genre, trailer structure and your production task. Work through all three parts with your group.",
-url: "/film-trailers.html",
-image: "" }
-],
-resources: []
-},
-"12": {
-page: "",
-assignments: [],
-resources: []
-}
-}
+  "years": {
+    "8": {
+      "page": "",
+      "assignments": [
+        {
+          "title": "Photography Unit",
+          "text": "Learn one photography idea at a time: shots, composition, aperture, shutter speed, ISO and more.",
+          "url": "/photography.html#unit",
+          "image": ""
+        }
+      ],
+      "resources": [],
+      "equipment": []
+    },
+    "9": {
+      "page": "",
+      "assignments": [],
+      "resources": [],
+      "equipment": []
+    },
+    "10": {
+      "page": "",
+      "assignments": [],
+      "resources": [],
+      "equipment": []
+    },
+    "11": {
+      "page": "",
+      "assignments": [
+        {
+          "title": "Film Trailers: Genre and Structure",
+          "text": "Task 2 · Genre, trailer structure and your production task. Work through all three parts with your group.",
+          "url": "/film-trailers.html",
+          "image": ""
+        }
+      ],
+      "resources": [],
+      "equipment": []
+    },
+    "12": {
+      "page": "",
+      "assignments": [],
+      "resources": [],
+      "equipment": []
+    }
+  },
+  "tutorials": [],
+  "competitions": [],
+  "links": [
+    {
+      "title": "YouTube to MP4 downloader",
+      "text": "Save a video as an MP4 for editing. Only use footage you have permission to use.",
+      "url": "https://cobalt.tools",
+      "image": ""
+    },
+    {
+      "title": "Pixabay Music",
+      "text": "Free music for projects. Check the licence for each track.",
+      "url": "https://pixabay.com/music/",
+      "image": ""
+    },
+    {
+      "title": "Free Music Archive",
+      "text": "Free music you can search by genre and licence. Credit the artist if asked.",
+      "url": "https://freemusicarchive.org",
+      "image": ""
+    },
+    {
+      "title": "Incompetech",
+      "text": "Royalty-free music by Kevin MacLeod. Credit is required.",
+      "url": "https://incompetech.com/music/royalty-free/",
+      "image": ""
+    },
+    {
+      "title": "Freesound",
+      "text": "Sound effects and recordings shared by other people.",
+      "url": "https://freesound.org",
+      "image": ""
+    }
+  ]
 };

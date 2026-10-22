@@ -13,7 +13,7 @@
 /* =================================================================
    EASY EDITS
    - Year colours: change the --yN values below.
-   - Links for each year: edit YEARS in the script at the bottom.
+   - Page content: edit content.js, or use Teacher login on the page.
    - Logo: upload your school logo to the site as  kcc-logo.png
    ================================================================= */
 :root{
@@ -80,7 +80,7 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y
 .tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
 
 /* the big booking button */
-.book{display:grid;grid-template-columns:4fr 1fr;gap:12px;margin:30px auto 10px;max-width:900px;
+.book{display:grid;grid-template-columns:4fr 1fr 1fr;gap:12px;margin:18px auto 10px;max-width:900px;
   background:linear-gradient(135deg,#E2464C,var(--brand) 55%,#C42A31);border-radius:30px;padding:14px;
   box-shadow:0 12px 0 var(--brand-dark),0 26px 44px rgba(216,52,58,.30)}
 .book a{text-decoration:none;color:#fff}
@@ -100,7 +100,12 @@ h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y
 .book-return span{font-size:30px;line-height:1}
 .book-return:hover{transform:translateY(-2px)}
 .book-return:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
-.book a:focus-visible{outline:4px solid #fff;outline-offset:3px}
+.book-qr{appearance:none;border:0;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;color:var(--brand-dark);font-weight:800;font-size:15px;line-height:1.15;border-radius:20px;padding:10px;min-height:64px;box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
+.book-qr:hover{transform:translateY(-2px)}
+.book-qr:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.qrbox{display:block;width:100%;max-width:104px;aspect-ratio:1;background:#fff}
+.qrbox svg{display:block;width:100%;height:auto}
+.book a:focus-visible,.book button:focus-visible{outline:4px solid #fff;outline-offset:3px}
 .quick{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 0}
 .quick a{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:12px 20px;text-decoration:none;font-weight:700;min-height:50px}
 .quick a:hover{border-color:var(--ink)}
@@ -145,11 +150,80 @@ a.card:hover{border-color:var(--panel-c)}
 .card-img{display:block;width:calc(100% + 36px);margin:0 -18px 14px;aspect-ratio:16/9;object-fit:cover;background:var(--line)}
 .empty-card{border-style:dashed;background:transparent}
 
+
+/* ---- sub headings, panels shared ---- */
+.sub-h{font-size:clamp(26px,3.6vw,34px)}
+.blk{padding-top:46px}
+.tut-block{margin-top:44px}
+.cw{position:relative;min-width:0}
+.cw>.card{height:100%}
+.ft{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--panel-soft,var(--accent-soft));font-size:12px;font-weight:700;color:var(--ink)}
+.tut-block .panel{--panel-c:var(--y8);--panel-soft:var(--y8-soft)}
+.video{margin-top:18px;border-radius:20px;overflow:hidden;aspect-ratio:16/9;background:#000;border:3px solid var(--panel-c)}
+.video iframe{display:block;width:100%;height:100%;border:0}
+.yr.tut{width:100%;height:100%}
+.yr.tut .lbl{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
+.yr.tut .pl{width:54px;height:54px;flex:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.18))}
+.yr.add{background:transparent;color:var(--ink);border:3px dashed var(--ink);box-shadow:none;font-weight:700;font-size:19px}
+
+/* ---- competitions stream ---- */
+.stream{overflow-x:auto;overflow-y:hidden;padding:16px 2px 30px;scrollbar-width:thin;scrollbar-color:var(--brand) transparent;overscroll-behavior-x:contain}
+.track{display:flex;gap:24px;width:max-content;margin:0 auto}
+.track .cw{flex:none}
+.poster{appearance:none;border:0;cursor:pointer;font:inherit;display:block;position:relative;height:clamp(300px,52vw,460px);aspect-ratio:var(--ar,3/4);border-radius:28px;padding:10px;
+  background:linear-gradient(140deg,var(--c1),var(--c2));box-shadow:0 10px 0 rgba(0,0,0,.18),0 24px 40px rgba(20,27,45,.22);transition:transform .15s}
+.poster:hover{transform:translateY(-4px)}
+.poster img{display:block;width:100%;height:100%;object-fit:cover;border-radius:19px;background:#fff}
+.poster .ph{width:100%;height:100%;border-radius:19px;background:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:56px;color:var(--c1)}
+.poster .pt{position:absolute;left:10px;right:10px;bottom:10px;padding:40px 16px 14px;border-radius:0 0 19px 19px;background:linear-gradient(transparent,rgba(10,12,30,.86));color:#fff;font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1;text-align:left}
+.stream-tools{display:flex;justify-content:center;margin-top:4px}
+
+/* ---- dialogs, buttons ---- */
+dialog{border:3px solid var(--ink);border-radius:24px;background:var(--surface);color:var(--ink);padding:24px;width:min(92vw,520px);max-width:92vw}
+dialog::backdrop{background:rgba(10,12,30,.7)}
+dialog h3{font-family:var(--display);font-weight:800;font-size:26px;margin:0 0 6px}
+dialog .f label{display:block;font-weight:700;margin:14px 0 4px}
+dialog .f input,dialog .f textarea{width:100%;font:inherit;padding:11px 13px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+dialog .f input:focus,dialog .f textarea:focus{border-color:var(--ink);outline:none}
+.err{color:#B42318;font-weight:700;min-height:1.4em;margin:10px 0 0}
+:root[data-theme="dark"] .err{color:#FF9A92}
+.fbtns{display:flex;gap:10px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:var(--bg);padding:9px 18px;min-height:44px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
+.qr-big{width:min(72vw,380px);margin:14px auto;padding:14px;background:#fff;border-radius:20px;border:3px solid var(--line)}
+.qr-big svg{display:block;width:100%;height:auto}
+.qr-url{word-break:break-all;color:var(--muted);font-size:15px;text-align:center;margin:0}
+dialog.lb{width:auto;max-width:min(94vw,920px);padding:14px;text-align:center}
+dialog.lb img{display:block;max-width:100%;max-height:76vh;margin:0 auto;border-radius:16px}
+dialog.lb h3{margin:12px 0 8px}
+
+/* ---- teacher mode ---- */
+.ctl{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:3}
+.ctl button{width:38px;height:38px;border-radius:50%;border:2px solid var(--ink);background:var(--surface);color:var(--ink);font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.ctl button:hover{background:var(--ink);color:var(--bg)}
+.dz{margin-top:14px;border:3px dashed var(--panel-c,var(--ink));border-radius:20px;padding:18px;text-align:center;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;transition:background .12s}
+.dz b{color:var(--ink)}
+.dz.over{background:var(--accent-soft);border-style:solid}
+.dz .dzb{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.dz.big{padding:28px;margin:6px 0 0;border-color:var(--brand)}
+.linkbtn{appearance:none;background:none;border:0;padding:0;font:inherit;font-weight:700;color:inherit;text-decoration:underline;cursor:pointer}
+.tbar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom));z-index:30;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;background:var(--surface);border:3px solid var(--ink);border-radius:22px;padding:10px 14px;box-shadow:0 12px 30px rgba(20,27,45,.3);width:max-content;max-width:94vw}
+.tbar[hidden]{display:none}
+.tb-msg{font-weight:700}
+.tb-msg small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+body.t-on{padding-bottom:110px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:110px;z-index:40;background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:14px;font-weight:700;max-width:92vw;text-align:center}
+.toast[hidden]{display:none}
+.hint{color:var(--muted);font-size:15px;margin:10px 0 0}
+
 footer{margin:56px 0 30px;padding-top:20px;border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:15px}
-footer a{font-weight:700}
+footer a,footer .linkbtn{font-weight:700}
 @media (max-width:560px){
-  .book{grid-template-columns:1fr;padding:12px;gap:10px}
-  .book-main{gap:14px;padding:10px;min-height:0;width:100%}
+  .book{grid-template-columns:1fr 1fr;padding:12px;gap:10px}
+  .book-main{gap:14px;padding:10px;min-height:0;width:100%;grid-column:1/-1}
+  .book-qr{flex-direction:row;gap:10px;min-height:60px}
+  .book-qr .qrbox{width:44px;max-width:44px}
   .book-return{flex-direction:row;gap:10px;min-height:60px}
   .book-return span{font-size:22px}
   .book .ic{width:60px;height:60px}
@@ -175,67 +249,503 @@ footer a{font-weight:700}
 </header>
 
 <main id="main" class="wrap">
-  <div class="book">
-    <a class="book-main" href="/book/">
-      <span class="ic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="14" width="38" height="26" rx="5"/><path d="M15 14l3-6h12l3 6"/><circle cx="24" cy="27" r="8"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg></span>
-      <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
-    </a>
-    <a class="book-return" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
-  </div>
 
-  <section id="years" aria-labelledby="yearsTitle">
+  <!-- BOOK EQUIPMENT -->
+  <section id="bookSec" class="blk" aria-labelledby="bookTitle" style="padding-top:34px">
+    <h2 id="bookTitle" class="big-h">Book Media Equipment</h2>
+    <div class="book">
+      <a class="book-main" href="/book/">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="14" width="38" height="26" rx="5"/><path d="M15 14l3-6h12l3 6"/><circle cx="24" cy="27" r="8"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg></span>
+        <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
+      </a>
+      <a class="book-return" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
+      <button type="button" class="book-qr" id="qrBtn" data-act="qr" aria-label="Show the booking QR code bigger" hidden>
+        <span class="qrbox" id="qrMini"></span><span>Scan to book</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- COMPETITIONS -->
+  <section id="comp" class="blk" aria-labelledby="compTitle" hidden></section>
+
+  <!-- YEAR INFORMATION + TUTORIALS -->
+  <section id="years" class="blk" aria-labelledby="yearsTitle">
     <h2 id="yearsTitle" class="big-h">Media Class Information</h2>
-    <p class="sub">Tap your year to find your assignments, resources and class web page.</p>
+    <p class="sub">Tap your year to find your assignments, resources and class web page. Tap it again to close.</p>
     <div class="years" id="yearGrid"></div>
     <div class="panel" id="yearPanel" aria-live="polite"></div>
+
+    <div class="tut-block" id="tutBlock" hidden>
+      <h2 class="sub-h" id="tutTitle">Media Equipment Tutorials</h2>
+      <p class="sub">Tap a tutorial to watch it. Tap it again to close.</p>
+      <div class="years" id="tutGrid"></div>
+      <div class="panel" id="tutPanel" aria-live="polite"></div>
+    </div>
   </section>
+
+  <!-- USEFUL LINKS -->
+  <section id="linksSec" class="blk" aria-labelledby="linksTitle" hidden></section>
 </main>
 
 <footer class="wrap">
   <span>Kingsway Christian College · Media Department</span>
-  <a href="/book/#teacher">Teacher login</a>
+  <button type="button" class="linkbtn" data-act="login">Teacher login</button>
 </footer>
 
+<!-- teacher toolbar + messages -->
+<div class="tbar" id="tbar" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="picker" multiple hidden>
+
+<!-- dialogs -->
+<dialog id="qrDlg" aria-labelledby="qrT">
+  <h3 id="qrT" style="text-align:center">Scan to book equipment</h3>
+  <div class="qr-big" id="qrBig"></div>
+  <p class="qr-url" id="qrUrl"></p>
+  <p class="hint" style="text-align:center">Point your phone camera at the code to open the booking page.</p>
+  <div class="fbtns" style="justify-content:center"><button type="button" class="btn" data-act="closedlg">Close</button></div>
+</dialog>
+
+<dialog id="lb" class="lb" aria-labelledby="lbT">
+  <img id="lbImg" alt="">
+  <h3 id="lbT"></h3>
+  <div class="fbtns" style="justify-content:center"><a class="btn brand" id="lbPdf" target="_blank" rel="noopener" hidden>Open the PDF</a><button type="button" class="btn" data-act="closedlg">Close</button></div>
+</dialog>
+
+<dialog id="loginDlg" aria-labelledby="loginT">
+  <form id="loginForm" class="f">
+    <h3 id="loginT">Teacher login</h3>
+    <label for="passcode">Passcode</label>
+    <input id="passcode" type="password" autocomplete="current-password">
+    <p class="err" id="loginErr" role="alert"></p>
+    <div class="fbtns"><button type="button" class="btn ghost" data-act="closedlg">Cancel</button><button class="btn brand">Log in</button></div>
+    <p class="hint">Looking for the equipment booking admin? <a href="/book/#teacher">Go to the booking teacher area</a>.</p>
+  </form>
+</dialog>
+
+<dialog id="formDlg" aria-labelledby="fTitle">
+  <form id="formEl" class="f">
+    <h3 id="fTitle"></h3>
+    <div id="fBody"></div>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="fbtns"><button type="button" class="btn ghost" data-act="closedlg">Cancel</button><button class="btn brand">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="pubDlg" aria-labelledby="pubT">
+  <h3 id="pubT">Your update is downloaded</h3>
+  <div id="pubBody"></div>
+  <div class="fbtns"><button type="button" class="btn" data-act="closedlg">Got it</button></div>
+</dialog>
+
 <script src="/content.js"></script>
+<script src="/qrcode.js"></script>
 <script>
 /* =================================================================
-   YEAR GROUPS – edit the text and links here.
-   Each link:  { title:"...", text:"...", url:"https://..." }
+   TEACHER PASSCODE – change this to your own. (It's a gate to stop
+   students clicking around, not high security. Nothing a student does
+   can change what other students see: changes only go live when you
+   upload the downloaded files to the site.)
    ================================================================= */
-const YEARS = (window.PORTAL&&window.PORTAL.years)||{};   /* edit content.js to change these */
-const ORDER=["8","9","10","11","12"].filter(y=>YEARS[y]);
+const TEACHER_CODE="kccmedia";
+
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-$("#yearGrid").innerHTML=ORDER.map(y=>`<button class="yr" style="--c:var(--y${y})" data-y="${y}" aria-pressed="false"><span class="num">${y}</span><span class="lbl">Year ${y}</span></button>`).join("");
+/* ---------- data (edit content.js, or use Teacher login on the page) ---------- */
+const P=JSON.parse(JSON.stringify((window.PORTAL)||{}));
+P.years=P.years||{}; P.tutorials=P.tutorials||[]; P.competitions=P.competitions||[]; P.links=P.links||[];
+const ORDER=["8","9","10","11","12"].filter(y=>P.years[y]);
+ORDER.forEach(y=>{const Y=P.years[y];Y.assignments=Y.assignments||[];Y.resources=Y.resources||[];Y.equipment=Y.equipment||[];Y.page=Y.page||"";});
 
-function linkCards(kind,list){
-  if(!list.length) return `<div class="card empty-card"><span class="k">${kind}s</span><b>Coming soon</b><p>Your teacher will add these here.</p></div>`;
-  return list.map(l=>`<a class="card${l.image?" has-img":""}" href="${esc(l.url)}"${/^https?:/.test(l.url||"")?' target="_blank" rel="noopener"':""}>${l.image?`<img class="card-img" src="${esc(l.image)}" alt="" loading="lazy">`:""}<span class="k">${kind}</span><b>${esc(l.title)}</b><p>${esc(l.text||"")}</p></a>`).join("");
+const S={teacher:false,preview:false,dirty:0,saved:true,files:new Map(),openYear:"",openTut:-1};
+const editing=()=>S.teacher&&!S.preview;
+{const saved=store.get("kcc-portal-year"); if(saved&&P.years[saved]) S.openYear=saved;}
+
+const FT={pdf:"PDF",doc:"Word",docx:"Word",ppt:"PowerPoint",pptx:"PowerPoint",key:"Keynote",xls:"Excel",xlsx:"Excel",csv:"Spreadsheet",mp4:"Video",mov:"Video",m4v:"Video",mp3:"Audio",wav:"Audio",zip:"ZIP",jpg:"Image",jpeg:"Image",png:"Image",gif:"Image",webp:"Image"};
+const extOf=u=>{const m=String(u||"").split(/[?#]/)[0].match(/\.([a-z0-9]{2,5})$/i);return m?m[1].toLowerCase():""};
+const safeUrl=u=>/^(https?:\/\/|\/|blob:|mailto:)/i.test(u||"")?u:"#";
+const resolve=u=>{const f=S.files.get(u);return f?f.obj:u};
+const PALS=[["--y11","--y10"],["--y9","--y12"],["--y8","--y11"],["--y10","--y9"],["--y12","--y8"]];
+const TC=["8","9","10","11","12"];
+
+/* =============================================================
+   BOOKING QR CODE
+   ============================================================= */
+const BOOK_URL=new URL("/book/",location.href).href;
+function qrSVG(id){const q=qrcode(0,"M");q.addData(BOOK_URL);q.make();return q.createSvgTag({cellSize:4,margin:2,scalable:true,title:{text:"QR code that opens the equipment booking page",id}});}
+if(typeof qrcode==="function"){
+  $("#qrMini").innerHTML=qrSVG("qrt1"); $("#qrBig").innerHTML=qrSVG("qrt2"); $("#qrUrl").textContent=BOOK_URL; $("#qrBtn").hidden=false;
 }
-function showYear(y,scroll){
-  const Y=YEARS[y]; if(!Y) return; Y.assignments=Y.assignments||[]; Y.resources=Y.resources||[];
-  store.set("kcc-portal-year",y);
-  document.querySelectorAll(".yr").forEach(b=>b.setAttribute("aria-pressed",b.dataset.y===y));
-  const p=$("#yearPanel");
+
+/* =============================================================
+   YEAR BUTTONS + PANEL
+   ============================================================= */
+$("#yearGrid").innerHTML=ORDER.map(y=>`<button class="yr" style="--c:var(--y${y})" data-act="yr" data-y="${y}" aria-expanded="false" aria-controls="yearPanel"><span class="num">${y}</span><span class="lbl">Year ${y}</span></button>`).join("");
+
+const ctl=(sec,i,y)=>`<div class="ctl"><button type="button" data-act="edit" data-sec="${sec}" data-i="${i}" data-y="${y||""}" aria-label="Edit">✎</button><button type="button" data-act="del" data-sec="${sec}" data-i="${i}" data-y="${y||""}" aria-label="Remove">✕</button></div>`;
+
+function cardsHTML(kind,list,sec,y){
+  return list.map((l,i)=>{
+    const ext=extOf(l.url), href=safeUrl(resolve(l.url||"")), ext_=/^https?:/.test(l.url||"")||ext==="pdf";
+    const a=`<a class="card${l.image?" has-img":""}" href="${esc(href)}"${ext_?' target="_blank" rel="noopener"':""}>${l.image?`<img class="card-img" src="${esc(resolve(l.image))}" alt="" loading="lazy">`:""}<span class="k">${kind}</span>${FT[ext]&&sec!=="links"?`<span class="ft">${FT[ext]}</span>`:""}<b>${esc(l.title)}</b>${l.text?`<p>${esc(l.text)}</p>`:""}</a>`;
+    return `<div class="cw">${a}${editing()?ctl(sec,i,y):""}</div>`;
+  }).join("");
+}
+function dzHTML(sec,y){
+  if(sec==="links") return `<div class="dz" data-sec="links"><b>Add a handy link</b><span class="dzb"><button type="button" class="btn" data-act="add" data-sec="links">+ Add a link</button></span></div>`;
+  if(sec==="equipment") return `<div class="dz" data-sec="equipment" data-y="${y}"><span><b>Drag a photo here</b> or add equipment</span><span class="dzb"><button type="button" class="btn" data-act="add" data-sec="equipment" data-y="${y}">+ Add equipment</button></span></div>`;
+  return `<div class="dz" data-sec="${sec}" data-y="${y}"><span><b>Drag files here</b> (Word, PDF, slides, images, video)</span><span class="dzb"><button type="button" class="btn" data-act="browse" data-sec="${sec}" data-y="${y}">Choose files</button><button type="button" class="btn ghost" data-act="add" data-sec="${sec}" data-y="${y}">+ Add a link</button></span></div>`;
+}
+function secHTML(y,key,label,kind){
+  const list=P.years[y][key];
+  if(!list.length&&!editing()) return "";            /* nothing to show = no heading, no "coming soon" */
+  return `<h4 class="sec">${label}</h4>${list.length?`<div class="cards">${cardsHTML(kind,list,key,y)}</div>`:""}${editing()?dzHTML(key,y):""}`;
+}
+function renderYears(){
+  document.querySelectorAll("#yearGrid .yr").forEach(b=>b.setAttribute("aria-expanded",String(b.dataset.y===S.openYear)));
+  const p=$("#yearPanel"), y=S.openYear, Y=P.years[y];
+  if(!Y){p.classList.remove("show");p.innerHTML="";return;}
   p.style.setProperty("--panel-c",`var(--y${y})`); p.style.setProperty("--panel-soft",`var(--y${y}-soft)`);
   p.innerHTML=`<div class="panel-head"><span class="badge" aria-hidden="true">${y}</span><h3>Year ${y} Media</h3>
-      ${Y.page?`<a class="book-yr" href="${esc(Y.page)}" target="_blank" rel="noopener">Open class web page <span aria-hidden="true">→</span></a>`:""}</div>
-    <h4 class="sec">Assignments</h4><div class="cards">${linkCards("Assignment",Y.assignments)}</div>
-    <h4 class="sec">Resources</h4><div class="cards">${linkCards("Resource",Y.resources)}</div>`;
+      ${Y.page?`<a class="book-yr" href="${esc(safeUrl(Y.page))}" target="_blank" rel="noopener">Open class web page <span aria-hidden="true">→</span></a>`:""}
+      ${editing()?`<button type="button" class="btn ${Y.page?"ghost":""}" style="${Y.page?"":"margin-left:auto"}" data-act="pageurl" data-y="${y}">${Y.page?"Change":"Set"} class web page link</button>`:""}</div>
+    ${secHTML(y,"assignments","Assignments","Assignment")}
+    ${secHTML(y,"resources","Resources","Resource")}
+    ${secHTML(y,"equipment","Equipment","Equipment")}`;
   p.classList.add("show");
-  if(scroll) p.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"nearest"});
 }
-document.querySelectorAll(".yr").forEach(b=>b.onclick=()=>showYear(b.dataset.y,true));
-const saved=store.get("kcc-portal-year"); if(saved&&YEARS[saved]) showYear(saved,false);
+function toggleYear(y){
+  S.openYear=S.openYear===y?"":y; store.set("kcc-portal-year",S.openYear); renderYears();
+  if(S.openYear) $("#yearPanel").scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"nearest"});
+}
 
-/* light / dark switch */
-const root=document.documentElement, modeBtn=$("#mode");
-function setMode(m){ if(m) root.dataset.theme=m; else delete root.dataset.theme; store.set("kcc-portal-theme",m||"");
-  const dark=m?m==="dark":matchMedia("(prefers-color-scheme: dark)").matches; modeBtn.textContent=dark?"☀️ Light mode":"🌙 Dark mode"; }
+/* =============================================================
+   TUTORIALS (YouTube)
+   ============================================================= */
+function ytEmbed(u){
+  try{
+    const x=new URL(String(u||"").trim()); const h=x.hostname.replace(/^(www|m|music)\./,""); let id="";
+    if(h==="youtu.be") id=x.pathname.slice(1).split("/")[0];
+    else if(h==="youtube.com"||h==="youtube-nocookie.com"){
+      if(x.pathname==="/watch") id=x.searchParams.get("v")||"";
+      else{const m=x.pathname.match(/^\/(embed|shorts|live|v)\/([^/?]+)/); if(m) id=m[2];}
+      if(!/^[\w-]{11}$/.test(id)&&x.searchParams.get("list")&&/^[\w-]+$/.test(x.searchParams.get("list")))
+        return "https://www.youtube-nocookie.com/embed/videoseries?list="+x.searchParams.get("list");
+    }
+    return /^[\w-]{11}$/.test(id)?"https://www.youtube-nocookie.com/embed/"+id:"";
+  }catch(e){return ""}
+}
+function renderTut(){
+  const box=$("#tutBlock"), list=P.tutorials;
+  if(!list.length&&!editing()){box.hidden=true;return;}
+  box.hidden=false;
+  let tiles=list.map((t,i)=>`<div class="cw"><button type="button" class="yr tut" style="--c:var(--y${TC[i%5]})" data-act="tut" data-t="${i}" aria-expanded="${S.openTut===i}" aria-controls="tutPanel"><svg class="pl" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M19 15l16 9-16 9z" fill="var(--c)"/></svg><span class="lbl">${esc(t.title)}</span></button>${editing()?ctl("tut",i):""}</div>`).join("");
+  if(editing()) tiles+=`<button type="button" class="yr tut add" data-act="add" data-sec="tut">+ Add a tutorial</button>`;
+  $("#tutGrid").innerHTML=tiles;
+  const p=$("#tutPanel"), t=list[S.openTut];
+  if(!t){p.classList.remove("show");p.innerHTML="";return;}
+  const c=TC[S.openTut%5], emb=ytEmbed(t.url);
+  p.style.setProperty("--panel-c",`var(--y${c})`); p.style.setProperty("--panel-soft",`var(--y${c}-soft)`);
+  p.innerHTML=`<div class="panel-head"><span class="badge" aria-hidden="true">▶</span><h3>${esc(t.title)}</h3><a class="book-yr" href="${esc(safeUrl(t.url))}" target="_blank" rel="noopener">Watch on YouTube <span aria-hidden="true">→</span></a></div>
+    ${emb?`<div class="video"><iframe src="${esc(emb)}" title="${esc(t.title)}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:`<p>This link can't be shown here. Use the button above.</p>`}`;
+  p.classList.add("show");
+}
+function toggleTut(i){
+  S.openTut=S.openTut===i?-1:i; renderTut();
+  if(S.openTut>=0) $("#tutPanel").scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"nearest"});
+}
+
+/* =============================================================
+   COMPETITIONS (poster stream)
+   ============================================================= */
+const M={raf:0,last:0,pos:0,hover:false,touch:false,hold:0,paused:false,L:0};
+function posterHTML(p,i){
+  const [c1,c2]=PALS[i%PALS.length], ar=p.w&&p.h?`${p.w}/${p.h}`:"3/4";
+  const img=p.image?`<img src="${esc(resolve(p.image))}" alt="" decoding="async">`:`<span class="ph" aria-hidden="true">PDF</span>`;
+  return `<div class="cw"><button type="button" class="poster" data-act="poster" data-p="${i}" style="--c1:var(${c1});--c2:var(${c2});--ar:${ar}" aria-label="View poster: ${esc(p.title)}">${img}<span class="pt">${esc(p.title)}</span></button>${editing()?ctl("comp",i):""}</div>`;
+}
+function renderComp(){
+  cancelAnimationFrame(M.raf);
+  const sec=$("#comp"), list=P.competitions;
+  if(!list.length&&!editing()){sec.hidden=true;sec.innerHTML="";return;}
+  sec.hidden=false;
+  const live=list.length&&!editing()&&!REDUCED;
+  sec.innerHTML=`<h2 id="compTitle" class="big-h">Competitions</h2>
+    ${list.length?`<p class="sub">Tap a poster to see it bigger. Scroll sideways to browse.</p>
+    <div class="stream" id="stream" tabindex="0" role="region" aria-label="Competition posters. Scroll sideways to browse."><div class="track">${list.map(posterHTML).join("")}</div></div>
+    ${live?`<div class="stream-tools"><button type="button" class="mode" id="ppBtn" data-act="pp" aria-pressed="${M.paused}">${M.paused?"▶ Play":"❚❚ Pause"}</button></div>`:""}`:""}
+    ${editing()?`<div class="dz big" data-sec="comp"><span><b>Drag competition posters here</b> (images or PDFs). They show as large posters that scroll across the page.</span><span class="dzb"><button type="button" class="btn brand" data-act="browse" data-sec="comp">Choose files</button></span></div>`:""}`;
+  if(live) setupStream();
+}
+function setupStream(){
+  const st=$("#stream"); if(!st) return; const tr=st.firstElementChild;
+  requestAnimationFrame(()=>{
+    if(!$("#stream")||!tr.children.length) return;
+    if(tr.scrollWidth<=st.clientWidth+30) return;           /* few posters: no need to scroll */
+    const n=tr.children.length;
+    [...tr.children].forEach(c=>{const k=c.cloneNode(true);k.setAttribute("aria-hidden","true");k.querySelectorAll("button").forEach(b=>b.tabIndex=-1);tr.appendChild(k);});
+    M.L=tr.children[n].offsetLeft-tr.children[0].offsetLeft;
+    st.scrollLeft=M.pos=M.L; M.last=0;
+    const hold=()=>{M.hold=performance.now()+6000};
+    st.addEventListener("wheel",hold,{passive:true});
+    st.addEventListener("keydown",hold);
+    st.addEventListener("focusin",hold);
+    st.addEventListener("pointerdown",hold);
+    st.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")M.hover=true});
+    st.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse"){M.hover=false;hold()}});
+    st.addEventListener("touchstart",()=>{M.touch=true},{passive:true});
+    ["touchend","touchcancel"].forEach(t=>st.addEventListener(t,()=>{M.touch=false;hold()},{passive:true}));
+    st.addEventListener("scroll",()=>{const s=st.scrollLeft; if(s>=M.L+1) st.scrollLeft=s-M.L; else if(s<=0) st.scrollLeft=s+M.L;},{passive:true});
+    M.raf=requestAnimationFrame(tick);
+  });
+}
+function tick(t){
+  M.raf=requestAnimationFrame(tick);
+  const st=$("#stream"); if(!st) return;
+  const dt=Math.min(64,t-(M.last||t)); M.last=t;
+  if(M.paused||M.hover||M.touch||t<M.hold||document.hidden){M.pos=st.scrollLeft;return;}
+  M.pos+=dt*0.045; if(M.pos>=M.L+1) M.pos-=M.L;
+  st.scrollLeft=M.pos;
+}
+function openPoster(i){
+  const p=P.competitions[i]; if(!p) return;
+  if(!p.image&&p.file){window.open(resolve(p.file),"_blank","noopener");return;}
+  $("#lbImg").src=resolve(p.image); $("#lbImg").alt=p.title; $("#lbT").textContent=p.title;
+  const a=$("#lbPdf"); if(p.file){a.href=resolve(p.file);a.hidden=false}else a.hidden=true;
+  $("#lb").showModal();
+}
+
+/* =============================================================
+   USEFUL LINKS
+   ============================================================= */
+function renderLinks(){
+  const sec=$("#linksSec"), list=P.links;
+  if(!list.length&&!editing()){sec.hidden=true;sec.innerHTML="";return;}
+  sec.hidden=false; sec.style.setProperty("--panel-c","var(--y8)");
+  sec.innerHTML=`<h2 id="linksTitle" class="big-h">Useful Links</h2><p class="sub">Handy sites for your media projects.</p>
+    ${list.length?`<div class="cards">${cardsHTML("Link",list,"links")}</div>`:""}${editing()?dzHTML("links"):""}`;
+}
+
+/* =============================================================
+   TEACHER MODE
+   ============================================================= */
+const listFor=(sec,y)=>sec==="tut"?P.tutorials:sec==="comp"?P.competitions:sec==="links"?P.links:P.years[y][sec];
+function renderAll(){renderComp();renderYears();renderTut();renderLinks();renderBar();}
+function changed(){S.dirty++;S.saved=false;renderAll();}
+let toastT=0;
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,4500);}
+function renderBar(){
+  const b=$("#tbar");
+  if(!S.teacher){b.hidden=true;document.body.classList.remove("t-on");return;}
+  b.hidden=false;document.body.classList.add("t-on");
+  const unsaved=S.dirty&&!S.saved;
+  b.innerHTML=`<span class="tb-msg">${S.preview?"Previewing as a student":"Teacher mode"}<small>${unsaved?"You have changes to download":S.dirty?"Update downloaded":"Drag files into any section"}</small></span>
+    <button type="button" class="btn ${unsaved?"brand":""}" data-act="download">Download update</button>
+    <button type="button" class="btn ghost" data-act="preview">${S.preview?"Back to editing":"Preview as student"}</button>
+    <button type="button" class="btn ghost" data-act="logout">Log out</button>`;
+}
+
+/* --- login --- */
+$("#loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  if($("#passcode").value===TEACHER_CODE){
+    S.teacher=true;S.preview=false;$("#loginDlg").close();$("#passcode").value="";$("#loginErr").textContent="";
+    renderAll();toast("Teacher mode is on. Drag files into any section.");
+  }else $("#loginErr").textContent="That passcode isn't right.";
+});
+
+/* --- form dialog --- */
+let ASK=null;
+function ask(o){
+  ASK=o;$("#fTitle").textContent=o.title;
+  $("#fBody").innerHTML=o.fields.map(f=>`<label for="f_${f.k}">${esc(f.label)}</label>${f.area?`<textarea id="f_${f.k}" rows="3" placeholder="${esc(f.ph||"")}">${esc(f.value||"")}</textarea>`:`<input id="f_${f.k}" type="text" value="${esc(f.value||"")}" placeholder="${esc(f.ph||"")}" autocomplete="off">`}`).join("");
+  $("#fErr").textContent="";$("#formDlg").showModal();$("#fBody").querySelector("input,textarea").focus();
+}
+$("#formEl").addEventListener("submit",e=>{
+  e.preventDefault();const v={};ASK.fields.forEach(f=>v[f.k]=$("#f_"+f.k).value.trim());
+  const err=ASK.save(v);if(err){$("#fErr").textContent=err;return;}$("#formDlg").close();
+});
+const normUrl=u=>{u=(u||"").trim();if(!u)return"";if(/^(https?:\/\/|\/|mailto:)/i.test(u))return u;if(/^[\w-]+(\.[\w-]+)+(\/|$|\?|#)/.test(u))return"https://"+u;return"/"+u;};
+
+function editItem(sec,y,i){
+  const list=listFor(sec,y), cur=i>=0?list[i]:{}, adding=i<0;
+  const put=rec=>{if(adding)list.push(rec);else list[i]=Object.assign({},cur,rec);changed();};
+  if(sec==="tut") return ask({title:adding?"Add a tutorial":"Edit tutorial",fields:[{k:"title",label:"Button title",value:cur.title,ph:"e.g. Using the Sony camera"},{k:"url",label:"YouTube link",value:cur.url,ph:"Paste the YouTube link here"}],
+    save:v=>{if(!v.title)return"Give the tutorial a title.";if(!ytEmbed(v.url))return"That doesn't look like a YouTube link.";put({title:v.title,url:v.url});}});
+  if(sec==="comp") return ask({title:"Edit poster title",fields:[{k:"title",label:"Poster title",value:cur.title}],save:v=>{if(!v.title)return"Give the poster a title.";put({title:v.title});}});
+  const isEq=sec==="equipment";
+  ask({title:adding?(isEq?"Add equipment":"Add a link"):"Edit",fields:[
+      {k:"title",label:"Title",value:cur.title,ph:isEq?"e.g. Sony A7 camera":"Short title"},
+      {k:"text",label:"Description (optional)",value:cur.text,area:true,ph:"One or two short sentences"},
+      {k:"url",label:isEq?"Link (defaults to the booking page)":"Link",value:cur.url||(adding&&isEq?"/book/":""),ph:"https://..."}],
+    save:v=>{if(!v.title)return"Give it a title.";const u=normUrl(v.url||(isEq?"/book/":""));if(!u)return"Add a link.";put({title:v.title,text:v.text,url:u,image:cur.image||""});}});
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;const d=b.dataset;
+  switch(d.act){
+    case"yr":toggleYear(d.y);break;
+    case"tut":toggleTut(+d.t);break;
+    case"poster":openPoster(+d.p);break;
+    case"qr":$("#qrDlg").showModal();break;
+    case"closedlg":b.closest("dialog").close();break;
+    case"login":$("#loginDlg").showModal();$("#passcode").focus();break;
+    case"logout":if(S.dirty&&!S.saved&&!confirm("You have changes that aren't downloaded yet. Log out and lose them?"))break;S.saved=true;location.reload();break;
+    case"preview":S.preview=!S.preview;renderAll();break;
+    case"pp":M.paused=!M.paused;b.setAttribute("aria-pressed",M.paused);b.textContent=M.paused?"▶ Play":"❚❚ Pause";break;
+    case"add":editItem(d.sec,d.y,-1);break;
+    case"edit":editItem(d.sec,d.y,+d.i);break;
+    case"del":{const l=listFor(d.sec,d.y);if(confirm(`Remove "${l[+d.i].title}"?`)){l.splice(+d.i,1);if(d.sec==="tut")S.openTut=-1;changed();}break;}
+    case"pageurl":ask({title:"Class web page link",fields:[{k:"url",label:"Link (leave empty to remove the button)",value:P.years[d.y].page,ph:"https://..."}],save:v=>{P.years[d.y].page=normUrl(v.url);changed();}});break;
+    case"browse":pickTarget={sec:d.sec,y:d.y};$("#picker").value="";$("#picker").click();break;
+    case"download":download();break;
+  }
+});
+document.addEventListener("click",e=>{const d=e.target;if(d.tagName==="DIALOG"){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});
+
+/* --- file handling --- */
+let pickTarget=null;
+$("#picker").addEventListener("change",e=>{if(pickTarget)handleFiles([...e.target.files],pickTarget);});
+const isImg=f=>/^image\//.test(f.type)||/\.(jpe?g|png|gif|webp)$/i.test(f.name);
+const isPdf=f=>f.type==="application/pdf"||/\.pdf$/i.test(f.name);
+const baseName=n=>n.replace(/\.[^.]+$/,"");
+const pretty=n=>baseName(n).replace(/[_]+/g," ").replace(/\s+/g," ").trim()||"Untitled";
+function safeName(n){
+  const m=n.match(/\.([^.]+)$/),ext=m?"."+m[1].toLowerCase().replace(/[^a-z0-9]/g,""):"";
+  const b=baseName(n).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9._-]+/g,"-").replace(/^[-.]+|[-.]+$/g,"")||"file";
+  return b+ext;
+}
+function putFile(folder,name,blob){
+  let n=safeName(name),path=`/uploads/${folder}/${n}`,k=2;
+  while(S.files.has(path)){n=safeName(baseName(name)+"-"+k+(name.match(/\.[^.]+$/)||[""])[0]);path=`/uploads/${folder}/${n}`;k++;}
+  S.files.set(path,{blob,obj:URL.createObjectURL(blob)});return path;
+}
+async function prepImage(f,max=1800){
+  if(/^image\/(jpeg|png|webp)$/.test(f.type)){
+    const bmp=await createImageBitmap(f),sc=Math.min(1,max/Math.max(bmp.width,bmp.height));
+    const w=Math.round(bmp.width*sc),h=Math.round(bmp.height*sc),c=document.createElement("canvas");c.width=w;c.height=h;
+    const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(bmp,0,0,w,h);
+    const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.88));return{blob,w,h,ext:".jpg"};
+  }
+  const u=URL.createObjectURL(f),im=new Image();await new Promise((r,j)=>{im.onload=r;im.onerror=j;im.src=u;});URL.revokeObjectURL(u);
+  return{blob:f,w:im.naturalWidth,h:im.naturalHeight,ext:(f.name.match(/\.[^.]+$/)||[".img"])[0].toLowerCase()};
+}
+let pdfReady=null;
+function loadPdfJs(){
+  if(pdfReady)return pdfReady;
+  const V="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  return pdfReady=new Promise((res,rej)=>{const s=document.createElement("script");s.src=V+"pdf.min.js";s.onload=async()=>{try{
+    const t=await (await fetch(V+"pdf.worker.min.js")).text();
+    pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([t],{type:"text/javascript"}));res();}catch(e){rej(e)}};s.onerror=rej;document.head.appendChild(s);});
+}
+async function pdfThumb(f){
+  await loadPdfJs();
+  const doc=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise,pg=await doc.getPage(1),v0=pg.getViewport({scale:1});
+  const sc=Math.min(3,1500/Math.max(v0.width,v0.height)),v=pg.getViewport({scale:sc}),c=document.createElement("canvas");c.width=Math.round(v.width);c.height=Math.round(v.height);
+  const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:x,viewport:v}).promise;
+  return{blob:await new Promise(r=>c.toBlob(r,"image/jpeg",.88)),w:c.width,h:c.height};
+}
+async function handleFiles(files,t){
+  if(!files.length)return;toast("Adding "+(files.length>1?files.length+" files":files[0].name)+"…");let added=0;
+  for(const f of files){
+    try{
+      if(t.sec==="comp"){
+        if(isImg(f)){const im=await prepImage(f),p=putFile("competitions",baseName(f.name)+im.ext,im.blob);P.competitions.push({title:pretty(f.name),image:p,file:"",w:im.w,h:im.h});added++;}
+        else if(isPdf(f)){
+          const file=putFile("competitions",f.name,f);
+          try{const th=await pdfThumb(f),p=putFile("competitions",baseName(f.name)+".jpg",th.blob);P.competitions.push({title:pretty(f.name),image:p,file,w:th.w,h:th.h});}
+          catch(err){P.competitions.push({title:pretty(f.name),image:"",file,w:0,h:0});toast("Added the PDF without a preview picture. Previews need an internet connection.");}
+          added++;
+        }else toast(`"${f.name}" skipped. Competition posters need to be images or PDFs.`);
+      }else if(t.sec==="equipment"){
+        if(isImg(f)){const im=await prepImage(f),p=putFile("year"+t.y,baseName(f.name)+im.ext,im.blob);P.years[t.y].equipment.push({title:pretty(f.name),text:"",url:"/book/",image:p});added++;}
+        else toast(`"${f.name}" skipped. Equipment takes a photo (use "+ Add equipment" for text).`);
+      }else{
+        if(isImg(f)){const im=await prepImage(f),p=putFile("year"+t.y,baseName(f.name)+im.ext,im.blob);P.years[t.y][t.sec].push({title:pretty(f.name),text:"",url:p,image:p});}
+        else{const p=putFile("year"+t.y,f.name,f);P.years[t.y][t.sec].push({title:pretty(f.name),text:"",url:p,image:""});}
+        added++;
+      }
+    }catch(err){console.error(err);toast(`Couldn't add "${f.name}".`);}
+  }
+  if(added){changed();if(t.sec!=="comp")toast(`Added ${added} file${added>1?"s":""}. Tap ✎ on a card to change its title.`);}
+}
+/* drag and drop */
+addEventListener("dragover",e=>{
+  const files=e.dataTransfer&&[...e.dataTransfer.types].includes("Files");if(!S.teacher||!files)return;e.preventDefault();
+  document.querySelectorAll(".dz.over").forEach(z=>z.classList.remove("over"));const z=e.target.closest&&e.target.closest(".dz");if(z)z.classList.add("over");
+});
+addEventListener("dragleave",e=>{if(!e.relatedTarget)document.querySelectorAll(".dz.over").forEach(z=>z.classList.remove("over"));});
+addEventListener("drop",e=>{
+  if(!S.teacher||!e.dataTransfer||![...e.dataTransfer.types].includes("Files"))return;e.preventDefault();
+  document.querySelectorAll(".dz.over").forEach(z=>z.classList.remove("over"));
+  const z=e.target.closest&&e.target.closest(".dz");if(!z||!editing()){toast("Drop files onto a dashed box.");return;}
+  handleFiles([...e.dataTransfer.files],{sec:z.dataset.sec,y:z.dataset.y});
+});
+addEventListener("beforeunload",e=>{if(S.teacher&&S.dirty&&!S.saved){e.preventDefault();e.returnValue="";}});
+
+/* --- download update (content.js, plus a zip when there are new files) --- */
+const HEADER=`/* =====================================================================
+MEDIA PORTAL CONTENT
+This file controls what students see. You can edit it by hand, or use
+"Teacher login" on the portal page and download an updated copy.
+
+years:        assignments, resources and equipment cards for each year,
+              plus "page" (a link to the class web page, or "")
+tutorials:    buttons that open a YouTube video  { title, url }
+competitions: posters that scroll across the page { title, image, file, w, h }
+links:        Useful Links cards                  { title, text, url }
+
+A card looks like  { "title": "...", "text": "...", "url": "...", "image": "" }
+Keep the quote marks, keep a comma after each }, and don't delete [ ] brackets.
+===================================================================== */
+`;
+function crcTable(){const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;}
+const CRC=crcTable();
+const crc32=u=>{let c=-1;for(let i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0;};
+function makeZip(files){
+  const enc=new TextEncoder(),parts=[],cd=[];let off=0;
+  for(const f of files){
+    const nm=enc.encode(f.name),crc=crc32(f.data),sz=f.data.length,h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(12,0x21,true);h.setUint32(14,crc,true);h.setUint32(18,sz,true);h.setUint32(22,sz,true);h.setUint16(26,nm.length,true);
+    parts.push(h.buffer,nm,f.data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(14,0x21,true);c.setUint32(16,crc,true);c.setUint32(20,sz,true);c.setUint32(24,sz,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    cd.push(c.buffer,nm);off+=30+nm.length+sz;
+  }
+  const cdSize=cd.reduce((a,b)=>a+b.byteLength,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cdSize,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,e.buffer],{type:"application/zip"});
+}
+function saveBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);}
+async function download(){
+  const js=HEADER+"window.PORTAL = "+JSON.stringify(P,null,2)+";\n", used=JSON.stringify(P);
+  const entries=[...S.files].filter(([p])=>used.includes(p));
+  let html;
+  if(!entries.length){
+    saveBlob(new Blob([js],{type:"text/javascript"}),"content.js");
+    html=`<p>Upload <b>content.js</b> to your site and replace the one that's there. That's it.</p>`;
+  }else{
+    toast("Preparing your download…");
+    const files=[{name:"content.js",data:new TextEncoder().encode(js)}];
+    for(const [p,f] of entries) files.push({name:p.slice(1),data:new Uint8Array(await f.blob.arrayBuffer())});
+    saveBlob(makeZip(files),"kcc-portal-update.zip");
+    html=`<p>Unzip <b>kcc-portal-update.zip</b>. Inside are:</p><ul><li><b>content.js</b>, which replaces your current content.js</li><li>an <b>uploads</b> folder, which goes next to it</li></ul><p>Upload both to your site, in the same place as <b>index.html</b>. Students see the changes once the upload finishes.</p>`;
+  }
+  $("#pubBody").innerHTML=html;$("#pubDlg").showModal();S.saved=true;renderBar();
+}
+
+/* =============================================================
+   LIGHT / DARK
+   ============================================================= */
+const root=document.documentElement,modeBtn=$("#mode");
+function setMode(m){if(m)root.dataset.theme=m;else delete root.dataset.theme;store.set("kcc-portal-theme",m||"");
+  const dark=m?m==="dark":matchMedia("(prefers-color-scheme: dark)").matches;modeBtn.textContent=dark?"☀️ Light mode":"🌙 Dark mode";}
 setMode(store.get("kcc-portal-theme")||"");
-modeBtn.onclick=()=>{ const dark=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches; setMode(dark?"light":"dark"); };
+modeBtn.onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;setMode(dark?"light":"dark");};
+
+renderAll();
 </script>
 </body>
 </html>
