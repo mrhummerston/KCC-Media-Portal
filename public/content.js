@@ -101,67 +101,49 @@ window.PORTAL = {
       ]
     },
     {
-      "title": "Pixabay Music",
-      "text": "Free music for projects. Check the licence for each track.",
-      "url": "https://pixabay.com/music/",
-      "image": ""
-    },
-    {
-      "title": "Free Music Archive",
-      "text": "Free music you can search by genre and licence. Credit the artist if asked.",
-      "url": "https://freemusicarchive.org",
-      "image": ""
-    },
-    {
-      "title": "Incompetech",
-      "text": "Royalty-free music by Kevin MacLeod. Credit is required.",
-      "url": "https://incompetech.com/music/royalty-free/",
-      "image": ""
-    },
-    {
-      "title": "Freesound",
-      "text": "Sound effects and recordings shared by other people.",
-      "url": "https://freesound.org",
-      "image": ""
-    },
-    {
       "title": "Music Websites",
       "text": "Links to copyright free music to use in your project/s.",
       "items": [
         {
           "title": "Bensound",
-          "text": "",
+          "text": "A website offering royalty-free music tracks that can be used in videos, films, podcasts, and other creative projects.",
           "url": "https://www.bensound.com/free-music-for-videos",
           "image": ""
         },
         {
           "title": "incompetech Music",
-          "text": "",
+          "text": "A library of free music composed by Kevin MacLeod, available for download and use with attribution.",
           "url": "https://incompetech.com/music/royalty-free/music.html",
           "image": ""
         },
         {
           "title": "Pixabay",
-          "text": "",
+          "text": "A free media platform providing music, sound effects, images, videos, and illustrations for creative projects.",
           "url": "https://pixabay.com/music/",
           "image": ""
         },
         {
           "title": "Purple Planet",
-          "text": "",
+          "text": "A website offering free and premium background music tracks for videos, presentations, films, and educational projects.",
           "url": "https://www.purple-planet.com/home",
           "image": ""
         },
         {
           "title": "SoundBible.com",
-          "text": "",
+          "text": "A collection of free sound effects and audio clips that can be downloaded for media and multimedia productions.",
           "url": "https://soundbible.com/",
           "image": ""
         },
         {
           "title": "List of other music websites",
-          "text": "",
+          "text": "A webpage containing links to additional websites where users can find free or royalty-free music resources.",
           "url": "/uploads/resources/Music Websites/music-and-sound-effects---copyright-free-and-creative-commons-resources---subject-guides-at-monash-university.html",
+          "image": ""
+        },
+        {
+          "title": "Free Music Archive",
+          "text": "Free music you can search by genre and licence. Credit the artist if asked.",
+          "url": "https://freemusicarchive.org/",
           "image": ""
         }
       ]
@@ -171,14 +153,14 @@ window.PORTAL = {
       "text": "",
       "items": [
         {
-          "title": "Free Sound Clips",
-          "text": "",
+          "title": "Sound Clips",
+          "text": "A website offering a large collection of free sound effects and audio clips for videos, games, presentations, and multimedia projects.",
           "url": "https://soundbible.com/",
           "image": ""
         },
         {
           "title": "Freesound",
-          "text": "",
+          "text": "A community-driven library where users upload and share free sound effects, ambient recordings, and audio samples under various licences.",
           "url": "https://freesound.org/",
           "image": ""
         },
@@ -190,7 +172,7 @@ window.PORTAL = {
         },
         {
           "title": "Pixabay",
-          "text": "",
+          "text": "A free media platform providing music, sound effects, images, videos, and illustrations for creative projects.",
           "url": "https://pixabay.com/sound-effects/",
           "image": ""
         }
@@ -222,7 +204,7 @@ window.PORTAL = {
     },
     {
       "title": "DaFont",
-      "text": "",
+      "text": "A site for finding font designs that can be downloaded and imported into Premiere Pro.",
       "url": "https://www.dafont.com/",
       "image": ""
     }
