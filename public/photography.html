@@ -484,6 +484,10 @@ dialog.tsdlg::backdrop{background:rgba(0,0,0,.65)}
 .tsscroll .tsdoc{font-size:calc(16px * var(--tsz,1))}
 @media (max-width:640px){ .tsbar strong{display:none} .tsbar{justify-content:center} dialog.tsdlg{width:100vw;max-width:100vw;height:100vh;max-height:100vh;border-radius:0} .tsscroll{padding:8px} .tsdoc{padding:18px 14px} .tsdoc .strip{margin-left:-14px;margin-right:-14px} }
 
+.videobox .shortwrap{position:relative;width:min(100%,340px);aspect-ratio:9/16;margin:8px auto 4px;border-radius:16px;overflow:hidden;background:#000;border:2px solid var(--line)}
+.videobox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.qreset{margin-top:12px}
+.videobox .btn{display:inline-flex;width:auto;padding-left:22px;padding-right:22px}
 </style>
 </head>
 <body>
@@ -1454,6 +1458,7 @@ var CONCEPTS = [
     folio:{page:'p3', count:4, text:'2 wide aperture photos and 2 narrow aperture photos'},
     idea:'Aperture is the size of the opening in your lens. It controls how much light comes in. Its artistic effect is that it controls <b>how blurry the background is</b>.<br><br>The <b>larger</b> the f-stop (aperture) number, the <b>more</b> subjects are in focus (and less light comes in as a result). The <b>smaller</b> the aperture number, the <b>fewer</b> subjects are in focus (and more light comes in as a result).',
     visual:'aperture',
+    video:{id:'EDjc7fwOcu8', h:'Watch: Aperture', cap:'Watch this short video, then try the test below.'},
     compare:[
       {h:'Wide aperture', tag:'small f-number', sub:'For example f/2.8. Try f/2.8 to f/5.6', items:['Lets in <b>more</b> light.','<b>Shallow</b> depth of field: your subject is sharp and the background is blurry.']},
       {h:'Narrow aperture', tag:'big f-number', sub:'For example f/36. Try f/16 to f/36', items:['Lets in <b>less</b> light.','<b>Deep</b> depth of field: almost everything is sharp.']}
@@ -1476,6 +1481,7 @@ var CONCEPTS = [
     folio:{page:'p4', count:4, text:'2 fast shutter photos and 2 slow shutter photos'},
     idea:'Shutter speed is how long the shutter stays open, letting in light. Its artistic effect is that it controls <b>how motion looks</b>.',
     visual:'shutter',
+    video:{id:'g0IKJL607T4', h:'Watch: Shutter speed', cap:'Watch this short video, then try the test below.'},
     compare:[
       {h:'Fast shutter speed', tag:'freezes motion', sub:'Try 1/4000 of a second', items:['Lets in <b>less</b> light.','Stops a moving subject in mid-air.']},
       {h:'Slow shutter speed', tag:'blurs motion', sub:'Try 1 second (1")', items:['Lets in <b>more</b> light.','Moving subjects smear. <b>Use a tripod.</b>']}
@@ -2301,14 +2307,13 @@ function findItHTML(){
 }
 
 /* ---------- unit: quiz ---------- */
-function quizHTML(kind){
-  var q = QUIZ[kind];
-  var h = '<section class="panel wide"><h2>The diagram: ' + esc(q.title) + '</h2><p class="sub">Use these to help you in the test below.</p>';
-  h += '<ul class="stops" aria-label="Common ' + esc(q.title) + ' settings">' + q.stops.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
-  h += '<div class="stoplabels"><span>' + esc(q.stopsL[0]) + '</span><span>' + esc(q.stopsL[1]) + '</span></div>';
-  h += '<div class="refgrid">' + q.ref.map(function(r){ return figHTML(r[0], r[1]); }).join('') + '</div><p class="sub">' + esc(q.refCap) + '</p>';
-  if (q.chart) h += figHTML('scales', 'Reference chart: aperture (top), shutter speed (middle) and ISO (bottom).', 'center');
-  h += '</section>';
+function videoHTML(v){
+  var yt = 'https://www.youtube.com/shorts/' + v.id;
+  return '<section class="panel wide videobox" data-noedit><h2 class="ctr">' + esc(v.h) + '</h2><div class="shortwrap"><iframe src="https://www.youtube-nocookie.com/embed/' + v.id + '?rel=0&modestbranding=1&playsinline=1" title="' + esc(v.h) + '" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>' +
+    '<p class="sub ctr">' + esc(v.cap) + '</p><p class="ctr"><a class="btn small ghost" href="' + yt + '" target="_blank" rel="noopener">▶ Open on YouTube</a></p></section>';
+}
+function quizSectionHTML(kind){
+  var q = QUIZ[kind], h = '';
   h += '<section class="panel wide quiz" data-kind="' + kind + '"><h2>Test yourself</h2><p class="sub">Look at each picture. Use the diagram to work out the setting. Type your answer, then press Check.</p><div class="qgrid">';
   q.photos.forEach(function(p, i){
     var L = 'ABC'.charAt(i);
@@ -2318,7 +2323,18 @@ function quizHTML(kind){
       (q.post ? '<span class="affix post">' + esc(q.post) + '</span>' : '') + '</span></label>' +
       optsHTML(q) + '<button class="btn small check" type="button">Check</button><p class="fb" aria-live="polite"></p><button class="linkbtn reveal" type="button" hidden>Show me the answer</button></div>';
   });
-  h += '</div><p class="qsum" aria-live="polite"></p></section>';
+  h += '</div><p class="qsum" aria-live="polite"></p><p class="ctr qreset-wrap" hidden><button class="btn qreset" type="button">↻ Try the three questions again</button></p></section>';
+  return h;
+}
+function quizHTML(kind){
+  var q = QUIZ[kind];
+  var h = '<section class="panel wide"><h2>The diagram: ' + esc(q.title) + '</h2><p class="sub">Use these to help you in the test below.</p>';
+  h += '<ul class="stops" aria-label="Common ' + esc(q.title) + ' settings">' + q.stops.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
+  h += '<div class="stoplabels"><span>' + esc(q.stopsL[0]) + '</span><span>' + esc(q.stopsL[1]) + '</span></div>';
+  h += '<div class="refgrid">' + q.ref.map(function(r){ return figHTML(r[0], r[1]); }).join('') + '</div><p class="sub">' + esc(q.refCap) + '</p>';
+  if (q.chart) h += figHTML('scales', 'Reference chart: aperture (top), shutter speed (middle) and ISO (bottom).', 'center');
+  h += '</section>';
+  h += quizSectionHTML(kind);
   return h;
 }
 function optsHTML(q){
@@ -2333,7 +2349,14 @@ function wireQuiz(root, kind){
   function sum(){
     var n = 0; q.photos.forEach(function(p, i){ if (qRec(kind, 'abc'.charAt(i)).ok) n++; });
     $('.qsum', sec).textContent = n === 3 ? 'All three correct. Well done!' : (n ? n + ' of 3 correct so far.' : '');
+    $('.qreset-wrap', sec).hidden = n !== 3;
   }
+  $('.qreset', sec).addEventListener('click', function(){
+    S.quiz[kind] = {}; persist();
+    var wrap = document.createElement('div'); wrap.innerHTML = quizSectionHTML(kind);
+    var fresh = wrap.firstChild; sec.replaceWith(fresh); fillImages(fresh); wireQuiz(root, kind);
+    var first = $('.quiz[data-kind="' + kind + '"] input', root); if (first) first.focus();
+  });
   $$('.qcard', sec).forEach(function(card, i){
     var id = 'abc'.charAt(i), p = q.photos[i], input = $('input', card), fb = $('.fb', card), rev = $('.reveal', card), btn = $('.check', card);
     $$('.opt', card).forEach(function(b){ b.addEventListener('click', function(){ if (!input.disabled){ input.value = b.getAttribute('data-v'); input.focus(); } }); });
@@ -2377,6 +2400,7 @@ function showLesson(id){
     skill: function(){ return c.skill ? skillHTML(c.skill) : ''; },
     techs: function(){ return (c.techs || []).map(techHTML).join(''); },
     compare: function(){ return c.compare ? compareHTML(c.compare) : ''; },
+    video: function(){ return c.video ? videoHTML(c.video) : ''; },
     galleries: function(){ return (c.galleries || []).map(galleryHTML).join(''); },
     quiz: function(){ return c.quiz ? quizHTML(c.quiz) : ''; },
     steps: function(){ return c.steps ? (Array.isArray(c.steps) ? c.steps.map(stepsHTML).join('') : stepsHTML(c.steps)) : ''; },
@@ -2387,7 +2411,7 @@ function showLesson(id){
     cards: function(){ return (c.cards || []).map(cardHTML).join(''); }
   };
   h += '<div class="lgrid">';
-  (c.layout || ['visual','hero','compare','galleries','quiz','steps','lcd','stepsTip','findit','cards']).forEach(function(k){ h += parts[k](); });
+  (c.layout || ['visual','hero','compare','video','galleries','quiz','steps','lcd','stepsTip','findit','cards']).forEach(function(k){ h += parts[k](); });
   h += '</div>';
   if (c.tip) h += '<p class="tip"><b>Tip</b><span>' + c.tip + '</span></p>';
   if (c.folio){
