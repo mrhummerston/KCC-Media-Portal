@@ -29,9 +29,16 @@ window.PORTAL = {
       "resources": [],
       "equipment": []
     },
-    "9": {
+     "9": {
       "page": "",
-      "assignments": [],
+      "assignments": [
+        {
+          "title": "Suspense Film Unit",
+          "text": "Camera and editing license, Monster House response, your suspense short film and foley, week by week.",
+          "url": "/year9-suspense.html#unit",
+          "image": ""
+        }
+      ],
       "resources": [],
       "equipment": []
     },
