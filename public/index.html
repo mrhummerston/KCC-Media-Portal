@@ -67,52 +67,86 @@ a{color:inherit}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 
 /* header */
-header.top{padding:22px 0 0}
-.toprow{display:flex;justify-content:flex-end;gap:10px}
+header.top{position:relative;padding:18px 0 0}
+.toprow{position:absolute;top:18px;right:20px;z-index:2}
 .mode{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 16px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;min-height:44px}
-.hero{text-align:center;padding:10px 0 6px}
-.logo{width:200px;margin:0 auto 10px;border-radius:28px;background:#fff;box-shadow:0 10px 30px rgba(20,27,45,.12);display:grid;place-items:center;overflow:hidden;padding:16px 18px}
+.hero{display:flex;align-items:center;justify-content:center;gap:20px;padding:14px 0 0}
+.logo{width:96px;flex:none;border-radius:26px;background:#fff;box-shadow:0 10px 30px rgba(20,27,45,.12);display:grid;place-items:center;overflow:hidden;padding:12px 14px}
 .logo img{display:block;width:100%;height:auto}
-@media (max-width:560px){.logo{width:150px;padding:12px 14px}}
-.logo .fallback{font-family:var(--display);font-weight:800;font-size:34px;color:var(--brand)}
-.school{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:14px;color:var(--muted);margin:0}
-h1{font-family:var(--display);font-weight:800;font-size:clamp(42px,8vw,84px);line-height:.98;letter-spacing:-.03em;margin:6px 0 12px}
+.logo .fallback{font-family:var(--display);font-weight:800;font-size:32px;color:var(--brand)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(38px,5.6vw,60px);line-height:.95;letter-spacing:-.035em;margin:0 0 6px}
 h1 .pop{display:inline-block;background:linear-gradient(90deg,var(--y11),var(--y10),var(--y9),var(--y12));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.04em}
-.tag{max-width:40ch;margin:0 auto;color:var(--muted);font-size:19px}
+.tag{margin:0;color:var(--muted);font-size:18px;max-width:38ch}
+@media (max-width:640px){
+  .toprow{position:static;display:flex;justify-content:flex-end}
+  .hero{flex-direction:column;text-align:center;gap:12px;padding-top:6px}
+  .logo{width:96px}
+}
 
-/* the big booking button */
-.book{display:grid;grid-template-columns:4fr 1fr;gap:12px;margin:18px auto 10px;max-width:900px;
-  background:linear-gradient(135deg,#E2464C,var(--brand) 55%,#C42A31);border-radius:30px;padding:14px;
-  box-shadow:0 12px 0 var(--brand-dark),0 26px 44px rgba(216,52,58,.30)}
-.book a{text-decoration:none;color:#fff}
-.book-main{display:flex;align-items:center;gap:20px;padding:20px 24px;border-radius:20px;min-height:116px;
-  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
-  transition:background .15s, transform .12s}
-.book-main:hover{background:rgba(255,255,255,.2)}
-.book-main:active{transform:translateY(3px)}
-.book .ic{width:72px;height:72px;flex:none;border-radius:18px;background:#fff;display:grid;place-items:center;box-shadow:0 4px 0 rgba(0,0,0,.15)}
-.book .ic svg{width:44px;height:44px}
-.book .ic svg *{stroke:var(--brand)}
-.book .ic svg circle:last-child{fill:var(--brand)}
-.book .txt{flex:1;text-align:left}
-.book b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,4.2vw,38px);line-height:1.05;letter-spacing:-.01em}
-.book small{display:block;font-size:17px;opacity:.95;margin-top:6px}
-.book-return{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;color:var(--brand-dark)!important;font-weight:800;font-size:19px;line-height:1.15;border-radius:20px;padding:12px 10px;min-height:64px;box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
-.book-return span{font-size:30px;line-height:1}
-.book-return:hover{transform:translateY(-2px)}
-.book-return:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
-.qr-under{display:flex;justify-content:center;margin:26px 0 0}
-.qr-tile{appearance:none;cursor:pointer;font:inherit;display:flex;align-items:center;gap:18px;background:var(--surface);color:var(--ink);border:3px solid var(--line);border-radius:24px;padding:14px 24px 14px 14px;text-align:left;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:transform .12s, box-shadow .12s}
-.qr-tile:hover{border-color:var(--ink);transform:translateY(-2px)}
-.qr-tile:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.12)}
-.qr-tile b{display:block;font-family:var(--display);font-weight:800;font-size:24px;line-height:1.05}
-.qr-tile small{display:block;color:var(--muted);font-size:16px;margin-top:4px}
-.qrbox{display:block;width:118px;flex:none;aspect-ratio:1;background:#fff;border:2px solid var(--line);border-radius:12px;overflow:hidden}
+/* ---- home: four huge buttons ---- */
+.hub{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:22px 0 0}
+.tile{position:relative;isolation:isolate;overflow:hidden;color:#fff;text-decoration:none;border-radius:40px;padding:26px;min-height:250px;background:var(--tg);
+  box-shadow:0 12px 0 var(--td),0 36px 60px -26px rgba(20,27,45,.5);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.tile::before,.tile::after{content:"";position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
+.tile::before{width:340px;height:340px;right:-110px;top:-130px;background:rgba(255,255,255,.13)}
+.tile::after{width:210px;height:210px;left:-70px;bottom:-100px;background:rgba(0,0,0,.10)}
+a.tile{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr}
+a.tile:hover,.tile-book:hover{transform:translateY(-6px);box-shadow:0 18px 0 var(--td),0 46px 70px -28px rgba(20,27,45,.55)}
+a.tile:active{transform:translateY(5px);box-shadow:0 5px 0 var(--td)}
+.tile .ico{width:66px;height:66px;border-radius:22px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.tile .ico svg{width:38px;height:38px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tile .go{width:56px;height:56px;border-radius:50%;background:#fff;color:var(--tc);display:grid;place-items:center;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.tile .go svg{width:28px;height:28px}
+a.tile:hover .go{transform:translateX(4px) rotate(-45deg)}
+.tile-text{grid-column:1/-1;align-self:end;padding-top:26px}
+.tile h2{color:#fff;text-align:left;margin:0;font-size:clamp(28px,3vw,40px);line-height:.98;letter-spacing:-.03em;text-wrap:balance}
+.tile p{margin:10px 0 0;font-size:18px;line-height:1.4;max-width:30ch}
+.tile a:focus-visible,.tile button:focus-visible,a.tile:focus-visible{outline:4px solid #fff;outline-offset:4px}
+
+.tile-book{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:28px 44px;align-items:center;min-height:0;padding:32px 36px}
+.tile-book h2{font-size:clamp(36px,5vw,62px);max-width:15ch}
+.tb-main{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.tb-main .tile-text{padding-top:0;grid-column:auto;align-self:flex-start}
+.tb-main p{font-size:20px;max-width:36ch}
+.tb-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.pill{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:19px;border-radius:999px;padding:14px 26px;min-height:54px;text-decoration:none;transition:transform .15s}
+.pill svg{width:22px;height:22px}
+.pill:hover{transform:translateY(-2px)}
+.pill-w{background:#fff;color:var(--tc)}
+.pill-o{background:rgba(255,255,255,.14);color:#fff;border:2px solid rgba(255,255,255,.75)}
+.tile-link::after{content:"";position:absolute;inset:0;z-index:1}      /* the whole tile is clickable */
+.pill-o,.qr-card{position:relative;z-index:2}
+.qr-card{appearance:none;border:0;cursor:pointer;font:inherit;background:#fff;color:var(--ink);border-radius:30px;padding:18px 18px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 8px 0 rgba(0,0,0,.18);transition:transform .15s}
+.qr-card:hover{transform:translateY(-3px) rotate(-1.2deg)}
+.qr-card b{display:block;font-family:var(--display);font-weight:800;font-size:22px;line-height:1;color:var(--tc);text-align:center}
+.qr-card small{display:block;color:var(--muted);font-size:14px;margin-top:3px;text-align:center}
+.qrbox{display:block;width:150px;flex:none;aspect-ratio:1;background:#fff;overflow:hidden;border-radius:10px}
 .qrbox svg{display:block;width:100%;height:auto}
-.book a:focus-visible{outline:4px solid #fff;outline-offset:3px}
-.quick{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 0}
-.quick a{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:12px 20px;text-decoration:none;font-weight:700;min-height:50px}
-.quick a:hover{border-color:var(--ink)}
+@media (max-width:940px){
+  .hub{grid-template-columns:1fr 1fr}
+  .hub>.tile:last-child{grid-column:1/-1;min-height:230px}
+}
+@media (max-width:700px){
+  .hub{grid-template-columns:1fr;gap:20px}
+  .tile{min-height:230px;border-radius:34px;padding:24px}
+  .tile-book{grid-template-columns:1fr;padding:26px;gap:22px}
+  .qr-card{flex-direction:row;gap:16px;padding:14px 18px 14px 14px;border-radius:26px}
+  .qr-card .qct{text-align:left}
+  .qr-card b,.qr-card small{text-align:left}
+  .qrbox{width:92px}
+}
+
+/* ---- each section opens as its own screen ---- */
+.view{display:none}
+.view.on{display:block;animation:pop .28s ease}
+.vbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:14px 0 4px;pointer-events:none}
+.vbar .back{pointer-events:auto}
+.back{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:17px;text-decoration:none;color:var(--ink);background:var(--surface);border:2px solid var(--ink);border-radius:999px;padding:10px 20px 10px 14px;min-height:48px;box-shadow:0 4px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.back:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--ink)}
+.back:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.back svg{width:22px;height:22px}
+.view .blk{padding-top:14px}
+main:focus{outline:none}
 
 /* years */
 section{padding:46px 0 0}
@@ -255,14 +289,8 @@ dialog .f input[type=file]{padding:8px}
 
 footer{margin:56px 0 30px;padding-top:20px;border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:15px}
 footer a,footer .linkbtn{font-weight:700}
+footer.wrap{margin-top:56px;margin-bottom:28px}
 @media (max-width:560px){
-  .book{grid-template-columns:1fr;padding:12px;gap:10px}
-  .book-main{gap:14px;padding:10px;min-height:0;width:100%}
-  .qr-tile{gap:14px;padding:10px 16px 10px 10px}
-  .qrbox{width:92px}
-  .book-return{flex-direction:row;gap:10px;min-height:60px}
-  .book-return span{font-size:22px}
-  .book .ic{width:60px;height:60px}
   .panel{padding:18px}
   .panel .book-yr{margin-left:0;width:100%;justify-content:center}
   .yr{min-height:124px}.yr .num{font-size:52px}
@@ -271,7 +299,7 @@ footer a,footer .linkbtn{font-weight:700}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main" id="skip">Skip to content</a>
 <div class="bg-shapes" aria-hidden="true"><span class="s1"></span><span class="s2"></span><span class="s3"></span><span class="s4"></span><span class="s5"></span></div>
 <div class="slate" aria-hidden="true"></div>
 
@@ -279,51 +307,84 @@ footer a,footer .linkbtn{font-weight:700}
   <div class="toprow"><button class="mode" id="mode" aria-label="Switch light or dark mode">🌙 Dark mode</button></div>
   <div class="hero">
     <div class="logo"><img src="/kcc-logo.png" alt="Kingsway Christian College logo" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'fallback',textContent:'KCC',ariaHidden:'true'}))"></div>
-    <h1>Media <span class="pop">Portal</span></h1>
-    <p class="tag">Borrow equipment and find everything for your media class.</p>
+    <div>
+      <h1>Media <span class="pop">Portal</span></h1>
+      <p class="tag">Borrow equipment and find everything for your media class.</p>
+    </div>
   </div>
 </header>
 
-<main id="main" class="wrap">
+<main id="main" class="wrap" tabindex="-1">
 
-  <!-- BOOK EQUIPMENT -->
-  <section id="bookSec" class="blk" aria-labelledby="bookTitle" style="padding-top:34px">
-    <h2 id="bookTitle" class="big-h">Book Media Equipment</h2>
-    <div class="book">
-      <a class="book-main" href="/book/">
-        <span class="ic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="14" width="38" height="26" rx="5"/><path d="M15 14l3-6h12l3 6"/><circle cx="24" cy="27" r="8"/><circle cx="36" cy="20" r="1.5" fill="#fff"/></svg></span>
-        <span class="txt"><b>Book Media Equipment</b><small>Cameras, tripods, lights, microphones, GoPros and more</small></span>
+  <!-- HOME: four huge buttons -->
+  <div id="home" class="view on">
+    <div class="hub">
+
+      <article class="tile tile-book" style="--tg:linear-gradient(135deg,#E0383E,#B8262D);--td:#8C1B22;--tc:#B8262D">
+        <div class="tb-main">
+          <div class="tile-text">
+            <h2>Book &amp; Return Media Equipment</h2>
+            <p>Cameras, tripods, lights, microphones, GoPros and more.</p>
+          </div>
+          <div class="tb-actions">
+            <a class="pill pill-w tile-link" href="/book/">Book equipment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="pill pill-o" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
+          </div>
+        </div>
+        <button type="button" class="qr-card" id="qrBtn" data-act="qr" aria-label="Show the booking QR code bigger" hidden>
+          <span class="qrbox" id="qrMini"></span>
+          <span class="qct"><b>Scan to book</b><small>Tap to make it bigger</small></span>
+        </button>
+      </article>
+
+      <a class="tile" href="#competitions" style="--tg:linear-gradient(135deg,#7C3AED,#BE185D);--td:#4A1D80;--tc:#7C2D9E">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 6H4.5a3 3 0 003.2 4.2M17 6h2.5a3 3 0 01-3.2 4.2"/><path d="M12 14v4M9.5 18h5M8 21h8"/></svg></span>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <div class="tile-text"><h2>Competitions</h2><p>See what's on, with the dates and how to enter.</p></div>
       </a>
-      <a class="book-return" href="/book/#return"><span aria-hidden="true">↩</span> Return gear</a>
+
+      <a class="tile" href="#classes" style="--tg:linear-gradient(135deg,#2563EB,#1E40AF);--td:#142456;--tc:#1D4ED8">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.6 2.7 3 6 3s6-1.4 6-3v-4.5"/><path d="M22 9v5"/></svg></span>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <div class="tile-text"><h2>Class Information</h2><p>Assignments, resources and tutorials for your year.</p></div>
+      </a>
+
+      <a class="tile" href="#resources" style="--tg:linear-gradient(135deg,#E2620F,#B43A09);--td:#7A2A0C;--tc:#B43A09">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <div class="tile-text"><h2>Useful Resources</h2><p>Folders and websites to help with your media project.</p></div>
+      </a>
     </div>
-    <div class="qr-under">
-      <button type="button" class="qr-tile" id="qrBtn" data-act="qr" aria-label="Show the booking QR code bigger" hidden>
-        <span class="qrbox" id="qrMini"></span>
-        <span><b>Scan to book</b><small>Tap the code to make it bigger</small></span>
-      </button>
-    </div>
-  </section>
+  </div>
 
   <!-- COMPETITIONS -->
-  <section id="comp" class="blk" aria-labelledby="compTitle" hidden></section>
+  <div id="v-competitions" class="view">
+    <div class="vbar"><a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to portal home</a></div>
+    <section id="comp" class="blk" aria-labelledby="compTitle"></section>
+  </div>
 
-  <!-- YEAR INFORMATION + TUTORIALS -->
-  <section id="years" class="blk" aria-labelledby="yearsTitle">
-    <h2 id="yearsTitle" class="big-h">Media Class Information</h2>
-    <p class="sub">Tap your year to find your assignments, resources and class web page. Tap it again to close.</p>
-    <div class="years" id="yearGrid"></div>
-    <div class="panel" id="yearPanel" aria-live="polite"></div>
-  </section>
-
-  <section id="tutBlock" class="blk" aria-labelledby="tutTitle" hidden>
-    <h2 id="tutTitle" class="big-h">Media Equipment Tutorials</h2>
-    <p class="sub">Tap a tutorial to watch it. Tap it again to close.</p>
-    <div class="years" id="tutGrid"></div>
-    <div class="panel" id="tutPanel" aria-live="polite"></div>
-  </section>
+  <!-- CLASS INFORMATION (+ tutorials) -->
+  <div id="v-classes" class="view">
+    <div class="vbar"><a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to portal home</a></div>
+    <section id="years" class="blk" aria-labelledby="yearsTitle">
+      <h2 id="yearsTitle" class="big-h">Media Class Information</h2>
+      <p class="sub">Tap your year to find your assignments, resources and class web page. Tap it again to close.</p>
+      <div class="years" id="yearGrid"></div>
+      <div class="panel" id="yearPanel" aria-live="polite"></div>
+    </section>
+    <section id="tutBlock" class="blk" aria-labelledby="tutTitle" hidden style="padding-top:46px">
+      <h2 id="tutTitle" class="big-h">Media Equipment Tutorials</h2>
+      <p class="sub">Tap a tutorial to watch it. Tap it again to close.</p>
+      <div class="years" id="tutGrid"></div>
+      <div class="panel" id="tutPanel" aria-live="polite"></div>
+    </section>
+  </div>
 
   <!-- USEFUL RESOURCES -->
-  <section id="linksSec" class="blk" aria-labelledby="linksTitle" hidden></section>
+  <div id="v-resources" class="view">
+    <div class="vbar"><a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to portal home</a></div>
+    <section id="linksSec" class="blk" aria-labelledby="linksTitle"></section>
+  </div>
 </main>
 
 <footer class="wrap">
@@ -548,20 +609,18 @@ function posterHTML(p,i){
 function renderComp(){
   cancelAnimationFrame(M.raf);
   const sec=$("#comp"), list=P.competitions;
-  if(!list.length&&!editing()){sec.hidden=true;sec.innerHTML="";return;}
-  sec.hidden=false;
   const live=list.length&&!editing()&&!REDUCED;
   sec.innerHTML=`<h2 id="compTitle" class="big-h">Competitions</h2>
     ${list.length?`<p class="sub">Tap a poster to see the dates and the competition page. Scroll sideways to browse.</p>
     <div class="stream" id="stream" tabindex="0" role="region" aria-label="Competition posters. Scroll sideways to browse."><div class="track">${list.map(posterHTML).join("")}</div></div>
-    ${live?`<div class="stream-tools"><button type="button" class="mode" id="ppBtn" data-act="pp" aria-pressed="${M.paused}">${M.paused?"▶ Play":"❚❚ Pause"}</button></div>`:""}`:""}
+    ${live?`<div class="stream-tools"><button type="button" class="mode" id="ppBtn" data-act="pp" aria-pressed="${M.paused}">${M.paused?"▶ Play":"❚❚ Pause"}</button></div>`:""}`:(editing()?"":`<p class="sub">There are no competitions on right now. Check back soon.</p>`)}
     ${editing()?`<div class="dz big" data-sec="comp"><form class="linkform" id="compForm"><label for="compUrl"><b>Paste a competition link</b> and the poster, start date and end date are filled in for you to check.</label><div class="row"><input id="compUrl" type="url" inputmode="url" placeholder="https://..." autocomplete="off"><button class="btn brand">Add competition</button></div></form><span>or drag poster images or PDFs here <button type="button" class="btn ghost" data-act="browse" data-sec="comp">Choose files</button></span></div>`:""}`;
   if(live) setupStream();
 }
 function setupStream(){
   const st=$("#stream"); if(!st) return; const tr=st.firstElementChild;
   requestAnimationFrame(()=>{
-    if(!$("#stream")||!tr.children.length) return;
+    if(!$("#stream")||!tr.children.length||!st.clientWidth) return;
     if(tr.scrollWidth<=st.clientWidth+30) return;           /* few posters: no need to scroll */
     const n=tr.children.length;
     [...tr.children].forEach(c=>{const k=c.cloneNode(true);k.setAttribute("aria-hidden","true");k.querySelectorAll("button").forEach(b=>b.tabIndex=-1);tr.appendChild(k);});
@@ -730,10 +789,9 @@ function editComp(i){
    ============================================================= */
 function renderLinks(){
   const sec=$("#linksSec"), list=P.links;
-  if(!list.length&&!editing()){sec.hidden=true;sec.innerHTML="";return;}
-  sec.hidden=false; sec.style.setProperty("--panel-c","var(--y8)");
+  sec.style.setProperty("--panel-c","var(--y8)");
   sec.innerHTML=`<h2 id="linksTitle" class="big-h">Useful Resources</h2><p class="sub">These are folders and websites that could help with your media project.</p>
-    ${list.length?`<div class="cards">${cardsHTML("auto",list,"links","","")}</div>`:""}${editing()?dzHTML("links","",""):""}`;
+    ${list.length?`<div class="cards">${cardsHTML("auto",list,"links","","")}</div>`:(editing()?"":`<p class="sub">Nothing has been added yet.</p>`)}${editing()?dzHTML("links","",""):""}`;
 }
 
 /* =============================================================
@@ -1055,7 +1113,28 @@ function setMode(m){if(m)root.dataset.theme=m;else delete root.dataset.theme;sto
 setMode(store.get("kcc-portal-theme")||"");
 modeBtn.onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;setMode(dark?"light":"dark");};
 
-renderAll();
+/* =============================================================
+   SCREENS: home plus three sections, chosen by the web address (#competitions, #classes, #resources)
+   ============================================================= */
+const VIEWS={competitions:"v-competitions",classes:"v-classes",resources:"v-resources"};
+const TITLES={home:"KCC Media Portal",competitions:"Competitions · KCC Media Portal",classes:"Class Information · KCC Media Portal",resources:"Useful Resources · KCC Media Portal"};
+let curView;
+function route(){
+  const h=location.hash.slice(1),v=VIEWS[h]?h:"home",id=v==="home"?"home":VIEWS[v];
+  document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on",el.id===id));
+  document.title=TITLES[v];
+  if(v==="competitions")renderComp();else cancelAnimationFrame(M.raf);
+  if(curView!==undefined&&curView!==v){
+    scrollTo(0,0);
+    const hd=v==="home"?$("#main"):$("#"+id+" h2");
+    if(hd){if(v!=="home")hd.tabIndex=-1;hd.focus({preventScroll:true});}
+  }
+  curView=v;
+}
+addEventListener("hashchange",route);
+$("#skip").addEventListener("click",e=>{e.preventDefault();$("#main").focus();});
+
+renderAll();route();
 </script>
 </body>
 </html>
