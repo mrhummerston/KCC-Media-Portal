@@ -560,6 +560,22 @@ label.qopt input{margin-top:4px;width:22px;height:22px;flex:none}
 label.qopt:has(input:checked){border-color:var(--accent)}
 #pdfMsg.ok{color:var(--ok,#2F7D3A);font-weight:700}
 #pdfMsg.err{color:var(--bad,#B3261E);font-weight:700}
+
+/* free positioning (teacher can place any text or box anywhere; phones keep the normal layout) */
+[data-kfree]{position:relative;z-index:5}
+@media (max-width:700px){ [data-kfree]{transform:none!important} }
+#edFree{pointer-events:auto;position:absolute;left:92px;top:6px;min-height:34px;padding:0 10px;border-radius:8px;border:2px solid #fff;background:#8a3ffc;color:#fff;font:700 .85rem var(--body);cursor:move;touch-action:none}
+
+/* ---------- Light Painting Challenge ---------- */
+.lvl{border-left:12px solid var(--lvc,#888)}
+.lvhead{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 14px;margin-bottom:6px}
+.lvhead h2{margin:0}
+.stars{font-size:1.6rem;letter-spacing:3px;color:var(--lvc,#888);line-height:1}
+.lpdiagram{margin:0;width:100%}
+.lpdiagram svg{display:block;width:100%;height:auto;max-height:none;border-radius:14px}
+.lpdiagram figcaption{margin-top:6px;text-align:center;color:var(--muted)}
+.lvl .gallery{margin-top:14px}
+.lvl .gallery .lpdiagram{grid-column:1/-1;width:100%;max-width:620px;margin:0 auto}
 </style>
 </head>
 <body>
@@ -809,7 +825,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
   }
 
   /* ---------- putting the edits onto the page ---------- */
-  var STYLE_PROPS = { ff: 'fontFamily', fs: 'fontSize', c: 'color', fw: 'fontWeight', fi: 'fontStyle', td: 'textDecoration', ta: 'textAlign' };
+  var STYLE_PROPS = { ff: 'fontFamily', fs: 'fontSize', c: 'color', fw: 'fontWeight', fi: 'fontStyle', td: 'textDecoration', ta: 'textAlign', tr: 'transform' };
   function setTextStyle(el, s) { Object.keys(STYLE_PROPS).forEach(function (k) { el.style[STYLE_PROPS[k]] = (s && s[k]) || ''; }); }
   function readTextStyle(el) { var o = {}; Object.keys(STYLE_PROPS).forEach(function (k) { var v = el.style[STYLE_PROPS[k]]; if (v) o[k] = v; }); return o; }
   var CROP0 = { ar: 'orig', z: 1, px: 50, py: 50, flip: 0 };
@@ -839,6 +855,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
   }
   function applyBlock(el, b) {
     b = b || {};
+    if (!el.hasAttribute('data-kt')) { if (b.tr) { el.style.transform = b.tr; el.setAttribute('data-kfree', '1'); } else if (el.hasAttribute('data-kfree')) { el.style.transform = ''; el.removeAttribute('data-kfree'); } }
     el.style.gridColumn = b.span ? (b.span === 'full' ? '1 / -1' : 'span ' + b.span) : '';
     var fg = figTarget(el);
     if (fg) {
@@ -886,6 +903,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
       var k = el.getAttribute('data-kt');
       if (E.text[k] !== undefined) el.innerHTML = clean(E.text[k]); else if (el.__orig !== undefined && el.innerHTML !== el.__orig) el.innerHTML = el.__orig;
       setTextStyle(el, E.style[k]);
+      if (E.style[k] && E.style[k].tr) el.setAttribute('data-kfree', '1'); else el.removeAttribute('data-kfree');
     });
     qa('[data-kb]', root).forEach(function (el) {
       var k = el.getAttribute('data-kb'); applyBlock(el, E.block[k]); el.classList.toggle('ed-hidden', !!E.hide[k]);
@@ -1183,7 +1201,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
       '<button type="button" id="edClearFmt">Clear formatting</button></span>',
       '<span class="ed-grp" id="gBlock" hidden><button type="button" id="edPrevB">◀ Earlier</button><button type="button" id="edNextB">Later ▶</button>',
       '<button type="button" id="edNarrow">Half width</button><button type="button" id="edWide">Full width</button><button type="button" id="edAuto">Auto width</button>',
-      '<button type="button" id="edDel">🗑 Delete</button><button type="button" id="edUp">⬆ Select parent</button></span>',
+      '<button type="button" id="edDel">🗑 Delete</button><button type="button" id="edUp">⬆ Select parent</button><button type="button" id="edFreeReset" hidden>↺ Reset position</button></span>',
       '<span class="ed-grp" id="gImg" hidden><button type="button" id="edImgSm">Picture −</button><button type="button" id="edImgLg">Picture +</button>',
       '<button type="button" id="edImgL">Left</button><button type="button" id="edImgC">Centre</button><button type="button" id="edImgR">Right</button>',
       '<button type="button" id="edImgReset">Reset size</button><button type="button" id="edImgNew">Replace picture…</button></span>',
@@ -1200,7 +1218,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
       '<button type="button" id="edResetPage">Undo all on this page</button><button type="button" id="edDiscard">Discard all unsaved changes</button></div>'
     ].join(''));
     var prev = el('div', { id: 'edPrev', hidden: '' }, 'Preview with your unsaved changes. <button type="button" id="edBack">Back to editing</button> <button type="button" id="edExit2">Exit</button>');
-    var ov = el('div', { id: 'edOv', hidden: '' }, '<button type="button" id="edMove" draggable="true" title="Drag to move">⠿ Move</button><span id="edResize" title="Drag to resize"></span>');
+    var ov = el('div', { id: 'edOv', hidden: '' }, '<button type="button" id="edMove" draggable="true" title="Drag to move">⠿ Move</button><button type="button" id="edFree" title="Drag to place it anywhere you like">✥ Free</button><span id="edResize" title="Drag to resize"></span>');
     var file = el('input', { type: 'file', id: 'edFile', accept: 'image/*', hidden: '' });
     var toastEl = el('div', { id: 'edToast', hidden: '', role: 'status' });
     var help = el('dialog', { id: 'edHelp' }, [
@@ -1213,6 +1231,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
       '<li><b>Crop, zoom, flip:</b> select a picture, press “✂ Crop &amp; zoom”, pick a shape, then drag inside the picture to move it and use the Zoom slider or mouse wheel. The original picture is never changed.</li>',
       '<li><b>Layout:</b> select any box inside a group and choose 1 to 4 columns, or make one box half or full width.</li>',
       '<li><b>Add and delete:</b> select a box and use + Text box, + Picture or + Item. Delete fades something out; press it again to bring it back.</li>',
+      '<li><b>Free move:</b> select any text or box, then drag the purple ✥ Free handle to put it anywhere you like (on computers; phones keep the normal layout). Press ↺ Reset position to put it back.</li>',
       '<li><b>Save:</b> press “Save my changes”. It downloads <b>edits.js</b>. Upload that file to GitHub next to photography.html (replace the old one) and commit.</li>',
       '<li>Your work is kept as a draft in this browser, so you can stop and carry on later. Students never see your draft until you publish edits.js.</li></ul>',
       '<p><button type="button" class="ed-primary" id="edHelpClose">Got it</button></p>'
@@ -1259,6 +1278,8 @@ label.qopt:has(input:checked){border-color:var(--accent)}
     });
     /* move and resize handles */
     var mv = q('#edMove');
+    q('#edFree').addEventListener('pointerdown', startFree);
+    q('#edFreeReset').addEventListener('click', function () { var t = freeTarget(); if (!t) return; t.style.transform = ''; t.removeAttribute('data-kfree'); saveFree(t); });
     mv.addEventListener('dragstart', function (e) { dragEl = selBlock(); if (!dragEl) { e.preventDefault(); return; } e.dataTransfer.setData('text/plain', 'move'); e.dataTransfer.effectAllowed = 'move'; dragEl.classList.add('ed-dragging'); });
     mv.addEventListener('dragend', function () { if (dragEl) { dragEl.classList.remove('ed-dragging'); if (dragEl.parentElement.hasAttribute('data-kc')) recordOrder(dragEl.parentElement); commit(); dragEl = null; place(); } });
     document.addEventListener('dragover', function (e) {
@@ -1367,6 +1388,23 @@ label.qopt:has(input:checked){border-color:var(--accent)}
     q('#edGHead').value = fontVal(E.global.display);
     status();
   }
+  /* ---------- free positioning ---------- */
+  function parseTr(s) { var m = /translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(s || ''); return m ? { x: +m[1], y: +m[2] } : { x: 0, y: 0 }; }
+  function freeTarget() { if (!editing || !sel || !document.body.contains(sel)) return null; return sel.hasAttribute('data-kt') ? sel : selBlock(); }
+  function saveFree(t) {
+    var p = parseTr(t.style.transform); if (!p.x && !p.y) { t.style.transform = ''; t.removeAttribute('data-kfree'); }
+    if (t.hasAttribute('data-kt')) persistText(t);
+    else { var k = t.getAttribute('data-kb'), r = blk(k), tr = t.style.transform; if (tr) r.tr = tr; else delete r.tr; }
+    commit(); updateBar(); place();
+  }
+  function startFree(e) {
+    var t = freeTarget(); if (!t) return; e.preventDefault();
+    var sx = e.clientX, sy = e.clientY, b0 = parseTr(t.style.transform), moved = false;
+    function mv(ev) { var x = Math.round(b0.x + ev.clientX - sx), y = Math.round(b0.y + ev.clientY - sy); t.style.transform = 'translate(' + x + 'px,' + y + 'px)'; t.setAttribute('data-kfree', '1'); moved = true; place(); }
+    function up() { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', up); if (moved) saveFree(t); }
+    document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+  }
+
   function place() {
     var ov = q('#edOv'); if (!ov) return;
     var b = editing ? selBlock() : null;
@@ -1374,6 +1412,7 @@ label.qopt:has(input:checked){border-color:var(--accent)}
     var r = b.getBoundingClientRect();
     ov.hidden = false; ov.style.left = (r.left + window.scrollX) + 'px'; ov.style.top = (r.top + window.scrollY) + 'px'; ov.style.width = r.width + 'px'; ov.style.height = r.height + 'px';
     q('#edResize').hidden = !isFig();
+    var ft = freeTarget(), fh = q('#edFree'), fr = q('#edFreeReset'); if (fh) fh.textContent = ft && ft.hasAttribute('data-kt') ? '✥ Free (text)' : '✥ Free (box)'; if (fr) fr.hidden = !(ft && ft.hasAttribute('data-kfree'));
   }
   function syncPage() {
     var s = q('#edPage'); if (!s) return;
@@ -1665,32 +1704,35 @@ var CONCEPTS = [
     tip:'Every photo should be in focus, well lit and well composed.' },
 
   { id:'lightpainting', group:'more', week:'Weeks 7 to 10', icon:'💡', color:'#F59E0B',
-    title:'Light painting', short:'Draw with light using a slow shutter speed in the dark.',
-    idea:'Light painting is slow shutter speed in the dark. You move a light while the shutter stays open, and the light draws in your photo. Each person has to \u201Cdirect\u201D a light painting.',
-    layout:['steps','galleries','cards','steps2'],
-    steps:[
-      {h:'Task 1: Write your name in light', items:[
-        'Use a white torch. There are enough for each group to have one.',
-        'Choose a way: you write your name yourself (but you will not appear in the final photo, because you are moving too quickly), <b>or</b> you stay <b>VERY</b> still and someone in your group writes your name above your head (you will appear).',
-        'Aim for writing that is neat and easy to read.',
-        'Leave gaps between each letter. To do this, turn the torch off and on between each letter.']},
-      {h:'Task 2: Make one of these', items:[
-        'You get one light stick and one torch per group.',
-        'Create a <b>fun message</b> using the light stick and the torch.',
-        '<b>Or</b> create the \u201Chardest\u201D <b>album cover</b>.']}
-    ],
-    galleries:[{h:'Light painting examples', items:[
-      {img:'lp_heart', cap:'A torch draws a heart in the dark.'},
-      {img:'lp_hearts', cap:'Three hearts drawn with a torch.'},
-      {img:'lp_mike', cap:'A name written in light with a torch.'},
-      {img:'lp_xmas', cap:'A fun message written in the air with a torch.'}]}],
+    title:'Light Painting Challenge', short:'Three levels: paint freely, use the ON/OFF switch, then paint your partner.',
+    idea:'Light painting is slow shutter speed in the dark. You move a light while the shutter stays open, and the light draws in your photo. Each person has to \u201Cdirect\u201D a light painting. Start at Beginner and work up to Expert.',
+    layout:['cards','levels','bonus','steps2'],
     cards:[
-      {h:'Camera and place', items:['Work in the dark studio (Studio 2).','Turn the Mode Dial to <b>Tv</b> and choose a slow shutter speed. Ask Mr Hummerston which speed to start with.','Use a tripod so the camera stays still.']},
-      {h:'Challenge mode', items:['Write your name using coloured light.']}
+      {h:'Camera and place', items:['Work in the dark studio (Studio 2).','Turn the Mode Dial to <b>Tv</b> and choose a slow shutter speed. Ask Mr Hummerston which speed to start with.','Use a tripod so the camera stays still.']}
     ],
+    levels:[
+      {stars:1, color:'#2E9E6B', h:'Beginner: Paint Freely', items:[
+        'Use a white torch. There are enough for each group to have one.',
+        'Move the torch while the shutter stays open and let the light draw. Try shapes, hearts and swirls.'],
+        photos:[{img:'lp_heart', cap:'A torch draws a heart in the dark.'},{img:'lp_hearts', cap:'Three hearts drawn with a torch.'}]},
+      {stars:2, color:'#E09A10', h:'Intermediate: Paint whilst using ON/OFF Switch', items:[
+        'Use the ON/OFF switch on the torch to stop and start the light while you paint.',
+        'Write your name yourself. You will not appear in the final photo, because you are moving too quickly.',
+        'Aim for writing that is neat and easy to read.',
+        'Leave gaps between each letter. To do this, turn the torch off and on between each letter.',
+        'Then make one of these: a <b>fun message</b> using the light stick and the torch (you get one light stick and one torch per group), <b>or</b> the \u201Chardest\u201D <b>album cover</b>.'],
+        photos:[{img:'lp_mike', cap:'A name written in light with a torch.'},{img:'lp_xmas', cap:'A fun message written in the air with a torch.'}]},
+      {stars:3, color:'#D63A4A', h:'Expert: Paint your partner', items:[
+        'Choose one person to stay <b>VERY</b> still. They will appear in the photo.',
+        'Someone in your group writes the still person\u2019s name in light above their head.',
+        'Turn the torch off and on between each letter, so the writing is neat and easy to read.'],
+        diagram:true, cap:'How it works: one person stays very still while a painter writes above their head. (This is a drawing, not a photo.)'}
+    ],
+    bonus:{h:'Challenge mode', items:['Write your name using coloured light.']},
     steps2:{h:'Handing in', items:['Email your best photos using the request email in Outlook.','Upload your best photos to the <b>Uploads</b> folder on the Media (O:) drive.']} },
 
-  { id:'motionblur', group:'more', week:'Weeks 7 to 10', icon:'🏃', color:'#3A86DB',
+  
+{ id:'motionblur', group:'more', week:'Weeks 7 to 10', icon:'🏃', color:'#3A86DB',
     title:'Motion blur', short:'Slow shutter speed in the light.',
     idea:'Rather than slow shutter speed in the dark (light painting), this is slow shutter speed in the light!',
     layout:['steps','cards','galleries','steps2'],
@@ -2477,6 +2519,33 @@ function wireIsoFill(root){
   rs.addEventListener('click', function(){ ids.forEach(function(id){ var el = inp(id); el.value = ''; el.classList.remove('okf', 'badf'); delete S.fill[id]; }); delete S.fill.ruleOk; tries = 0; persist(); lock(false); fb.className = 'fb rule-fb'; fb.textContent = ''; inp('rule_h1').focus(); });
   if (S.fill && S.fill.ruleOk){ ids.forEach(function(id){ inp(id).classList.add('okf'); }); lock(true); fb.className = 'fb ok rule-fb'; fb.textContent = '✓ That is the rule! Higher ISO = more sensitivity to light = more grain/noise. Lower ISO = less sensitive to light = less grain/noise.'; }
 }
+/* ---------- Light Painting Challenge: three levels ---------- */
+function lpExpertSVG(){
+  var f = 'font-family="DejaVu Sans,Atkinson Hyperlegible,Segoe UI,sans-serif"', s;
+  s = '<svg viewBox="0 0 520 362" role="img" aria-label="A drawing of two people and a camera on a tripod in the dark. One person stands very still. Another writes a name in light above their head with a torch." ' + f + '>';
+  s += '<defs><filter id="lpGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter></defs>';
+  s += '<rect width="520" height="362" rx="16" fill="#0b0c12"/><line x1="20" y1="300" x2="500" y2="300" stroke="#2a2d3a" stroke-width="3"/>';
+  var letters = 'M148 172 L148 128 L172 172 L172 128 M186 172 L198 128 L210 172 M190 158 L206 158 M224 172 L224 128 L238 150 L252 128 L252 172 M266 128 L286 128 M266 128 L266 172 L286 172 M266 150 L282 150';
+  s += '<path d="' + letters + '" fill="none" stroke="#8fc7ff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#lpGlow)" opacity=".9"/>';
+  s += '<path d="' + letters + '" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  var fig = function(cx, arm){ return '<circle cx="' + cx + '" cy="212" r="23" fill="#cfd3dd"/><g stroke="#cfd3dd" stroke-width="9" stroke-linecap="round" fill="none"><path d="M' + cx + ' 237 V272"/><path d="M' + cx + ' 246 ' + arm + '"/><path d="M' + cx + ' 272 L' + (cx - 14) + ' 298 M' + cx + ' 272 L' + (cx + 14) + ' 298"/></g>'; };
+  s += fig(217, 'L195 268 M217 246 L239 268');
+  s += fig(380, 'L338 176 M380 246 L402 268');
+  s += '<circle cx="332" cy="168" r="14" fill="#ffe9a8" filter="url(#lpGlow)"/><circle cx="332" cy="168" r="5" fill="#fff6d6"/>';
+  s += '<rect x="46" y="218" width="46" height="28" rx="4" fill="#4a4d5a"/><circle cx="80" cy="232" r="9" fill="#1b1c23" stroke="#9aa0b2" stroke-width="2"/><path d="M69 246 L50 300 M69 246 L88 300 M69 246 V300" stroke="#9aa0b2" stroke-width="4" stroke-linecap="round"/>';
+  s += '<g font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle"><text x="80" y="323"><tspan x="80">Camera on</tspan><tspan x="80" dy="19">a tripod</tspan></text><text x="217" y="323"><tspan x="217">Stays</tspan><tspan x="217" dy="19">VERY still</tspan></text><text x="380" y="323"><tspan x="380">Paints above</tspan><tspan x="380" dy="19">their head</tspan></text></g>';
+  return s + '</svg>';
+}
+function levelsHTML(levels){
+  return levels.map(function(L){
+    var stars = new Array(L.stars + 1).join('\u2605') + new Array(4 - L.stars).join('\u2606');
+    var figs = (L.photos || []).map(function(p){ return figHTML(p.img, p.cap); }).join('');
+    if (L.diagram) figs += '<figure class="visual lpdiagram">' + lpExpertSVG() + '<figcaption>' + esc(L.cap) + '</figcaption></figure>';
+    return '<section class="panel wide lvl" style="--lvc:' + L.color + '"><div class="lvhead"><span class="stars" role="img" aria-label="Level ' + L.stars + ' of 3">' + stars + '</span><h2>' + esc(L.h) + '</h2></div>' +
+      '<ol class="steps">' + L.items.map(function(i){ return '<li><span>' + i + '</span></li>'; }).join('') + '</ol><div class="gallery">' + figs + '</div></section>';
+  }).join('');
+}
+function bonusHTML(b){ return '<section class="panel wide lvbonus"><h2>' + esc(b.h) + '</h2><ul class="plain">' + b.items.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</ul></section>'; }
 function videoHTML(v){
   var yt = 'https://www.youtube.com/shorts/' + v.id;
   return '<section class="panel wide videobox" data-noedit><h2 class="ctr">' + esc(v.h) + '</h2><div class="shortwrap"><iframe src="https://www.youtube-nocookie.com/embed/' + v.id + '?rel=0&modestbranding=1&playsinline=1" title="' + esc(v.h) + '" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>' +
@@ -2571,6 +2640,8 @@ function showLesson(id){
     techs: function(){ return (c.techs || []).map(techHTML).join(''); },
     compare: function(){ return c.compare ? compareHTML(c.compare) : ''; },
     guided: function(){ return c.guided ? guidedHTML(c.guided) : ''; },
+    levels: function(){ return c.levels ? levelsHTML(c.levels) : ''; },
+    bonus: function(){ return c.bonus ? bonusHTML(c.bonus) : ''; },
     dialpair: function(){ return c.dialpair ? dialPairHTML(c.dialpair) : ''; },
     second: function(){ return c.second ? secondHTML(c.second) : ''; },
     video: function(){ return c.video ? videoHTML(c.video) : ''; },
