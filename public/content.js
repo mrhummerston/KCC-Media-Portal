@@ -29,7 +29,7 @@ window.PORTAL = {
       "resources": [],
       "equipment": []
     },
-     "9": {
+    "9": {
       "page": "",
       "assignments": [
         {
@@ -103,6 +103,12 @@ window.PORTAL = {
           "title": "Unsplash",
           "text": "Beautiful free photos.",
           "url": "https://unsplash.com/",
+          "image": ""
+        },
+        {
+          "title": "Mixkit",
+          "text": "",
+          "url": "https://mixkit.co/",
           "image": ""
         }
       ]
@@ -182,6 +188,12 @@ window.PORTAL = {
           "text": "A free media platform providing music, sound effects, images, videos, and illustrations for creative projects.",
           "url": "https://pixabay.com/sound-effects/",
           "image": ""
+        },
+        {
+          "title": "Mixkit",
+          "text": "",
+          "url": "https://mixkit.co/",
+          "image": ""
         }
       ]
     },
@@ -206,6 +218,12 @@ window.PORTAL = {
           "text": "",
           "url": "https://unsplash.com/",
           "image": ""
+        },
+        {
+          "title": "Mixkit",
+          "text": "",
+          "url": "https://mixkit.co/",
+          "image": ""
         }
       ]
     },
@@ -214,6 +232,18 @@ window.PORTAL = {
       "text": "A site for finding font designs that can be downloaded and imported into Premiere Pro.",
       "url": "https://www.dafont.com/",
       "image": ""
+    },
+    {
+      "title": "Video Templates - Adobe Premiere Pro",
+      "text": "For when you are looking for pre-made templates for difficult tasks, e.g. text effects.",
+      "items": [
+        {
+          "title": "MixKit",
+          "text": "Up your video creation game by exploring our library of the best free video templates for Premiere Pro CC 2020. Download and use free motion graphics templates in your next video editing project with no attribution or sign up required.",
+          "url": "https://mixkit.co/free-premiere-pro-templates/",
+          "image": ""
+        }
+      ]
     }
   ]
 };
