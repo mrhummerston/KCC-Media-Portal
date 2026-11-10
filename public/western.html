@@ -7,7 +7,7 @@
 <meta name="description" content="Year 8 Media Arts: the Western Genre Unit, Rango notes and response, and your Western short film.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Rye&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Comic+Neue:wght@400;700&family=Inter:wght@400;600;700;800&family=Lexend:wght@400;600;700&family=Open+Sans:wght@400;600;700;800&family=Playfair+Display:wght@400;600;700&family=Roboto:wght@400;500;700&family=Rye&display=swap" rel="stylesheet">
 <script>
 (function () {
   var t = null;
@@ -621,6 +621,40 @@ td.swcode{white-space:nowrap;min-width:290px}
 [data-kfree]{position:relative;z-index:5}
 @media (max-width:700px){ [data-kfree]{transform:none!important} }
 #edFree{pointer-events:auto;position:absolute;left:92px;top:6px;min-height:34px;padding:0 10px;border-radius:8px;border:2px solid #fff;background:#8a3ffc;color:#fff;font:700 .85rem var(--body);cursor:move;touch-action:none}
+
+/* ---------- lesson templates the teacher can add (objective, vocabulary, prompt, headings, shapes) ---------- */
+.panel.ed-tpl{color:#1b2333;box-shadow:none}
+.panel.ed-tpl p,.panel.ed-tpl h1,.panel.ed-tpl h2{margin:0}
+.panel.ed-tpl-objective{background:#fff1a8;border:3px solid #e3b800;border-radius:18px;color:#3b2f00;padding:20px 26px}
+.panel.ed-tpl-objective p{font-size:1.3rem;line-height:1.35}
+.panel.ed-tpl-vocab{display:flex;align-items:stretch;padding:0;background:#e4f0ff;border:2px solid #2b5be0;border-radius:18px;color:#0f2a5c;overflow:hidden}
+.panel.ed-tpl-vocab p{padding:18px 24px;font-size:1.25rem;line-height:1.35;flex:1 1 64%}
+.panel.ed-tpl-vocab p:first-child{flex:0 0 36%;font-weight:800;border-right:3px solid rgba(15,42,92,.25)}
+.panel.ed-tpl-prompt{position:relative;background:#f1e8ff;border:0;border-left:12px solid #7a4fd6;border-radius:14px;color:#2b1659;padding:22px 28px 22px 48px}
+.panel.ed-tpl-prompt::before{content:'\201C';position:absolute;left:20px;top:-4px;font:800 74px/1 Georgia,serif;opacity:.28}
+.panel.ed-tpl-prompt p{font-size:1.4rem;font-style:italic;line-height:1.35}
+.panel.ed-tpl-h1,.panel.ed-tpl-h2,.panel.ed-tpl-text{background:transparent;border:0;border-radius:6px;color:var(--text);padding:6px 10px}
+.panel.ed-tpl-h1 h1{font-size:clamp(2rem,5vw,3.4rem)}
+.panel.ed-tpl-h2 h2{font-size:clamp(1.5rem,3.4vw,2.3rem)}
+.panel.ed-tpl-text p{font-size:1.2rem;line-height:1.45}
+.panel.ed-tpl-rect,.panel.ed-tpl-circle{display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;font-weight:700}
+.panel.ed-tpl-rect{background:#dde8ff;border:3px solid #2b5be0;border-radius:14px;color:#0f2a5c}
+.panel.ed-tpl-circle{background:#ffe3de;border:3px solid #e0523d;border-radius:50%;color:#5a1a10}
+.panel.ed-tpl-rect p,.panel.ed-tpl-circle p{font-size:1.2rem}
+/* ---------- present mode (teacher): only the lesson, ready for the projector ---------- */
+body.ed-present .topbar,body.ed-present .foot,body.ed-present .back,body.ed-present .topnav,body.ed-present .nav,body.ed-present .mark,body.ed-present .noprint,body.ed-present #edBar,body.ed-present #edOv,body.ed-present #edToast,body.ed-present #edPrev{display:none!important}
+body.ed-present{padding-bottom:0!important}
+body.ed-present .wrap{max-width:1500px}
+#edBar #edTplRow button{font-weight:700}
+
+.panel.ed-tpl,[data-added]{max-width:100%}
+
+/* keep the teacher toolbar compact */
+#edBar select{max-width:210px;flex:0 1 auto}
+#edBar #edBdw{max-width:120px}
+#edBar #edGBody,#edBar #edGHead{max-width:190px}
+#edBar #edAspect{max-width:160px}
+#edBar #edPage{max-width:260px}
 </style>
 </head>
 <body>
@@ -690,7 +724,9 @@ td.swcode{white-space:nowrap;min-width:290px}
   var SKIP = '.qcard,.slot,.fields,dialog,.topbar,.foot,#edBar,#edOv,#edPrev,.printdoc,.print-title,.print-label,.run-head,.print-empty,.fb,.qsum,.state,.err,.busy,.back,.opts,[data-noedit]';
   var FONTS = [['Page default', ''], ['Atkinson Hyperlegible', '"Atkinson Hyperlegible","Segoe UI",sans-serif'], ['Bricolage Grotesque', '"Bricolage Grotesque","Segoe UI",sans-serif'],
     ['Segoe UI', '"Segoe UI",system-ui,sans-serif'], ['Arial', 'Arial,Helvetica,sans-serif'], ['Verdana', 'Verdana,Geneva,sans-serif'], ['Trebuchet MS', '"Trebuchet MS",sans-serif'],
-    ['Georgia', 'Georgia,serif'], ['Times New Roman', '"Times New Roman",Times,serif'], ['Courier New', '"Courier New",monospace'], ['Comic Sans MS', '"Comic Sans MS","Comic Sans",cursive']];
+    ['Georgia', 'Georgia,serif'], ['Times New Roman', '"Times New Roman",Times,serif'], ['Courier New', '"Courier New",monospace'], ['Comic Sans MS', '"Comic Sans MS","Comic Sans",cursive'],
+    ['Inter', '"Inter",system-ui,sans-serif'], ['Open Sans', '"Open Sans",system-ui,sans-serif'], ['Roboto', '"Roboto",system-ui,sans-serif'], ['Lexend (easy to read)', '"Lexend",system-ui,sans-serif'],
+    ['Comic Neue (Comic Sans style)', '"Comic Neue","Comic Sans MS",cursive'], ['Playfair Display (serif)', '"Playfair Display",Georgia,serif']];
 
   function q(s, r) { return (r || document).querySelector(s); }
   function qa(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
@@ -804,6 +840,13 @@ td.swcode{white-space:nowrap;min-width:290px}
     b = b || {};
     if (!el.hasAttribute('data-kt')) { if (b.tr) { el.style.transform = b.tr; el.setAttribute('data-kfree', '1'); } else if (el.hasAttribute('data-kfree')) { el.style.transform = ''; el.removeAttribute('data-kfree'); } }
     el.style.gridColumn = b.span ? (b.span === 'full' ? '1 / -1' : 'span ' + b.span) : '';
+    var nf = !figTarget(el);
+    if (b.bg !== undefined) el.style.background = b.bg; else el.style.removeProperty('background');
+    if (b.bdw !== undefined || b.bd) { var bw0 = b.bdw === undefined ? 2 : b.bdw; el.style.borderStyle = bw0 ? 'solid' : 'none'; el.style.borderWidth = bw0 ? bw0 + 'px' : ''; if (b.bd) el.style.borderColor = b.bd; }
+    else { el.style.removeProperty('border-style'); el.style.removeProperty('border-width'); el.style.removeProperty('border-color'); }
+    if (b.op !== undefined) el.style.opacity = b.op; else el.style.removeProperty('opacity');
+    if (nf && b.bw) { el.style.width = b.bw + 'px'; el.style.maxWidth = '100%'; } else if (nf) { el.style.removeProperty('width'); el.style.removeProperty('max-width'); }
+    if (nf && b.bh) el.style.minHeight = b.bh + 'px'; else if (nf) el.style.removeProperty('min-height');
     var fg = figTarget(el);
     if (fg) {
       fg.style.width = b.w ? b.w + 'px' : ''; fg.style.maxWidth = b.w ? '100%' : '';
@@ -815,7 +858,7 @@ td.swcode{white-space:nowrap;min-width:290px}
   }
   function buildAdded(rec) {
     var el, im, cap;
-    if (rec.type === 'panel') { el = document.createElement('section'); el.className = 'panel c'; el.innerHTML = clean(rec.html); }
+    if (rec.type === 'panel') { el = document.createElement('section'); el.className = 'panel c' + (rec.cls ? ' ' + rec.cls : ''); el.innerHTML = clean(rec.html); }
     else if (rec.type === 'li') { el = document.createElement('li'); el.innerHTML = clean(rec.html); }
     else {
       var fig = '<figure class="fig' + (rec.type === 'pic' ? ' center' : '') + '"><img alt=""><figcaption></figcaption></figure>';
@@ -1094,7 +1137,7 @@ td.swcode{white-space:nowrap;min-width:290px}
   }
   function addRecord(c, rec) {
     var ck = c.getAttribute('data-kc');
-    E.add[ck] = (E.add[ck] || []).concat(rec); var el = buildAdded(rec); c.appendChild(el); decorate(c);
+    E.add[ck] = (E.add[ck] || []).concat(rec); var el = buildAdded(rec); c.appendChild(el); applyBlock(el, E.block[rec.id]); decorate(c);
     recordOrder(c); commit(); select(el); el.scrollIntoView({ block: 'center' });
   }
   function newId() { return 'add-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -1136,9 +1179,11 @@ td.swcode{white-space:nowrap;min-width:290px}
       '<label>Page <select id="edPage"></select></label>',
       '<button type="button" id="edUndo">↶ Undo</button><button type="button" id="edRedo">↷ Redo</button>',
       '<button type="button" id="edPreview">👁 Preview</button>',
+      '<button type="button" id="edPresent" title="Hide everything except the lesson, for the projector">▶ Present</button>',
       '<button type="button" id="edSave" class="ed-primary">💾 Save my changes</button>',
       '<button type="button" id="edHelpBtn">? Help</button><button type="button" id="edExit">Exit</button>',
       '<span id="edStatus"></span></div>',
+      '<div class="ed-row" id="edTplRow"><span class="ed-label">Add to this lesson:</span><button type="button" data-tpl="objective">🎯 Objective box</button><button type="button" data-tpl="vocab">📖 Vocabulary card</button><button type="button" data-tpl="prompt">💬 Discussion prompt</button><button type="button" data-tpl="text">Text box</button><button type="button" data-tpl="h1">Heading 1</button><button type="button" data-tpl="h2">Heading 2</button><button type="button" data-tpl="rect">▭ Rectangle</button><button type="button" data-tpl="circle">◯ Circle</button><button type="button" data-tpl="pic">🖼 Picture</button></div>',
       '<div class="ed-row ed-ctx"><span id="edSelLabel" class="ed-label">Click any text, picture or box to edit it.</span>',
       '<span class="ed-grp" id="gText" hidden><select id="edFont" aria-label="Font">' + fontOpts + '</select>',
       '<button type="button" id="edSm" title="Smaller text">A−</button><span id="edSize" class="ed-size"></span><button type="button" id="edLg" title="Bigger text">A+</button>',
@@ -1149,6 +1194,7 @@ td.swcode{white-space:nowrap;min-width:290px}
       '<span class="ed-grp" id="gBlock" hidden><button type="button" id="edPrevB">◀ Earlier</button><button type="button" id="edNextB">Later ▶</button>',
       '<button type="button" id="edNarrow">Half width</button><button type="button" id="edWide">Full width</button><button type="button" id="edAuto">Auto width</button>',
       '<button type="button" id="edDel">🗑 Delete</button><button type="button" id="edUp">⬆ Select parent</button><button type="button" id="edFreeReset" hidden>↺ Reset position</button></span>',
+      '<span class="ed-grp" id="gFx" hidden><label>Fill <input type="color" id="edFill" value="#ffffff"></label><button type="button" id="edNoFill">No fill</button><label>Border <input type="color" id="edBdc" value="#2b5be0"></label><select id="edBdw" aria-label="Border width"><option value="0">No border</option><option value="1">1 px</option><option value="2">2 px</option><option value="3">3 px</option><option value="4">4 px</option><option value="6">6 px</option><option value="8">8 px</option></select><label>Opacity <input type="range" id="edOp" min="10" max="100" step="5" value="100"> <span id="edOpV" class="ed-size">100%</span></label></span>'+
       '<span class="ed-grp" id="gImg" hidden><button type="button" id="edImgSm">Picture −</button><button type="button" id="edImgLg">Picture +</button>',
       '<button type="button" id="edImgL">Left</button><button type="button" id="edImgC">Centre</button><button type="button" id="edImgR">Right</button>',
       '<button type="button" id="edImgReset">Reset size</button><button type="button" id="edImgNew">Replace picture…</button></span>',
@@ -1162,7 +1208,7 @@ td.swcode{white-space:nowrap;min-width:290px}
       '<div class="ed-row"><span class="ed-label">Whole page:</span>',
       '<label>Text font <select id="edGBody">' + fontOpts + '</select></label><label>Heading font <select id="edGHead">' + fontOpts + '</select></label>',
       '<button type="button" id="edGSm">Page text −</button><span id="edGScale" class="ed-size"></span><button type="button" id="edGLg">Page text +</button>',
-      '<button type="button" id="edResetPage">Undo all on this page</button><button type="button" id="edDiscard">Discard all unsaved changes</button></div>'
+      '<button type="button" id="edClearAdded">🧹 Clear added items</button><button type="button" id="edDlLesson">⬇ Download lesson (.html)</button><button type="button" id="edResetPage">Undo all on this page</button><button type="button" id="edDiscard">Discard all unsaved changes</button></div>'
     ].join(''));
     var prev = el('div', { id: 'edPrev', hidden: '' }, 'Preview with your unsaved changes. <button type="button" id="edBack">Back to editing</button> <button type="button" id="edExit2">Exit</button>');
     var ov = el('div', { id: 'edOv', hidden: '' }, '<button type="button" id="edMove" draggable="true" title="Drag to move">⠿ Move</button><button type="button" id="edFree" title="Drag to place it anywhere you like">✥ Free</button><span id="edResize" title="Drag to resize"></span>');
@@ -1179,6 +1225,10 @@ td.swcode{white-space:nowrap;min-width:290px}
       '<li><b>Layout:</b> select any box inside a group and choose 1 to 4 columns, or make one box half or full width.</li>',
       '<li><b>Add and delete:</b> select a box and use + Text box, + Picture or + Item. Delete fades something out; press it again to bring it back.</li>',
       '<li><b>Free move:</b> select any text or box, then drag the purple ✥ Free handle to put it anywhere you like (on computers; phones keep the normal layout). Press ↺ Reset position to put it back.</li>',
+      '<li><b>Add:</b> use the “Add to this lesson” buttons for an objective box, vocabulary card, discussion prompt, text box, headings, shapes or a picture. Then drag ✥ Free to place it, and the square corner to resize it.</li>',
+      '<li><b>Fill, border, opacity:</b> select a box and use the Fill, Border and Opacity controls.</li>',
+      '<li><b>Present:</b> hides everything except the lesson, ready for the projector. Press Esc to come back.</li>',
+      '<li><b>Clear added items</b> removes everything you added to this page (press Undo straight after to bring it back). <b>Download lesson</b> saves this page as a stand-alone .html file.</li>',
       '<li><b>Save:</b> press “Save my changes”. It downloads <b>' + EDITS_FILE + '</b>. Upload that file to GitHub next to the page (replace the old one) and commit.</li>',
       '<li>Your work is kept as a draft in this browser, so you can stop and carry on later. Students never see your draft until you publish edits.js.</li></ul>',
       '<p><button type="button" class="ed-primary" id="edHelpClose">Got it</button></p>'
@@ -1189,6 +1239,13 @@ td.swcode{white-space:nowrap;min-width:290px}
   function wire() {
     var bar = q('#edBar');
     bar.addEventListener('mousedown', function (e) { if (!e.target.closest('select,input')) e.preventDefault(); });
+    bar.addEventListener('click', function (e) { var tb = e.target.closest('[data-tpl]'); if (tb) addTpl(tb.getAttribute('data-tpl')); });
+    q('#edFill').addEventListener('input', function (e) { setFx({ bg: e.target.value }, false); }); q('#edFill').addEventListener('change', function () { commit(); updateBar(); });
+    q('#edNoFill').addEventListener('click', function () { var b = selBlock(); if (!b) return; var r = E.block[b.getAttribute('data-kb')] || {}; if (r.bg === 'transparent') setFx({ bg: r.bgp || null, bgp: null }); else setFx({ bg: 'transparent', bgp: r.bg || null }); });
+    q('#edBdc').addEventListener('input', function (e) { var b = selBlock(); if (!b) return; var r = blk(b.getAttribute('data-kb')); setFx({ bd: e.target.value, bdw: r.bdw === undefined ? (parseFloat(getComputedStyle(b).borderTopWidth) || 2) : r.bdw }, false); }); q('#edBdc').addEventListener('change', function () { commit(); updateBar(); });
+    q('#edBdw').addEventListener('change', function (e) { setFx({ bdw: +e.target.value }); });
+    q('#edOp').addEventListener('input', function (e) { q('#edOpV').textContent = e.target.value + '%'; setFx({ op: e.target.value / 100 }, false); }); q('#edOp').addEventListener('change', function () { commit(); });
+    q('#edPresent').addEventListener('click', function () { present(true); }); q('#edClearAdded').addEventListener('click', clearAdded); q('#edDlLesson').addEventListener('click', downloadLesson);
     function on(id, fn) { q('#' + id).addEventListener('click', fn); }
     on('edUndo', undo); on('edRedo', redoIt); on('edSave', download);
     on('edPreview', function () { editing = false; sessionStorage.setItem(EDIT_FLAG, '0'); mode(); rerender(); });
@@ -1238,16 +1295,21 @@ td.swcode{white-space:nowrap;min-width:290px}
     });
     var rz = q('#edResize'), rs = null;
     rz.addEventListener('pointerdown', function (e) {
-      var f = figOf(); if (!f) return; e.preventDefault(); rz.setPointerCapture(e.pointerId);
-      rs = { f: f, x: e.clientX, w: f.getBoundingClientRect().width, max: f.parentElement.getBoundingClientRect().width };
+      var f = figOf(), bx = f ? null : boxTarget(); if (!f && !bx) return; e.preventDefault(); rz.setPointerCapture(e.pointerId);
+      if (f) rs = { f: f, x: e.clientX, w: f.getBoundingClientRect().width, max: f.parentElement.getBoundingClientRect().width };
+      else { var r0 = bx.getBoundingClientRect(); rs = { box: bx, x: e.clientX, y: e.clientY, w: r0.width, h: r0.height }; }
     });
     rz.addEventListener('pointermove', function (e) {
-      if (!rs) return; var w = Math.max(80, Math.min(rs.max, rs.w + (e.clientX - rs.x)));
+      if (!rs) return;
+      if (rs.box) { rs.box.style.maxWidth = '100%'; rs.box.style.width = Math.round(Math.max(80, rs.w + (e.clientX - rs.x))) + 'px'; rs.box.style.minHeight = Math.round(Math.max(40, rs.h + (e.clientY - rs.y))) + 'px'; place(); return; }
+      var w = Math.max(80, Math.min(rs.max, rs.w + (e.clientX - rs.x)));
       rs.f.style.width = Math.round(w) + 'px'; rs.f.style.maxWidth = '100%'; place();
     });
     function endRz(e) {
-      if (!rs) return; var k = rs.f.getAttribute('data-kb'); blk(k).w = Math.round(parseFloat(rs.f.style.width)); rs = null;
-      try { rz.releasePointerCapture(e.pointerId); } catch (x) {} commit(); place();
+      if (!rs) return;
+      if (rs.box) { var kb = rs.box.getAttribute('data-kb'), rr = blk(kb); rr.bw = Math.round(parseFloat(rs.box.style.width)); rr.bh = Math.round(parseFloat(rs.box.style.minHeight)); }
+      else { var k = rs.f.getAttribute('data-kb'); blk(k).w = Math.round(parseFloat(rs.f.style.width)); }
+      rs = null; try { rz.releasePointerCapture(e.pointerId); } catch (x) {} commit(); place();
     }
     rz.addEventListener('pointerup', endRz); rz.addEventListener('pointercancel', endRz);
     window.addEventListener('resize', place); window.addEventListener('scroll', function () {}, { passive: true });
@@ -1312,7 +1374,7 @@ td.swcode{white-space:nowrap;min-width:290px}
     if (!editing || !q('#edBar')) return;
     var gt = q('#gText'), gb = q('#gBlock'), gi = q('#gImg'), gc = q('#gCont'), lab = q('#edSelLabel');
     var b = selBlock(), tgt = textTargets(), c = containerOf();
-    gt.hidden = !tgt.length; gb.hidden = !b; gi.hidden = !isFig(); gc.hidden = !c;
+    gt.hidden = !tgt.length; gb.hidden = !b; gi.hidden = !isFig(); gc.hidden = !c; syncFx(); var tr = q('#edTplRow'); if (tr) tr.hidden = !tplContainer();
     var kind = !sel ? '' : (selText() ? 'Text' : isFig() ? 'Picture' : b ? 'Box' : 'Group');
     lab.textContent = !sel ? 'Click any text, picture or box to edit it.' : 'Selected: ' + kind + (b && b.hasAttribute('data-added') ? ' (added by you)' : '') + (b && E.hide[b.getAttribute('data-kb')] ? ' (deleted)' : '');
     if (tgt.length) { q('#edSize').textContent = curSize() + ' px'; try { q('#edColor').value = rgbToHex(getComputedStyle(tgt[0]).color); } catch (e) {} q('#edFont').value = fontVal(tgt[0].style.fontFamily); }
@@ -1335,6 +1397,72 @@ td.swcode{white-space:nowrap;min-width:290px}
     q('#edGHead').value = fontVal(E.global.display);
     status();
   }
+  /* ---------- lesson templates, box styling, present, clear, download ---------- */
+  var TPL = {
+    objective: { cls: 'ed-tpl ed-tpl-objective', html: '<p><b>Learning Intent:</b> By the end of this lesson, students will be able to...</p>', bw: 640 },
+    vocab: { cls: 'ed-tpl ed-tpl-vocab', html: '<p>Keyword</p><p>Write the meaning in words your students will understand.</p>', bw: 640 },
+    prompt: { cls: 'ed-tpl ed-tpl-prompt', html: '<p>Discuss: What do you notice, and why do you think that happens?</p>', bw: 640 },
+    text: { cls: 'ed-tpl ed-tpl-text', html: '<p>Click here and type your own text.</p>', bw: 440 },
+    h1: { cls: 'ed-tpl ed-tpl-h1', html: '<h1>Lesson title</h1>' },
+    h2: { cls: 'ed-tpl ed-tpl-h2', html: '<h2>Section heading</h2>' },
+    rect: { cls: 'ed-tpl ed-tpl-rect', html: '<p>Label</p>', bw: 340, bh: 200 },
+    circle: { cls: 'ed-tpl ed-tpl-circle', html: '<p>Label</p>', bw: 240, bh: 240 }
+  };
+  function tplContainer() {
+    var c = containerOf(); if (c && c.matches('.lgrid')) return c;
+    var v = q('#viewLesson'); return v && !v.hidden ? q('.lgrid[data-kc]', v) : null;
+  }
+  function addTpl(type) {
+    var c = tplContainer(); if (!c) { toast('Open a lesson first. Templates are added to lesson pages.'); return; }
+    if (type === 'pic') { pickImage().then(function (url) { addRecord(c, { id: newId(), type: 'pic', src: url, cap: 'Type a caption' }); }); return; }
+    var d = TPL[type], id = newId(); if (d.bw || d.bh) { var r = blk(id); if (d.bw) r.bw = d.bw; if (d.bh) r.bh = d.bh; }
+    addRecord(c, { id: id, type: 'panel', cls: d.cls, html: d.html });
+  }
+  function boxTarget() { var b = selBlock(); return b && !figTarget(b) ? b : null; }
+  function setFx(patch, done) {
+    var b = selBlock(); if (!b) return; var r = blk(b.getAttribute('data-kb'));
+    Object.keys(patch).forEach(function (x) { if (patch[x] === null) delete r[x]; else r[x] = patch[x]; });
+    if (r.op === 1) delete r.op; applyBlock(b, r); if (done !== false) { commit(); updateBar(); } place();
+  }
+  function syncFx() {
+    var b = selBlock(), g = q('#gFx'); if (!g) return; g.hidden = !b; if (!b) return;
+    var r = E.block[b.getAttribute('data-kb')] || {}, cs = getComputedStyle(b);
+    q('#edFill').value = rgbToHex(r.bg && r.bg !== 'transparent' ? r.bg : cs.backgroundColor); q('#edNoFill').classList.toggle('ed-primary', r.bg === 'transparent');
+    q('#edBdc').value = rgbToHex(r.bd || cs.borderTopColor); q('#edBdw').value = String(r.bdw !== undefined ? r.bdw : (parseFloat(cs.borderTopWidth) || 0) ? Math.round(parseFloat(cs.borderTopWidth)) : 0);
+    var op = r.op !== undefined ? r.op : 1; q('#edOp').value = Math.round(op * 100); q('#edOpV').textContent = Math.round(op * 100) + '%';
+  }
+  var presenting = false, wasEditing = false;
+  function present(on) {
+    if (on === presenting) return; presenting = on; document.body.classList.toggle('ed-present', on);
+    if (on) {
+      wasEditing = editing; deselect(); undecorate(document.body); document.body.style.paddingBottom = '';
+      toast('Press Esc to leave Present mode'); try { var p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(function () {}); } catch (x) {}
+    } else {
+      if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (x) {} }
+      if (wasEditing) { decorate(document.body); mode(); }
+    }
+  }
+  document.addEventListener('keydown', function (e) { if (presenting && e.key === 'Escape') present(false); });
+  document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && presenting) present(false); });
+  function clearAdded() {
+    var added = qa('[data-added]'); if (!added.length) { toast('Nothing has been added to this page yet.'); return; }
+    if (!window.confirm('Remove the ' + added.length + (added.length === 1 ? ' item' : ' items') + ' you added to this page? You can press Undo straight after.')) return;
+    deselect(); var cs = qa('[data-kc]');
+    added.forEach(function (b) { delete E.block[b.getAttribute('data-kb')]; b.remove(); });
+    cs.forEach(function (c) { var ck = c.getAttribute('data-kc'); if (E.add[ck]) { var ids = E.add[ck].map(function (r) { return r.id; }); delete E.add[ck]; if (E.order[ck]) E.order[ck] = E.order[ck].filter(function (x) { return ids.indexOf(x) < 0; }); if (!E.order[ck].length) delete E.order[ck]; } });
+    commit(); toast('Cleared. Press Undo to bring them back.');
+  }
+  function downloadLesson() {
+    deselect(); var v = ['#viewLesson', '#viewFolio', '#viewHome'].map(function (s) { return q(s); }).filter(function (n) { return n && !n.hidden; })[0]; if (!v) { toast('Open a page first.'); return; }
+    var c = v.cloneNode(true);
+    qa('.ed-hidden', c).forEach(function (n) { n.remove(); });
+    [c].concat(qa('*', c)).forEach(function (n) { ['contenteditable', 'spellcheck', 'draggable', 'data-kt', 'data-kb', 'data-kc', 'data-added', 'data-aid'].forEach(function (a) { n.removeAttribute(a); }); if (n.classList) n.classList.remove('ed-sel', 'ed-dragging'); });
+    c.hidden = false; var title = ((q('h1', v) || {}).textContent || document.title || 'Lesson').trim(), css = qa('style').map(function (s) { return s.textContent; }).join('\n'), fonts = qa('link[rel="stylesheet"]').map(function (l) { return l.outerHTML; }).join('\n');
+    var html = '<!DOCTYPE html>\n<html lang="en" data-theme="' + (document.documentElement.getAttribute('data-theme') || 'light') + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' + title.replace(/</g, '&lt;') + '</title>' + fonts + '<style>' + css + '</style></head><body><main class="wrap">' + c.outerHTML + '<p class="sub" style="text-align:center;margin-top:24px">A stand-alone copy of this lesson. Interactive activities only work on the website.</p></main></body></html>';
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = title.replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim().slice(0, 60) + '.html'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    toast('Saved “' + a.download + '”.');
+  }
+
   /* ---------- free positioning ---------- */
   function parseTr(s) { var m = /translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(s || ''); return m ? { x: +m[1], y: +m[2] } : { x: 0, y: 0 }; }
   function freeTarget() { if (!editing || !sel || !document.body.contains(sel)) return null; return sel.hasAttribute('data-kt') ? sel : selBlock(); }
@@ -1358,7 +1486,7 @@ td.swcode{white-space:nowrap;min-width:290px}
     if (!b || !document.body.contains(b)) { ov.hidden = true; return; }
     var r = b.getBoundingClientRect();
     ov.hidden = false; ov.style.left = (r.left + window.scrollX) + 'px'; ov.style.top = (r.top + window.scrollY) + 'px'; ov.style.width = r.width + 'px'; ov.style.height = r.height + 'px';
-    q('#edResize').hidden = !isFig();
+    q('#edResize').hidden = !(isFig() || boxTarget());
     var ft = freeTarget(), fh = q('#edFree'), fr = q('#edFreeReset'); if (fh) fh.textContent = ft && ft.hasAttribute('data-kt') ? '✥ Free (text)' : '✥ Free (box)'; if (fr) fr.hidden = !(ft && ft.hasAttribute('data-kfree'));
   }
   function syncPage() {
