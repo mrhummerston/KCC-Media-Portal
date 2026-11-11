@@ -23,7 +23,7 @@
   var UI_SEL = '#kbTop,#kbChip,#kbBar,#kbPop,#kbAdd,#kbFab,#kbModal,#kbDrop,#kbLine,#kbToast,#kbHint,#kbRz,.kb-ui';
   var SKIP = '.qcard,.slot,.fields,dialog,.topbar,.foot,.printdoc,.fb,.qsum,.state,.err,.busy,.back,.opts,[data-noedit],' + UI_SEL;
   /* text elements inside blocks the teacher added: these become editable */
-  var ADDED_TEXT = 'h1,h2,h3,h4,p,blockquote,figcaption,.kb-sum,.kb-btn,ul,ol,.kb-term,.kb-def,.kb-who';
+  var ADDED_TEXT = 'h1,h2,h3,h4,p,blockquote,figcaption,.kb-sum,.kb-btn,ul,ol,.kb-term,.kb-def,.kb-who,th,td';
 
   var FONTS = [['Page default', ''], ['Atkinson Hyperlegible', '"Atkinson Hyperlegible","Segoe UI",sans-serif'], ['Bricolage Grotesque', '"Bricolage Grotesque","Segoe UI",sans-serif'],
     ['Inter', '"Inter",system-ui,sans-serif'], ['Open Sans', '"Open Sans",system-ui,sans-serif'], ['Roboto', '"Roboto",system-ui,sans-serif'], ['Lexend (easy to read)', '"Lexend",system-ui,sans-serif'],
@@ -49,14 +49,15 @@
   function q(s, r) { return (r || document).querySelector(s); }
   function qa(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-  function blank() { return { v: 2, text: {}, style: {}, block: {}, order: {}, hide: {}, cols: {}, add: {}, global: {} }; }
+  function blank() { return { v: 2, text: {}, style: {}, block: {}, order: {}, hide: {}, cols: {}, add: {}, global: {}, move: {} }; }
   function norm(e) { var b = blank(); if (e && typeof e === 'object') Object.keys(b).forEach(function (k) { if (k !== 'v' && e[k] !== undefined && e[k] !== null) b[k] = e[k]; }); return b; }
   function copy(e) { return norm(JSON.parse(JSON.stringify(e))); }
   function snap(e) { return JSON.parse(JSON.stringify(e)); }
   function nf(s) { return String(s || '').replace(/["'\s]/g, '').toLowerCase(); }
   function fontVal(v) { for (var i = 0; i < FONTS.length; i++) if (nf(FONTS[i][1]) === nf(v)) return FONTS[i][1]; return ''; }
   function slug(s) { return String(s || '').toLowerCase().replace(/<[^>]*>/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 36); }
-  function newId() { return 'add-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  var idN = 0;
+  function newId() { return 'add-' + Date.now().toString(36) + (++idN).toString(36) + Math.random().toString(36).slice(2, 5); }
   function rgbToHex(rgb) { var m = String(rgb).match(/\d+/g); if (!m) return '#000000'; return '#' + m.slice(0, 3).map(function (n) { return ('0' + (+n).toString(16)).slice(-2); }).join(''); }
   function toHex(c) { if (!c || c === 'transparent' || /rgba\(.*,\s*0\)/.test(c)) return '#ffffff'; return /^#[0-9a-f]{6}$/i.test(c) ? c : rgbToHex(c); }
   function fmtSize(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
@@ -131,6 +132,7 @@
         if (m && !m.hasAttribute('data-kc')) m.setAttribute('data-kc', mk(vk + '|c|' + (m.id || 'main') + '|-'));
         mainC = m || mainC;
       }
+      qa('[data-kb]', root).forEach(function (el) { if (el.__home === undefined) el.__home = el.parentElement ? el.parentElement.getAttribute('data-kc') : null; });
     }
     qa(TEXT_SEL, root).forEach(function (el) {
       if (el.hasAttribute('data-kt') || el.closest(SKIP) || el.closest('[data-added]')) return;
@@ -188,6 +190,7 @@
     } else {
       el = document.createElement('section'); var c = rec.cls || '';
       el.className = /(^|\s)kb(\s|$)/.test(c) ? c : 'panel c' + (c ? ' ' + c : ''); el.innerHTML = clean(rec.html);
+      qa('[data-slot]', el).forEach(function (s) { s.setAttribute('data-kc', rec.id + '#' + s.getAttribute('data-slot')); });
     }
     el.setAttribute('data-kb', rec.id); el.setAttribute('data-added', rec.type); el.setAttribute('data-aid', rec.id);
     return el;
@@ -205,13 +208,24 @@
     out.forEach(function (k) { c.appendChild(k); });
   }
   function recordOrder(c) { E.order[c.getAttribute('data-kc')] = blockKids(c).map(function (k) { return k.getAttribute('data-kb'); }); }
+  function findContainer(key, root) { if (!key) return null; return qa('[data-kc]', root || document).filter(function (c) { return c.getAttribute('data-kc') === key; })[0] || null; }
   function applyAll(root) {
-    var cs = qa('[data-kc]', root); if (root.hasAttribute && root.hasAttribute('data-kc')) cs.push(root);
-    cs.forEach(function (c) {
-      (E.add[c.getAttribute('data-kc')] || []).forEach(function (rec) {
-        var have = Array.prototype.slice.call(c.children).some(function (k) { return k.getAttribute('data-aid') === rec.id; });
-        if (!have) c.appendChild(buildAdded(rec));
+    var seen = [], rounds = 0;
+    function pending() { var all = qa('[data-kc]', root); if (root.hasAttribute && root.hasAttribute('data-kc') && all.indexOf(root) < 0) all.push(root); return all.filter(function (c) { return seen.indexOf(c) < 0; }); }
+    var cs = pending();
+    while (cs.length && rounds++ < 10) {
+      cs.forEach(function (c) {
+        seen.push(c);
+        (E.add[c.getAttribute('data-kc')] || []).forEach(function (rec) {
+          var have = Array.prototype.slice.call(c.children).some(function (k) { return k.getAttribute('data-aid') === rec.id; });
+          if (!have) c.appendChild(buildAdded(rec));
+        });
       });
+      cs = pending();
+    }
+    qa('[data-kb]', root).forEach(function (el) {
+      var to = E.move[el.getAttribute('data-kb')]; if (!to) return;
+      var tc = findContainer(to, root); if (tc && !el.contains(tc) && el.parentElement !== tc) tc.appendChild(el);
     });
     qa('[data-kt]', root).forEach(function (el) {
       var k = el.getAttribute('data-kt');
@@ -222,18 +236,21 @@
     qa('[data-kb]', root).forEach(function (el) {
       var k = el.getAttribute('data-kb'); applyBlock(el, E.block[k]); el.classList.toggle('ed-hidden', !!E.hide[k]);
     });
-    cs.forEach(function (c) {
+    var all = qa('[data-kc]', root); if (root.hasAttribute && root.hasAttribute('data-kc') && all.indexOf(root) < 0) all.push(root);
+    all.forEach(function (c) {
       var ck = c.getAttribute('data-kc'); if (E.order[ck]) reorder(c, E.order[ck]);
       var n = E.cols[ck]; c.style.gridTemplateColumns = n ? 'repeat(' + n + ',minmax(0,1fr))' : '';
     });
   }
+  /* a design block with nothing in it is invisible to students (teachers still see it) */
+  function markEmptyDesigns(root) { qa('.kb-d', root).forEach(function (d) { d.classList.toggle('kb-d-empty', !q('.kb-slot > [data-kb]', d) && !q('.kb-herobg-img', d)); }); }
 
   /* ---------- called by the page after it draws something ---------- */
   function after(viewKey, root, opts) {
     var blocks = !(opts && opts.blocks === false);
     curView = viewKey; curRoot = root; mainC = null; deselect();
     tagAll(root, viewKey, blocks, opts && opts.container);
-    applyAll(root);
+    applyAll(root); markEmptyDesigns(root); if (document.body.classList.contains('kb-arrange') && typeof labelAll === 'function') labelAll();
     if (teacher) resolveAssets(root);
     if (editing) decorate(root); else undecorate(root);
     if (editing) place();
@@ -242,7 +259,8 @@
   function undecorate(root) { qa('[contenteditable]', root).forEach(function (n) { n.removeAttribute('contenteditable'); n.removeAttribute('spellcheck'); }); }
   function decorate(root) {
     qa('[data-kt]', root).forEach(function (el) { el.setAttribute('contenteditable', 'true'); el.setAttribute('spellcheck', 'false'); });
-    qa('[data-added]', root).forEach(function (b) {
+    var addedBlocks = qa('[data-added]', root); if (root.hasAttribute && root.hasAttribute('data-added')) addedBlocks.unshift(root);
+    addedBlocks.forEach(function (b) {
       if (b.getAttribute('data-added') === 'li') { b.setAttribute('contenteditable', 'true'); return; }
       qa(ADDED_TEXT, b).forEach(function (t) {
         if (t.parentElement && t.parentElement.closest('[contenteditable="true"]')) return;
@@ -262,7 +280,7 @@
     catch (e) { if (!draftWarned) { draftWarned = true; toast('Your changes are too big to keep as a draft. Press Save now so you do not lose them.'); } }
     status();
   }
-  function dirty() { clearTimeout(draftT); draftT = setTimeout(saveDraft, 300); status(); }
+  function dirty() { clearTimeout(draftT); draftT = setTimeout(saveDraft, 300); status(); if (typeof scheduleOutline === 'function') scheduleOutline(); }
   function commit() { if (JSON.stringify(E) === JSON.stringify(hist[hist.length - 1])) { dirty(); return; } hist.push(snap(E)); if (hist.length > 60) hist.shift(); redo = []; dirty(); histBtns(); }
   function rerender() {
     deselect();
@@ -273,7 +291,7 @@
   function redoIt() { if (!redo.length) return; var s = redo.pop(); hist.push(s); E = norm(snap(s)); dirty(); applyGlobal(); rerender(); }
   function pruneOf(e) {
     var o = copy(e);
-    ['text', 'style', 'block', 'order', 'hide', 'cols', 'add', 'global'].forEach(function (k) {
+    ['text', 'style', 'block', 'order', 'hide', 'cols', 'add', 'global', 'move'].forEach(function (k) {
       Object.keys(o[k]).forEach(function (x) { var v = o[k][x]; if (v === undefined || v === null || (typeof v === 'object' && !Object.keys(v).length)) delete o[k][x]; });
     });
     Object.keys(o.add).forEach(function (ck) { if (!o.add[ck].length) delete o.add[ck]; });
@@ -319,7 +337,9 @@
       ['contenteditable', 'spellcheck', 'draggable', 'data-kt', 'data-kb', 'data-kc', 'data-added', 'data-aid'].forEach(function (a) { n.removeAttribute(a); });
       n.classList && n.classList.remove('ed-sel', 'ed-hidden', 'ed-drop');
     });
-    qa('[data-path]', c).forEach(function (i) { var p = i.getAttribute('data-path'); if (i.tagName === 'IMG') i.setAttribute('src', p); else i.setAttribute('href', p); i.removeAttribute('data-path'); });
+    qa('[data-path]', c).forEach(function (i) { var p = i.getAttribute('data-path'); if (/^(IMG|VIDEO|SOURCE)$/.test(i.tagName)) i.setAttribute('src', p); else i.setAttribute('href', p); i.removeAttribute('data-path'); });
+    qa('[data-slot]', c).forEach(function (s) { s.innerHTML = ''; });
+    qa('.kb-d-empty', c).forEach(function (d) { d.classList.remove('kb-d-empty'); });
     qa('.kb-slides', c).forEach(normSlides);
     return c;
   }
@@ -390,11 +410,22 @@
     if (n) E.cols[ck] = n; else delete E.cols[ck];
     c.style.gridTemplateColumns = n ? 'repeat(' + n + ',minmax(0,1fr))' : ''; commit(); place();
   }
+  function evictOriginals(block) {
+    qa('[data-kb]', block).forEach(function (el) {
+      if (el === block || el.hasAttribute('data-added')) return;
+      var home = findContainer(el.__home); delete E.move[el.getAttribute('data-kb')]; if (home) home.appendChild(el);
+    });
+  }
+  function dropTree(block) {
+    qa('[data-added]', block).forEach(function (x) { if (x !== block) delete E.block[x.getAttribute('data-kb')]; });
+    qa('[data-slot]', block).forEach(function (s) { var k = s.getAttribute('data-kc'); delete E.add[k]; delete E.order[k]; });
+  }
   function deleteSel() {
     var b = selBlock(); if (!b) return; var k = b.getAttribute('data-kb'), pc = b.parentElement;
     if (b.hasAttribute('data-added')) {
+      evictOriginals(b); dropTree(b);
       var ck = pc.getAttribute('data-kc'); E.add[ck] = (E.add[ck] || []).filter(function (r) { return r.id !== k; }); if (!E.add[ck].length) delete E.add[ck];
-      delete E.block[k]; deselect(); b.remove(); if (pc.hasAttribute('data-kc')) recordOrder(pc); toast('Deleted. Press Undo to bring it back.');
+      delete E.block[k]; deselect(); b.remove(); if (pc.hasAttribute('data-kc')) recordOrder(pc); markEmptyDesigns(curRoot || document); toast('Deleted. Press Undo to bring it back.');
     } else { E.hide[k] = 1; b.classList.add('ed-hidden'); deselect(); toast('Hidden from students. Select it and press Restore to bring it back.'); }
     commit(); place();
   }
@@ -403,12 +434,40 @@
     var ck = c.getAttribute('data-kc'); E.add[ck] = (E.add[ck] || []).concat(rec);
     var el = buildAdded(rec); c.insertBefore(el, ref || null); applyBlock(el, E.block[rec.id]); decorate(c); resolveAssets(el); recordOrder(c); return el;
   }
+  function cloneTree(rec) {
+    var c = JSON.parse(JSON.stringify(rec)); c.id = newId(); var br = E.block[rec.id]; if (br) E.block[c.id] = JSON.parse(JSON.stringify(br));
+    Object.keys(E.add).filter(function (k) { return k.indexOf(rec.id + '#') === 0; }).forEach(function (k) {
+      var nk = c.id + k.slice(rec.id.length), kids = E.add[k], copies = kids.map(cloneTree); E.add[nk] = copies;
+      if (E.order[k]) E.order[nk] = E.order[k].map(function (id) { var i = kids.map(function (r) { return r.id; }).indexOf(id); return i >= 0 ? copies[i].id : id; });
+    });
+    return c;
+  }
   function duplicateSel() {
     var b = selBlock(); if (!b) return; var c = b.parentElement; if (!c.hasAttribute('data-kc')) return;
-    var rec, id = newId();
-    if (b.hasAttribute('data-added')) { var src = recFor(b); if (!src) return; rec = JSON.parse(JSON.stringify(src)); rec.id = id; var br = E.block[src.id]; if (br) E.block[id] = JSON.parse(JSON.stringify(br)); }
-    else { var cl = stripDeco(b); rec = { id: id, type: 'panel', cls: String(b.className).replace(/\bed-\S+/g, '').trim(), html: clean(cl.innerHTML) }; }
-    var el = insertRecord(c, rec, b.nextElementSibling); commit(); select(el); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); toast('Duplicated.');
+    var rec;
+    if (b.hasAttribute('data-added')) { var src = recFor(b); if (!src) return; rec = cloneTree(src); }
+    else { var cl = stripDeco(b); rec = { id: newId(), type: 'panel', cls: String(b.className).replace(/\bed-\S+/g, '').trim(), html: clean(cl.innerHTML) }; }
+    var el = insertTree(c, { rec: rec }, b.nextElementSibling); commit(); select(el); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); toast('Duplicated.');
+  }
+  /* build a block (and everything inside it) from a description: {def, html, slots:{s1:[...]}} or an existing record */
+  function insertTree(c, node, ref) {
+    var rec = node.rec, d = node.def;
+    if (!rec) { var id = newId(); if (d.bh) blk(id).bh = d.bh; rec = { id: id, type: 'panel', cls: d.cls, html: node.html || d.html }; }
+    var el = insertRecord(c, rec, ref);
+    qa('[data-slot]', el).forEach(function (s) { (E.add[s.getAttribute('data-kc')] || []).forEach(function (r) { if (!q('[data-aid="' + r.id + '"]', s)) s.appendChild(buildAdded(r)); }); });
+    Object.keys(node.slots || {}).forEach(function (sn) { var sc = qa('[data-slot]', el).filter(function (s) { return s.getAttribute('data-slot') === sn && s.closest('[data-kb]') === el; })[0]; if (sc) node.slots[sn].forEach(function (ch) { insertTree(sc, ch, null); }); });
+    decorate(el); resolveAssets(el); markEmptyDesigns(c); return el;
+  }
+  /* move a block anywhere (another place in the page, or into a design block) and remember it */
+  function moveBlockTo(b, c, ref) {
+    var oldC = b.parentElement, ock = oldC && oldC.getAttribute('data-kc'), nck = c.getAttribute('data-kc'), k = b.getAttribute('data-kb');
+    if (ock !== nck) {
+      if (b.hasAttribute('data-added')) { var rec = recFor(b); if (rec) { E.add[ock] = (E.add[ock] || []).filter(function (r) { return r.id !== rec.id; }); if (!E.add[ock].length) delete E.add[ock]; E.add[nck] = (E.add[nck] || []).concat(rec); } }
+      else { if (nck === b.__home) delete E.move[k]; else E.move[k] = nck; }
+    }
+    c.insertBefore(b, ref || null);
+    if (ock !== nck && oldC && oldC.hasAttribute('data-kc')) recordOrder(oldC);
+    recordOrder(c); markEmptyDesigns(curRoot || document); commit();
   }
 
   /* ---------- uploaded pictures and files: kept in this browser until they are published ---------- */
@@ -436,7 +495,7 @@
   }
   /* while editing, show the copy kept in this browser (the published file may not be uploaded yet) */
   function resolveAssets(root) {
-    qa('img[src^="' + UPLOADS + '"]', root).forEach(function (img) {
+    qa('img[src^="' + UPLOADS + '"],video[src^="' + UPLOADS + '"]', root).forEach(function (img) {
       var p = img.getAttribute('src');
       assetURL(p).then(function (u) { if (u) { img.setAttribute('data-path', p); img.src = u; } });
     });
@@ -590,61 +649,74 @@
     layout: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M10 10v10"/>', link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>', grip: '<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>',
     palette: '<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2 0-2 1-3 3-3h2a3 3 0 0 0 3-3c0-6-5-10-10-10z"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10" r="1"/>', upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
     crop: '<path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/>', swap: '<path d="M4 8h14l-3-3M20 16H6l3 3"/>', move: '<path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/>', save: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',
+    rect: '<rect x="3" y="4" width="18" height="16" rx="3"/>', tint: '<rect x="3" y="4" width="18" height="16" rx="3" fill="currentColor" fill-opacity=".15"/>', side: '<rect x="3" y="5" width="6" height="14" rx="2"/><rect x="11" y="5" width="10" height="14" rx="2"/>', table: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M3 15h18M9 5v14"/>', media: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 9l5 3-5 3z"/>', task: '<path d="M5 5h14v14H5z"/><path d="M8 12l3 3 5-6"/>', subheading: '<path d="M5 6v12M15 6v12M5 12h10M19 10v8"/>', arrange: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>', page: '<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/>', eyeoff: '<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.2 4M6.2 6.3C3.6 8 2 12 2 12s4 7 10 7c1.4 0 2.700-.3 3.800-.8"/>',
     check: '<path d="M5 12l5 5 9-10"/>', chevron: '<path d="M6 9l6 6 6-6"/>', text2: '<path d="M4 18L10 5l6 13M6 14h8M18 8h3M19.5 8v10"/>', bold: '<path d="M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z"/>', italic: '<path d="M10 5h8M6 19h8M14 5l-4 14"/>', underline: '<path d="M7 4v7a5 5 0 0 0 10 0V4M5 20h14"/>',
     full: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', sparkle: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>', moon: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>'
   };
   function ico(n, s) { return '<svg class="kb-i" viewBox="0 0 24 24" width="' + (s || 20) + '" height="' + (s || 20) + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || '') + '</svg>'; }
 
-  /* ---------- the block library ---------- */
+  /* ---------- ELEMENTS (what you put inside a design block) and DESIGN BLOCKS (the boxes) ---------- */
   var DROP_IMG = '<div class="kb-drop" data-drop="image"><b>Drop a picture here</b><span>or click to choose one</span></div>';
-  var DROP_SM = '<div class="kb-drop kb-drop-sm" data-drop="image"><b>Add picture</b></div>';
-  var BLOCKS = [
-    { id: 'heading', group: 'Text', name: 'Heading', desc: 'Big title and a line under it', cls: 'kb kb-heading wide', html: '<h1>Your heading</h1><p class="kb-sub">A short line that sets the scene.</p>' },
+  var DROP_MEDIA = '<div class="kb-drop kb-drop-media" data-drop="media"><b>Drop images, videos, PDFs or Word files here</b><span class="kb-drop-btns"><span role="button" tabindex="0" data-mact="upload">Choose files</span><span role="button" tabindex="0" data-mact="link">Paste a link</span></span></div>';
+  var ELEMENTS = [
+    { id: 'heading', group: 'Text', name: 'Heading', desc: 'A big title', cls: 'kb kb-heading wide', html: '<h1>Your heading</h1>' },
+    { id: 'subheading', group: 'Text', name: 'Subheading', desc: 'A smaller title', cls: 'kb kb-heading kb-subheading wide', html: '<h2>Your subheading</h2>' },
     { id: 'text', group: 'Text', name: 'Text', desc: 'A paragraph or two', cls: 'kb kb-text wide', html: '<p>Click here and start typing. Select words to change how they look, or use the toolbar above.</p>' },
     { id: 'quote', group: 'Text', name: 'Quote', desc: 'A pull quote with a name', cls: 'kb kb-quote wide', html: '<blockquote><p>\u201CA good question is worth more than a quick answer.\u201D</p></blockquote><p class="kb-who">Name, role</p>' },
     { id: 'callout', group: 'Text', name: 'Callout', desc: 'A tip or reminder that stands out', cls: 'kb kb-callout wide', html: '<div class="kb-ico" aria-hidden="true">\uD83D\uDCA1</div><div class="kb-body"><p><b>Tip:</b> Write something your students should remember.</p></div>' },
+    { id: 'task', group: 'Text', name: 'Task box', desc: 'A highlighted task for students', cls: 'kb kb-task wide', html: '<p><b>TASK:</b> Tell students exactly what to do.</p>' },
     { id: 'button', group: 'Text', name: 'Button', desc: 'A big link button', cls: 'kb kb-button wide', html: '<div class="kb-btnwrap"><a class="kb-btn" href="#">Button text</a></div>' },
     { id: 'divider', group: 'Text', name: 'Divider', desc: 'A thin line between parts', cls: 'kb kb-divider wide', html: '<hr>' },
     { id: 'spacer', group: 'Text', name: 'Space', desc: 'Empty room. Drag the corner to size it', cls: 'kb kb-spacer wide', html: '', bh: 60 },
 
+    { id: 'media', group: 'Media', name: 'Media', desc: 'Pictures, videos, PDFs, Word files or a link', cls: 'kb kb-media wide', html: DROP_MEDIA, icon: 'media' },
+    { id: 'table', group: 'Lesson', name: 'Table', desc: 'Rows and columns, like a worksheet', cls: 'kb kb-tablewrap wide', icon: 'table',
+      html: '<table class="kb-table"><thead><tr><th>Heading</th><th>Heading</th><th>Heading</th></tr></thead><tbody><tr><td>Write here</td><td></td><td></td></tr><tr><td>Write here</td><td></td><td></td></tr><tr><td>Write here</td><td></td><td></td></tr></tbody></table>' },
     { id: 'objective', group: 'Lesson', name: 'Learning intent', desc: 'What students will be able to do', cls: 'kb kb-objective wide', html: '<p><b>Learning Intent:</b> By the end of this lesson, students will be able to...</p>' },
     { id: 'criteria', group: 'Lesson', name: 'Success criteria', desc: 'A tick list of \u201CI can\u2026\u201D', cls: 'kb kb-criteria', html: '<h3>Success criteria</h3><ul><li>I can\u2026</li><li>I can\u2026</li><li>I can\u2026</li></ul>' },
     { id: 'vocab', group: 'Lesson', name: 'Vocabulary card', desc: 'A keyword and its meaning', cls: 'kb kb-vocab', html: '<p class="kb-term">Keyword</p><p class="kb-def">Write the meaning in words your students will understand.</p>' },
     { id: 'prompt', group: 'Lesson', name: 'Discussion prompt', desc: 'A question for the class', cls: 'kb kb-prompt wide', html: '<p>Discuss: What do you notice, and why do you think that happens?</p>' },
-    { id: 'steps', group: 'Lesson', name: 'Numbered steps', desc: 'Do this, then this', cls: 'kb kb-steps wide', html: '<h3>Steps</h3><ol><li>First step</li><li>Second step</li><li>Third step</li></ol>' },
-    { id: 'accordion', group: 'Lesson', name: 'Click to open', desc: 'A question that opens to reveal more', cls: 'kb kb-acc wide', html: '<details open><summary><span class="kb-sum">Question or topic</span></summary><p>The answer or the details go here.</p></details>' },
-
-    { id: 'image', group: 'Media', name: 'Picture', desc: 'One picture with a caption', cls: 'kb kb-image wide', html: '<figure>' + DROP_IMG + '<figcaption>Add a caption (optional)</figcaption></figure>' },
-    { id: 'gallery', group: 'Media', name: 'Gallery', desc: 'Many pictures in a grid', cls: 'kb kb-gallery wide', html: '<div class="kb-grid"><div class="kb-drop" data-drop="gallery"><b>Drop several pictures here</b><span>or click to choose them</span></div></div>' },
-    { id: 'video', group: 'Media', name: 'Video', desc: 'Paste a YouTube link', cls: 'kb kb-video-block wide', ask: 'video' },
-    { id: 'file', group: 'Media', name: 'File', desc: 'A PDF, Word or PowerPoint to download', cls: 'kb kb-file wide', ask: 'file' },
-    { id: 'slides', group: 'Media', name: 'Slides from a PDF', desc: 'Show every page of a PDF like slides', cls: 'kb kb-slides wide', ask: 'pdf' },
-
-    { id: 'hero', group: 'Layout', name: 'Banner', desc: 'A big picture with a title on top', cls: 'kb kb-hero wide', html: '<div class="kb-herobg"><div class="kb-drop kb-drop-hero" data-drop="hero"><b>Drop a banner picture here</b><span>or click to choose one</span></div></div><div class="kb-herotext"><h1>A big, welcoming title</h1><p>One line that says what this page is about.</p></div>' },
-    { id: 'imgtext', group: 'Layout', name: 'Picture + text', desc: 'Picture on one side, words on the other', cls: 'kb kb-imgtext wide', html: '<div class="kb-side">' + DROP_IMG + '</div><div class="kb-main"><h2>A heading</h2><p>Tell the story of the picture, or explain the idea next to it.</p></div>' },
-    { id: 'textimg', group: 'Layout', name: 'Text + picture', desc: 'Words first, picture on the right', cls: 'kb kb-imgtext kb-rev wide', html: '<div class="kb-side">' + DROP_IMG + '</div><div class="kb-main"><h2>A heading</h2><p>Tell the story of the picture, or explain the idea next to it.</p></div>' },
-    { id: 'cols2', group: 'Layout', name: 'Two columns', desc: 'Two blocks of text side by side', cls: 'kb kb-cols kb-cols2 wide', html: '<div class="kb-col"><h3>First column</h3><p>Write something here.</p></div><div class="kb-col"><h3>Second column</h3><p>Write something here.</p></div>' },
-    { id: 'cols3', group: 'Layout', name: 'Three columns', desc: 'Three short ideas in a row', cls: 'kb kb-cols kb-cols3 wide', html: '<div class="kb-col"><h3>One</h3><p>Write something here.</p></div><div class="kb-col"><h3>Two</h3><p>Write something here.</p></div><div class="kb-col"><h3>Three</h3><p>Write something here.</p></div>' },
-    { id: 'cards', group: 'Layout', name: 'Cards', desc: 'Three cards with a picture each', cls: 'kb kb-cards wide', html: [1, 2, 3].map(function (n) { return '<div class="kb-card">' + DROP_SM + '<h3>Card title</h3><p>A short description.</p></div>'; }).join('') }
+    { id: 'steps', group: 'Lesson', name: 'Numbered steps', desc: 'Do this, then this', cls: 'kb kb-steps wide', html: '<h3>Steps</h3><ol><li>First step</li><li>Second step</li><li>Third step</li></ol>' }
   ];
-  function blockDef(id) { return BLOCKS.filter(function (b) { return b.id === id; })[0]; }
-  function withText(id, over) { var d = blockDef(id), c = {}; Object.keys(d).forEach(function (k) { c[k] = d[k]; }); if (over) Object.keys(over).forEach(function (k) { c[k] = over[k]; }); return c; }
+  var DESIGNS = [
+    { id: 'rect', design: true, name: 'Big rectangle', desc: 'A clean box. Drop elements inside', cls: 'kb kb-d kb-d-rect wide', html: '<div class="kb-slot" data-slot="s1"></div>', icon: 'rect' },
+    { id: 'tint', design: true, name: 'Colour box', desc: 'A tinted box in your page colour', cls: 'kb kb-d kb-d-tint wide', html: '<div class="kb-slot" data-slot="s1"></div>', icon: 'tint' },
+    { id: 'cols2', design: true, name: 'Two columns', desc: 'Two boxes side by side', cls: 'kb kb-d kb-d-cols2 wide', html: '<div class="kb-slot" data-slot="s1"></div><div class="kb-slot" data-slot="s2"></div>', icon: 'cols2' },
+    { id: 'cols3', design: true, name: 'Three columns', desc: 'Three boxes in a row', cls: 'kb kb-d kb-d-cols3 wide', html: '<div class="kb-slot" data-slot="s1"></div><div class="kb-slot" data-slot="s2"></div><div class="kb-slot" data-slot="s3"></div>', icon: 'cols3' },
+    { id: 'side', design: true, name: 'Side and main', desc: 'A narrow box beside a wide one', cls: 'kb kb-d kb-d-side wide', html: '<div class="kb-slot" data-slot="s1"></div><div class="kb-slot" data-slot="s2"></div>', icon: 'side' },
+    { id: 'cards', design: true, name: 'Three cards', desc: 'A row of cards for pictures and text', cls: 'kb kb-d kb-d-cards wide', html: '<div class="kb-slot" data-slot="s1"></div><div class="kb-slot" data-slot="s2"></div><div class="kb-slot" data-slot="s3"></div>', icon: 'cards' },
+    { id: 'banner', design: true, name: 'Banner', desc: 'A big picture with words on top', cls: 'kb kb-d kb-d-banner wide', html: '<div class="kb-herobg"><div class="kb-drop kb-drop-hero" data-drop="hero"><b>Drop a banner picture here</b><span>or click to choose one</span></div></div><div class="kb-slot kb-herotext" data-slot="s1"></div>', icon: 'hero' },
+    { id: 'open', design: true, name: 'Click to open', desc: 'A section students open to read', cls: 'kb kb-d kb-d-open wide', html: '<details open><summary><span class="kb-sum">Click to open</span></summary><div class="kb-slot" data-slot="s1"></div></details>', icon: 'accordion' }
+  ];
+  function blockDef(id) { return ELEMENTS.concat(DESIGNS).filter(function (b) { return b.id === id; })[0]; }
+  function EL(id, over) { var n = { def: blockDef(id) }; if (over) Object.keys(over).forEach(function (k) { n[k] = over[k]; }); return n; }
+  function DB(id, slots) { return { def: blockDef(id), slots: slots }; }
+  function H1(t) { return EL('heading', { html: '<h1>' + t + '</h1>' }); } function H2(t) { return EL('subheading', { html: '<h2>' + t + '</h2>' }); } function TX(t) { return EL('text', { html: '<p>' + t + '</p>' }); }
+  function TABLE(cols, rows) { return EL('table', { html: '<table class="kb-table"><thead><tr>' + cols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>' + rows.map(function (r) { return '<tr>' + cols.map(function (c, i) { return '<td>' + (r[i] || '') + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>' }); }
 
-  /* ---------- whole-page layouts: several blocks placed in one click ---------- */
+  /* ---------- whole-page layouts: design blocks with elements already placed in them ---------- */
   var TEMPLATES = [
-    { id: 'overview', name: 'Lesson overview', desc: 'Banner, learning intent, success criteria and key words', wire: ['hero', 'bar', 'cols', 'half', 'bar'],
-      parts: [withText('hero', { html: blockDef('hero').html.replace('A big, welcoming title', 'Lesson title').replace('One line that says what this page is about.', 'What we are learning, and why it matters.') }), withText('objective'),
-        withText('cols2', { html: '<div class="kb-col"><h3>What we will do</h3><p>Outline the activities for the lesson.</p></div><div class="kb-col"><h3>What you need</h3><p>List the equipment and materials.</p></div>' }), withText('criteria'), withText('vocab'), withText('vocab'), withText('prompt')] },
-    { id: 'guide', name: 'Step-by-step guide', desc: 'Heading, steps, a tip and a gallery of examples', wire: ['bar', 'bar', 'steps', 'bar', 'grid'],
-      parts: [withText('heading', { html: '<h1>How to\u2026</h1><p class="kb-sub">Follow these steps, then try it yourself.</p>' }), withText('steps'), withText('callout'), withText('gallery')] },
-    { id: 'resources', name: 'Resource hub', desc: 'A heading, three cards and a button to a task sheet', wire: ['bar', 'cards', 'bar'],
-      parts: [withText('heading', { html: '<h1>Resources</h1><p class="kb-sub">Everything you need for this unit in one place.</p>' }), withText('cards'), withText('button', { html: '<div class="kb-btnwrap"><a class="kb-btn" href="#">Open the task sheet</a></div>' })] },
-    { id: 'showcase', name: 'Gallery showcase', desc: 'Banner, intro, gallery and a quote', wire: ['hero', 'bar', 'grid', 'bar'],
-      parts: [withText('hero'), withText('text'), withText('gallery'), withText('quote')] },
-    { id: 'weekly', name: 'Weekly plan', desc: 'Three columns for the parts of the week, with success criteria', wire: ['bar', 'cols3', 'half', 'bar'],
-      parts: [withText('heading', { html: '<h1>This week</h1><p class="kb-sub">What we will cover, lesson by lesson.</p>' }), withText('cols3', { html: '<div class="kb-col"><h3>Lesson 1</h3><p>Focus and activities.</p></div><div class="kb-col"><h3>Lesson 2</h3><p>Focus and activities.</p></div><div class="kb-col"><h3>Lesson 3</h3><p>Focus and activities.</p></div>' }), withText('criteria'), withText('button')] },
+    { id: 'lesson', name: 'Lesson page', desc: 'Page title, introduction, media, lesson steps and revision', wire: ['hero', 'bar', 'half', 'steps', 'rect'],
+      parts: [DB('banner', { s1: [H1('Lesson title'), TX('What we are learning, and why it matters.')] }), DB('rect', { s1: [H2('Introduction'), EL('objective'), TX('Set the scene for the lesson in a sentence or two.')] }),
+        DB('cols2', { s1: [EL('media')], s2: [H2('Watch and notice'), TX('Tell students what to look and listen for.'), EL('task')] }), DB('rect', { s1: [H2('Lesson steps'), EL('steps'), EL('callout')] }),
+        DB('tint', { s1: [H2('Revision'), EL('criteria'), EL('vocab'), EL('prompt')] })] },
+    { id: 'analyse', name: 'Analyse a scene', desc: 'A task, the scene, and a table to fill in', wire: ['bar', 'half', 'table', 'table'],
+      parts: [DB('rect', { s1: [H1('Analysing a scene'), EL('task', { html: '<p><b>TASK:</b> Watch the scene, then complete the table below.</p>' })] }), DB('cols2', { s1: [EL('media')], s2: [H2('What to look for'), TX('List the codes and conventions students should notice.')] }),
+        DB('rect', { s1: [H2('Specific scene analysis'), TABLE(['Codes used', 'How are the codes used?', 'What is the meaning created?'], [['Audio codes'], ['Technical codes'], ['Symbolic codes']])] }), DB('tint', { s1: [H2('Reflect'), EL('prompt')] })] },
+    { id: 'values', name: 'Values and examples', desc: 'Introduction, a clip, and a Value / Examples table', wire: ['bar', 'half', 'table'],
+      parts: [DB('rect', { s1: [H1('A hero\u2019s values'), TX('Explain the idea in your own words.')] }), DB('side', { s1: [EL('vocab')], s2: [EL('media')] }), EL('task', { html: '<p><b>TASK:</b> Find examples of each value in the film and add them to the table.</p>' }),
+        DB('rect', { s1: [TABLE(['Value', 'Examples from the film'], [['Responsibility'], ['Family'], ['Identity'], ['Courage']])] })] },
+    { id: 'compare', name: 'Compare and contrast', desc: 'Two clips side by side with a summary table', wire: ['bar', 'half', 'half', 'table'],
+      parts: [DB('rect', { s1: [H1('Comparing the two'), EL('task')] }), DB('cols2', { s1: [H2('First'), EL('media'), TX('Notes about the first.')], s2: [H2('Second'), EL('media'), TX('Notes about the second.')] }),
+        DB('rect', { s1: [H2('Lesson summary'), TABLE(['', 'First', 'Second'], [['What changed'], ['Why it matters']])] })] },
+    { id: 'resources', name: 'Resource hub', desc: 'A heading and three cards, each with a picture', wire: ['bar', 'cards'],
+      parts: [DB('rect', { s1: [H1('Resources'), TX('Everything you need for this unit in one place.')] }), DB('cards', { s1: [EL('media'), H2('Card title'), TX('A short description.')], s2: [EL('media'), H2('Card title'), TX('A short description.')], s3: [EL('media'), H2('Card title'), TX('A short description.')] }), EL('button')] },
+    { id: 'showcase', name: 'Gallery showcase', desc: 'Banner, intro, a gallery and a quote', wire: ['hero', 'bar', 'grid', 'bar'],
+      parts: [DB('banner', { s1: [H1('Our best work'), TX('A showcase of student photos.')] }), DB('rect', { s1: [EL('media')] }), EL('quote')] },
+    { id: 'weekly', name: 'Weekly plan', desc: 'Three columns for the parts of the week, with success criteria', wire: ['bar', 'cols', 'half'],
+      parts: [DB('rect', { s1: [H1('This week'), TX('What we will cover, lesson by lesson.')] }), DB('cols3', { s1: [H2('Lesson 1'), TX('Focus and activities.')], s2: [H2('Lesson 2'), TX('Focus and activities.')], s3: [H2('Lesson 3'), TX('Focus and activities.')] }), DB('tint', { s1: [EL('criteria')] }), EL('button')] },
     { id: 'faq', name: 'Questions and answers', desc: 'A heading and click-to-open answers', wire: ['bar', 'acc', 'acc', 'acc'],
-      parts: [withText('heading', { html: '<h1>Questions</h1><p class="kb-sub">Click a question to see the answer.</p>' }), withText('accordion'), withText('accordion'), withText('accordion')] }
+      parts: [DB('rect', { s1: [H1('Questions'), TX('Click a question to see the answer.')] }), DB('open', { s1: [TX('The answer goes here.')] }), DB('open', { s1: [TX('The answer goes here.')] }), DB('open', { s1: [TX('The answer goes here.')] })] }
   ];
 
   /* =====================================================================
@@ -652,7 +724,8 @@
      ===================================================================== */
   var ui = {}, popKind = null, popAnchor = null;
   var NAMES = { heading: 'Heading', text: 'Text', quote: 'Quote', callout: 'Callout', button: 'Button', divider: 'Divider', spacer: 'Space', objective: 'Learning intent', criteria: 'Success criteria', vocab: 'Vocabulary', prompt: 'Prompt',
-    steps: 'Steps', acc: 'Click to open', image: 'Picture', gallery: 'Gallery', 'video-block': 'Video', file: 'File', slides: 'Slides', hero: 'Banner', imgtext: 'Picture + text', cols: 'Columns', cards: 'Cards' };
+    steps: 'Steps', acc: 'Click to open', image: 'Picture', gallery: 'Gallery', 'video-block': 'Video', file: 'File', slides: 'Slides', hero: 'Banner', imgtext: 'Picture + text', cols: 'Columns', cards: 'Cards', media: 'Media', tablewrap: 'Table', task: 'Task box' };
+  var DNAMES = { rect: 'Big rectangle', tint: 'Colour box', cols2: 'Two columns', cols3: 'Three columns', side: 'Side and main', cards: 'Three cards', banner: 'Banner', open: 'Click to open' };
 
   function toast(msg, ms) {
     var t = ui.toast || q('#kbToast'); if (!t) return; t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, ms || 5000);
@@ -662,7 +735,7 @@
     function mk(tag, id, cls, html, attrs) { var e = document.createElement(tag); if (id) e.id = id; e.className = 'kb-ui' + (cls ? ' ' + cls : ''); if (html) e.innerHTML = html; Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); }); document.body.appendChild(e); return e; }
     ui.top = mk('div', 'kbTop', '', '<div class="kbt-l"><span class="kbt-badge">' + ico('brush', 16) + ' Editing</span><label class="kb-sr" for="kbPage">Page</label><select id="kbPage"></select></div>' +
       '<div class="kbt-m"><button type="button" id="kbUndo" class="kbu-btn" aria-label="Undo" title="Undo (Ctrl+Z)">' + ico('undo', 18) + '</button><button type="button" id="kbRedo" class="kbu-btn" aria-label="Redo" title="Redo (Ctrl+Y)">' + ico('redo', 18) + '</button><span id="kbStatus" class="kbt-status" role="status"></span></div>' +
-      '<div class="kbt-r"><button type="button" id="kbPreview" class="kbu-txt">' + ico('eye', 17) + '<span>Preview</span></button><button type="button" id="kbPresent" class="kbu-txt">' + ico('play', 16) + '<span>Present</span></button>' +
+      '<div class="kbt-r"><button type="button" id="kbArrange" class="kbu-txt" aria-pressed="false" title="Zoom out so the whole page fits and rearrange it">' + ico('arrange', 17) + '<span>Arrange</span></button><button type="button" id="kbPreview" class="kbu-txt">' + ico('eye', 17) + '<span>Preview</span></button><button type="button" id="kbPresent" class="kbu-txt">' + ico('play', 16) + '<span>Present</span></button>' +
       '<span class="kb-split"><button type="button" id="kbSave" class="kbu-pri">' + ico('save', 17) + '<span>Save changes</span></button><button type="button" id="kbSaveMore" class="kbu-pri kbu-caret" aria-label="More save options" aria-haspopup="menu">' + ico('chevron', 16) + '</button></span>' +
       '<button type="button" id="kbExit" class="kbu-txt"><span>Exit</span></button></div>', { role: 'toolbar', 'aria-label': 'Page editor' });
     ui.fab = mk('button', 'kbFab', '', ico('plus', 20) + '<span>Add</span>', { type: 'button', 'aria-label': 'Add to your page' });
@@ -672,34 +745,53 @@
     ui.drop = mk('div', 'kbDrop', '', '<div>' + ico('upload', 30) + '<b>Drop to add to your page</b><span>Several pictures become a gallery. PDF, Word and PowerPoint files ask what you want to do.</span></div>', { hidden: '' });
     ui.toast = mk('div', 'kbToast', '', '', { hidden: '', role: 'status', 'aria-live': 'polite' });
     ui.modal = mk('div', 'kbModal', '', '<div class="kbm-card" role="dialog" aria-modal="true"></div>', { hidden: '' });
+    ui.ghost = mk('div', 'kbGhost', '', '', { hidden: '' });
     ui.back = mk('button', 'kbBack', '', ico('brush', 16) + '<span>Back to editing</span>', { type: 'button', hidden: '' });
     ui.file = document.createElement('input'); ui.file.type = 'file'; ui.file.multiple = true; ui.file.hidden = true; ui.file.id = 'kbFile'; ui.file.className = 'kb-ui'; document.body.appendChild(ui.file);
     ui.add = mk('aside', 'kbAdd', '', '', { 'aria-label': 'Add to your page', 'aria-hidden': 'true' });
     buildAdd(); wireUi();
   }
 
-  /* ---------- the Add drawer: blocks, layouts and design ---------- */
-  var addTab = 'blocks';
+  /* ---------- the Add drawer: design blocks, elements, layouts, this page, theme ---------- */
+  var addTab = 'blocks', outT = null;
+  var TABS = [['blocks', 'Blocks'], ['elements', 'Elements'], ['layouts', 'Layouts'], ['page', 'On page'], ['theme', 'Theme']];
   function buildAdd() {
     ui.add.innerHTML = '<div class="kba-head"><b>Add to your page</b><button type="button" id="kbAddClose" class="kbu-btn" aria-label="Close">' + ico('x', 18) + '</button></div>' +
-      '<div class="kba-tabs" role="tablist"><button type="button" role="tab" data-tab="blocks">Blocks</button><button type="button" role="tab" data-tab="layouts">Layouts</button><button type="button" role="tab" data-tab="design">Design</button></div><div class="kba-body" id="kbAddBody"></div>';
+      '<div class="kba-tabs" role="tablist">' + TABS.map(function (x) { return '<button type="button" role="tab" data-tab="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div><div class="kba-body" id="kbAddBody"></div>';
     renderAdd();
   }
+  function tileHtml(b) { return '<button type="button" class="kba-tile" draggable="true" data-block="' + b.id + '" data-s="' + esc((b.name + ' ' + b.desc).toLowerCase()) + '"><span class="kba-ic">' + ico(b.icon || b.id, 22) + '</span><b>' + b.name + '</b><small>' + b.desc + '</small></button>'; }
+  function snippet(b) { var t = q('h1,h2,h3,.kb-term,p,li,figcaption,.kb-sum,th', b), s = t ? t.textContent.trim().replace(/\s+/g, ' ') : ''; return s.slice(0, 36); }
+  function outlineRows(cont, depth) {
+    var h = '';
+    blockKids(cont).forEach(function (b) {
+      var k = b.getAttribute('data-kb'), hid = !!E.hide[k], on = b === selBlock();
+      h += '<div class="kbo-i' + (hid ? ' hid' : '') + (on ? ' on' : '') + '" draggable="true" data-key="' + esc(k) + '" style="padding-left:' + (8 + depth * 18) + 'px"><span class="kbo-g" aria-hidden="true">' + ico('grip', 14) + '</span><button type="button" class="kbo-n" data-oselect="' + esc(k) + '"><b>' + esc(blockLabel(b)) + '</b><small>' + esc(snippet(b)) + '</small></button><button type="button" class="kbo-e" data-ohide="' + esc(k) + '" aria-label="' + (hid ? 'Show ' : 'Hide ') + esc(blockLabel(b)) + '" title="' + (hid ? 'Show' : 'Hide from students') + '">' + ico(hid ? 'eyeoff' : 'eye', 15) + '</button></div>';
+      qa('.kb-slot[data-kc]', b).filter(function (s) { return s.closest('[data-kb]') === b; }).forEach(function (s) { h += outlineRows(s, depth + 1); });
+    });
+    return h;
+  }
+  function outlineHtml() {
+    var c = containerNow() || (curRoot && q('[data-kc]', curRoot)); if (!c) return '<p class="kba-note">Open a page to see its blocks.</p>';
+    var rows = outlineRows(c, 0);
+    return '<p class="kba-note">Every block on this page, in order. <b>Click</b> one to jump to it. <b>Drag</b> one onto the page to move it, even into a design block. The eye hides it from students.</p><div class="kbo">' + (rows || '<p class="kba-note">Nothing here yet.</p>') + '</div>';
+  }
+  function scheduleOutline() { clearTimeout(outT); outT = setTimeout(function () { if (arrange) labelAll(); if (ui.add && addTab === 'page' && document.body.classList.contains('kb-add-open')) renderAdd(); }, 200); }
   function renderAdd() {
     qa('.kba-tabs [role=tab]', ui.add).forEach(function (t) { var on = t.getAttribute('data-tab') === addTab; t.setAttribute('aria-selected', on ? 'true' : 'false'); t.classList.toggle('on', on); });
-    var body = q('#kbAddBody'), h = '';
+    var body = q('#kbAddBody'), keep = body.scrollTop, h = '';
     if (addTab === 'blocks') {
+      h += '<p class="kba-note"><b>Design blocks</b> are the boxes a page is built from. Drag one onto the page, then drag <b>Elements</b> into it. They snap into place.</p><div class="kba-grid">' + DESIGNS.map(tileHtml).join('') + '</div>';
+    } else if (addTab === 'elements') {
       h += '<div class="kba-up"><div>' + ico('upload', 22) + '</div><div><b>Pictures and files</b><span>Drag them anywhere on the page, or</span></div><button type="button" id="kbPick" class="kbu-pri small">Choose files</button></div>';
-      h += '<label class="kba-search"><span class="kb-sr">Search blocks</span><input type="search" id="kbSearch" placeholder="Search blocks" autocomplete="off"></label>';
-      ['Text', 'Lesson', 'Media', 'Layout'].forEach(function (g) {
-        h += '<h3 class="kba-g" data-g="' + g + '">' + g + '</h3><div class="kba-grid" data-g="' + g + '">' + BLOCKS.filter(function (b) { return b.group === g; }).map(function (b) {
-          return '<button type="button" class="kba-tile" draggable="true" data-block="' + b.id + '" data-s="' + esc((b.name + ' ' + b.desc).toLowerCase()) + '"><span class="kba-ic">' + ico(b.id === 'textimg' ? 'imgtext' : b.id === 'cols2' ? 'cols2' : b.id, 22) + '</span><b>' + b.name + '</b><small>' + b.desc + '</small></button>';
-        }).join('') + '</div>';
-      });
+      h += '<label class="kba-search"><span class="kb-sr">Search elements</span><input type="search" id="kbSearch" placeholder="Search elements" autocomplete="off"></label>';
+      ['Text', 'Media', 'Lesson'].forEach(function (g) { h += '<h3 class="kba-g" data-g="' + g + '">' + g + '</h3><div class="kba-grid" data-g="' + g + '">' + ELEMENTS.filter(function (b) { return b.group === g; }).map(tileHtml).join('') + '</div>'; });
     } else if (addTab === 'layouts') {
-      h += '<p class="kba-note">Start a page from a ready-made layout. You can change every word and picture afterwards.</p><div class="kba-lay">' + TEMPLATES.map(function (t) {
-        return '<button type="button" class="kba-card" data-tpl="' + t.id + '"><span class="kba-wire">' + t.wire.map(function (w) { return '<i class="w-' + w + '"></i>'; }).join('') + '</span><b>' + t.name + '</b><small>' + t.desc + '</small></button>';
+      h += '<p class="kba-note">Start a page from a ready-made design. Every word, picture and box can be changed afterwards.</p><div class="kba-lay">' + TEMPLATES.map(function (x) {
+        return '<button type="button" class="kba-card" data-tpl="' + x.id + '"><span class="kba-wire">' + x.wire.map(function (w) { return '<i class="w-' + w + '"></i>'; }).join('') + '</span><b>' + x.name + '</b><small>' + x.desc + '</small></button>';
       }).join('') + '</div>';
+    } else if (addTab === 'page') {
+      h += outlineHtml();
     } else {
       var g = E.global || {};
       h += '<div class="kba-sec"><b>Colours</b><div class="kba-sw">' + PALETTES.map(function (p) { return '<button type="button" class="kba-dot" data-pal="' + p.id + '" style="background:' + p.accent + '" aria-label="' + p.name + '" aria-pressed="' + (g.pal === p.id) + '" title="' + p.name + '"></button>'; }).join('') + '</div></div>';
@@ -709,7 +801,7 @@
       h += '<div class="kba-sec"><b>Text size</b><div class="kbp-step"><button type="button" class="kbu-btn" data-scale="-10" aria-label="Smaller text">A\u2212</button><span id="kbScaleV">' + (g.scale || 100) + '%</span><button type="button" class="kbu-btn" data-scale="10" aria-label="Bigger text">A+</button></div></div>';
       h += '<div class="kba-sec"><button type="button" class="kbu-txt" data-resetdesign="1">Reset the design</button></div>';
     }
-    body.innerHTML = h;
+    body.innerHTML = h; body.scrollTop = keep;
   }
   function seg(act, opts, val) { return '<div class="kbp-seg" role="group">' + opts.map(function (o) { return '<button type="button" data-' + act + '="' + o[0] + '" aria-pressed="' + (String(val) === o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div>'; }
   function openAdd(on, tab) {
@@ -724,6 +816,7 @@
 
   /* ---------- the block chip (above the selected block) ---------- */
   function blockLabel(b) {
+    var dm = /\bkb-d-([a-z0-9]+)/.exec(b.className || ''); if (dm && DNAMES[dm[1]]) return DNAMES[dm[1]]; if (/\bkb-subheading\b/.test(b.className || '')) return 'Subheading';
     var m = /\bkb-([a-z0-9-]+)/.exec(b.className || ''); if (m) { var k = m[1]; if (NAMES[k]) return NAMES[k]; if (k === 'video') return 'Video'; if (k === 'acc') return 'Click to open'; }
     if (b.matches('.fig')) return 'Picture'; if (b.matches('.tile')) return 'Tile'; if (b.matches('.panel')) return 'Section'; return 'Block';
   }
@@ -731,7 +824,7 @@
   function renderChip() {
     if (!ui.chip) return; var b = selBlock();
     if (!editing || presenting || !b) { ui.chip.hidden = true; return; }
-    var k = b.getAttribute('data-kb'), hid = !!E.hide[k], h = '<span class="kbc-grip" draggable="true" title="Drag to move" aria-label="Drag to move this block">' + ico('grip', 16) + '</span><span class="kbc-name">' + esc(blockLabel(b)) + '</span>';
+    var k = b.getAttribute('data-kb'), hid = !!E.hide[k], h = '<span class="kbc-grip" title="Press and drag to move" aria-label="Press and drag to move this block">' + ico('grip', 16) + '</span><span class="kbc-name">' + esc(blockLabel(b)) + '</span>';
     if (hid) h += cbtn('restore', 'eye', 'Restore');
     else h += cbtn('style', 'brush', 'Style', ' aria-haspopup="dialog" aria-expanded="' + (popKind === 'style') + '"') + cbtn('layout', 'layout', 'Layout', ' aria-haspopup="dialog" aria-expanded="' + (popKind === 'layout') + '"') + cbtn('dup', 'copy', 'Duplicate') + cbtn('del', 'trash', b.hasAttribute('data-added') ? 'Delete' : 'Hide');
     ui.chip.innerHTML = h; ui.chip.hidden = false;
@@ -783,7 +876,7 @@
   }
   var lastChipKey = '';
   function renderChipIfNeeded() { var b = selBlock(), key = b ? b.getAttribute('data-kb') + '|' + !!E.hide[b.getAttribute('data-kb')] + '|' + popKind : ''; if (key !== lastChipKey) { lastChipKey = key; renderChip(); } }
-  function refresh() { if (!ui.chip) return; lastChipKey = ''; renderChip(); renderBar(); place(); histBtns(); }
+  function refresh() { if (!ui.chip) return; lastChipKey = ''; renderChip(); renderBar(); place(); histBtns(); scheduleOutline(); }
   function histBtns() { if (!ui.top) return; var u = q('#kbUndo'), r = q('#kbRedo'); if (u) u.disabled = hist.length < 2; if (r) r.disabled = !redo.length; status(); }
   function status() {
     var s = q('#kbStatus'); if (!s) return; var ch = changedFromPublished();
@@ -850,6 +943,7 @@
       return sec('Width', pseg('span', [['', 'Auto'], ['1', 'Half'], ['full', 'Full width']], r.span == null ? '' : String(r.span))) + sec('Alignment', pseg('al', [['', 'Default'], ['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], r.al || '')) +
         sec('Size', '<p class="kbp-hint">Drag the round handle at the corner of the block to make it bigger or smaller.</p><button type="button" class="kbu-txt" data-a="resetsize">Reset size</button>') +
         sec('Order', '<div class="kbp-row"><button type="button" class="kbu-txt" data-a="up">' + ico('up', 16) + ' Earlier</button><button type="button" class="kbu-txt" data-a="down">' + ico('down', 16) + ' Later</button></div>') +
+        (q('.kb-table', b) ? sec('Table', '<div class="kbp-row"><button type="button" class="kbu-txt" data-a="trow+">+ Row</button><button type="button" class="kbu-txt" data-a="trow-">\u2212 Row</button><button type="button" class="kbu-txt" data-a="tcol+">+ Column</button><button type="button" class="kbu-txt" data-a="tcol-">\u2212 Column</button></div><p class="kbp-hint">Click a cell first to add or remove next to it. Otherwise it works on the end of the table.</p>') : '') +
         (grid ? sec('Columns in this section', pseg('cols', [['', 'Auto'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4']], cols || '')) : '') +
         sec('Place anywhere', '<div class="kbp-row"><button type="button" class="kbu-txt" data-a="free" aria-pressed="' + freeMode + '">' + ico('move', 16) + ' ' + (freeMode ? 'Drag the block now' : 'Drag it freely') + '</button><button type="button" class="kbu-txt" data-a="resetpos">Reset position</button></div><p class="kbp-hint">Computers only. Phones keep the normal layout.</p>');
     }
@@ -897,6 +991,7 @@
       case 'cols': setCols(v ? +v : 0); repop(); break;
       case 'free': freeMode = !freeMode; document.body.classList.toggle('kb-free', freeMode); closePop(); if (freeMode) toast('Now drag the block anywhere you like. Press Esc when you are done.'); break;
       case 'resetpos': setBlock({ tr: null }); break;
+      case 'trow+': case 'trow-': case 'tcol+': case 'tcol-': tableOp(a); repop(); break;
       case 'ar': setImg({ ar: v || '', fit: v ? (readImg(im).fit || 'cover') : '' }); repop(); break;
       case 'fit': setImg({ fit: v }); repop(); break;
       case 'pos': setImg({ pos: v }); repop(); break;
@@ -1017,6 +1112,8 @@
       if (t.closest('#kbAddClose')) { openAdd(false); return; }
       var tab = t.closest('[data-tab]'); if (tab) { addTab = tab.getAttribute('data-tab'); renderAdd(); return; }
       if (t.closest('#kbPick')) { pickFiles(); return; }
+      var os = t.closest('[data-oselect]'); if (os) { var ob = blockByKey(os.getAttribute('data-oselect')); if (ob) { select(ob); ob.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return; }
+      var oh = t.closest('[data-ohide]'); if (oh) { var hb = blockByKey(oh.getAttribute('data-ohide')); if (hb) { var hk = hb.getAttribute('data-kb'); if (E.hide[hk]) delete E.hide[hk]; else E.hide[hk] = 1; hb.classList.toggle('ed-hidden', !!E.hide[hk]); commit(); renderAdd(); } return; }
       var bt = t.closest('[data-block]'); if (bt) { addBlock(bt.getAttribute('data-block')); return; }
       var tp = t.closest('[data-tpl]'); if (tp) { addTemplate(tp.getAttribute('data-tpl')); return; }
       var pal = t.closest('[data-pal]'); if (pal) { setGlobal({ pal: pal.getAttribute('data-pal') }); return; }
@@ -1032,13 +1129,17 @@
       qa('.kba-g', ui.add).forEach(function (g) { var grid = q('.kba-grid[data-g="' + g.getAttribute('data-g') + '"]', ui.add); var any = qa('.kba-tile', grid).some(function (t) { return !t.hidden; }); g.hidden = grid.hidden = !any; });
     });
     ui.add.addEventListener('dragstart', function (e) { var t = e.target.closest && e.target.closest('[data-block]'); if (!t) return; e.dataTransfer.setData('text/kb-block', t.getAttribute('data-block')); e.dataTransfer.effectAllowed = 'copy'; dragBlockId = t.getAttribute('data-block'); });
-    ui.add.addEventListener('dragend', function () { dragBlockId = null; hideLine(); });
+    ui.add.addEventListener('dragend', function () { dragBlockId = null; dragKey = null; hideLine(); });
 
     /* selecting things on the page */
     document.addEventListener('click', function (e) {
-      if (!editing || presenting) return; var t = e.target; if (!t.closest || t.closest(UI_SEL)) return;
-      if (t.closest('a') && !t.closest('.kb-slides-bar')) e.preventDefault(); if (t.closest('summary')) e.preventDefault();
-      var drop = t.closest('.kb-drop'); if (drop) { pickForDrop(drop); return; }
+      if (!editing || presenting) return;
+      if (suppressClick) { e.preventDefault(); e.stopPropagation(); return; }
+      var t = e.target; if (!t.closest || t.closest(UI_SEL)) return;
+      var a = t.closest('a'), href = a ? (a.getAttribute('href') || '') : '';
+      if (a && /^#./.test(href) && (a.hasAttribute('data-kb') || !a.closest('[contenteditable="true"]'))) return;   /* lessons, tiles and tabs open as normal */
+      if (a && !t.closest('.kb-slides-bar')) e.preventDefault(); if (t.closest('summary')) e.preventDefault();
+      var drop = t.closest('.kb-drop'); if (drop) { var mb = t.closest('[data-mact]'); if (mb && mb.getAttribute('data-mact') === 'link') askLink({ type: 'drop', el: drop }); else pickForDrop(drop); return; }
       var im = t.closest('img'); if (im && blockOf(im) && !im.closest('.kb-slides')) { select(im); return; }
       var tx = textOf(t); if (tx) { select(tx); return; }
       var bl = blockOf(t); if (bl) { select(bl); return; }
@@ -1069,7 +1170,7 @@
     document.addEventListener('pointermove', function (e) { if (!fm) return; var dx = Math.round(fm.ox + e.clientX - fm.x), dy = Math.round(fm.oy + e.clientY - fm.y); fm.b.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)'; fm.b.setAttribute('data-kfree', '1'); place(); });
     document.addEventListener('pointerup', function () { if (!fm) return; var b = fm.b, k = b.getAttribute('data-kb'); fm = null; blk(k).tr = b.style.transform; commit(); place(); });
 
-    wireDrop();
+    wireDrop(); wireDrag();
   }
   function onKey(e) {
     if (!teacher) return;
@@ -1088,63 +1189,169 @@
   }
 
   /* =====================================================================
-     DRAGGING THINGS ONTO THE PAGE: blocks, pictures, files
+     PRESS AND DRAG ANY BLOCK. ARRANGE VIEW. TABLES.
      ===================================================================== */
-  var dragBlockId = null;
+  var bd = null, dragging = null, dragSpot = null, lastPt = null, suppressClick = false, scrollV = 0, scrollRaf = 0, arrange = false;
+  var INTERACTIVE = 'button,input,select,textarea,summary,[role="button"],.kb-drop,#kbRz,.kb-slides-bar a,.kb-filecard,.kb-linkcard';
+  function bdDown(e) {
+    if (!editing || presenting || freeMode || e.button > 0 || bd) return;
+    var t = e.target, grip = t.closest && t.closest('.kbc-grip');
+    if (!grip && t.closest && t.closest(UI_SEL)) return;
+    var b = grip ? selBlock() : blockOf(t); if (!b) return;
+    if (!grip && t.closest && t.closest(INTERACTIVE) && !arrange) return;
+    var inText = !grip && !arrange && !!textOf(t);
+    bd = { b: b, x0: e.clientX, y0: e.clientY, inText: inText, hold: false, timer: null };
+    if (inText) bd.timer = setTimeout(function () { if (bd && !dragging) { bd.hold = true; document.body.classList.add('kb-holding'); } }, 380);
+    window.addEventListener('pointermove', bdMove, true); window.addEventListener('pointerup', bdUp, true); window.addEventListener('pointercancel', bdUp, true);
+  }
+  function cancelBd() { if (bd) clearTimeout(bd.timer); bd = null; document.body.classList.remove('kb-holding'); window.removeEventListener('pointermove', bdMove, true); window.removeEventListener('pointerup', bdUp, true); window.removeEventListener('pointercancel', bdUp, true); }
+  function bdMove(e) {
+    if (!bd) return; var d = Math.hypot(e.clientX - bd.x0, e.clientY - bd.y0);
+    if (!dragging) {
+      if (bd.inText && !bd.hold) { if (d > 5) cancelBd(); return; }
+      if (d < 6) return; startDrag(e);
+    }
+    moveDrag(e);
+  }
+  function startDrag() {
+    clearTimeout(bd.timer); dragging = bd.b; suppressClick = true; select(dragging); closePop();
+    document.body.classList.add('kb-dragging'); dragging.classList.add('ed-dragging');
+    var s = window.getSelection && window.getSelection(); if (s) s.removeAllRanges(); if (document.activeElement && document.activeElement.blur && document.activeElement !== document.body) document.activeElement.blur();
+    ui.ghost.textContent = blockLabel(dragging); ui.ghost.hidden = false; scrollLoop();
+  }
+  function moveDrag(e) {
+    lastPt = { x: e.clientX, y: e.clientY }; ui.ghost.style.left = (e.clientX + 16) + 'px'; ui.ghost.style.top = (e.clientY + 14) + 'px';
+    dragSpot = spotAt(e.clientX, e.clientY, dragging); showLine(dragSpot);
+    scrollV = e.clientY < 90 ? -Math.ceil((90 - e.clientY) / 5) : e.clientY > window.innerHeight - 90 ? Math.ceil((e.clientY - (window.innerHeight - 90)) / 5) : 0;
+  }
+  function scrollLoop() {
+    if (!dragging) return;
+    if (scrollV && lastPt) { window.scrollBy(0, scrollV); dragSpot = spotAt(lastPt.x, lastPt.y, dragging); showLine(dragSpot); }
+    scrollRaf = requestAnimationFrame(scrollLoop);
+  }
+  function bdUp() {
+    var d = dragging, spot = dragSpot; cancelBd();
+    if (d) {
+      document.body.classList.remove('kb-dragging'); d.classList.remove('ed-dragging'); ui.ghost.hidden = true; hideLine(); cancelAnimationFrame(scrollRaf); scrollV = 0; dragging = null; dragSpot = null;
+      if (spot && !(spot.c === d.parentElement && spot.ref === d.nextElementSibling)) moveBlockTo(d, spot.c, spot.ref);
+      setTimeout(function () { suppressClick = false; }, 80); place();
+    }
+  }
+
+  /* ---------- Arrange: every block shrinks to a card so the whole page fits on one screen ---------- */
+  function labelAll() { qa('[data-kb]', curRoot || document).forEach(function (b) { var s = snippet(b); b.setAttribute('data-label', blockLabel(b) + (s ? '  \u00B7  ' + s : '')); }); }
+  function setArrange(on) {
+    arrange = !!on; document.body.classList.toggle('kb-arrange', arrange); var bt = q('#kbArrange'); if (bt) bt.setAttribute('aria-pressed', String(arrange));
+    closePop(); deselect();
+    if (arrange) { labelAll(); toast('Arrange: press and drag any card to a new place, even into a box. Press Arrange again when you are done.', 5000); }
+    else qa('[data-label]').forEach(function (n) { n.removeAttribute('data-label'); });
+    place();
+  }
+
+  /* ---------- tables ---------- */
+  function tableOp(op) {
+    var b = selBlock(), tb = b && q('.kb-table', b); if (!tb) return;
+    var cell = selText(); cell = cell && /^(TD|TH)$/.test(cell.tagName) && tb.contains(cell) ? cell : null;
+    var body = q('tbody', tb) || tb, rows = qa('tr', tb), cols = rows[0] ? rows[0].cells.length : 0, tr = cell && cell.closest('tr'), ci = cell ? cell.cellIndex : cols - 1;
+    if (op === 'trow+') {
+      var nr = document.createElement('tr'); for (var i = 0; i < cols; i++) nr.appendChild(document.createElement('td'));
+      if (tr && tr.parentElement === body) body.insertBefore(nr, tr.nextSibling); else if (tr && tr.parentElement.tagName === 'THEAD') body.insertBefore(nr, body.firstChild); else body.appendChild(nr);
+    } else if (op === 'trow-') {
+      var bodyRows = qa('tr', body); if (bodyRows.length < 2) { toast('A table needs at least one row.'); return; } (tr && tr.parentElement === body ? tr : bodyRows[bodyRows.length - 1]).remove();
+    } else if (op === 'tcol+') {
+      rows.forEach(function (r) { var c = document.createElement(r.parentElement.tagName === 'THEAD' ? 'th' : 'td'); r.insertBefore(c, r.cells[ci + 1] || null); });
+    } else if (op === 'tcol-') {
+      if (cols < 2) { toast('A table needs at least one column.'); return; } rows.forEach(function (r) { if (r.cells[ci]) r.deleteCell(ci); });
+    }
+    decorate(b); saveAdded(b); commit(); place();
+  }
+
+  function wireDrag() {
+    document.addEventListener('pointerdown', bdDown, true);
+    q('#kbArrange').addEventListener('click', function () { setArrange(!arrange); });
+    ui.add.addEventListener('dragstart', function (e) {
+      var o = e.target.closest && e.target.closest('[data-key]'); if (!o) return;
+      e.dataTransfer.setData('text/kb-key', o.getAttribute('data-key')); e.dataTransfer.effectAllowed = 'move'; dragKey = o.getAttribute('data-key');
+    });
+  }
+
+  /* =====================================================================
+     SNAPPING THINGS INTO PLACE: blocks, elements, pictures, files, links
+     ===================================================================== */
+  var dragBlockId = null, dragKey = null;
   function hasFiles(dt) { return !!dt && Array.prototype.indexOf.call(dt.types || [], 'Files') > -1; }
-  function isImage(f) { return /^image\//.test(f.type || '') && !/svg/.test(f.type) || /\.(jpe?g|png|gif|webp|bmp)$/i.test(f.name || ''); }
+  function isImage(f) { return (/^image\//.test(f.type || '') && !/svg/.test(f.type || '')) || /\.(jpe?g|png|gif|webp|bmp)$/i.test(f.name || ''); }
+  function isVideo(f) { return /^video\/(mp4|webm|ogg)/.test(f.type || '') || /\.(mp4|webm|ogv|m4v)$/i.test(f.name || ''); }
   function containerNow() { return mainC && document.body.contains(mainC) ? mainC : null; }
-  function kidsOf(c) { return blockKids(c).filter(function (k) { return k !== dragEl; }); }
-  function spotAt(x, y) {
-    var c = containerNow(); if (!c) return null; var kids = kidsOf(c), cr = c.getBoundingClientRect();
-    if (!kids.length) return { c: c, ref: null, line: { x: cr.left, y: cr.top + 4, w: cr.width, h: 4 } };
+  function blockByKey(k) { return qa('[data-kb]').filter(function (b) { return b.getAttribute('data-kb') === k; })[0] || null; }
+  /* blocks can be dropped on the page itself or inside a design block's slot (never inside themselves) */
+  function acceptsBlocks(c, ex) {
+    if (!c) return false; if (ex && ex.contains(c)) return false;
+    return c === mainC || c.classList.contains('kb-slot') || !!(ex && c === ex.parentElement);
+  }
+  function containerAt(x, y, ex) {
+    var el = document.elementFromPoint(x, y), c = el && el.closest ? el.closest('[data-kc]') : null;
+    while (c && !acceptsBlocks(c, ex)) c = c.parentElement ? c.parentElement.closest('[data-kc]') : null;
+    return c || (ex && ex.parentElement && ex.parentElement.hasAttribute('data-kc') ? ex.parentElement : containerNow());
+  }
+  function spotIn(c, x, y, ex) {
+    var kids = blockKids(c).filter(function (k) { return k !== ex; }), cr = c.getBoundingClientRect();
+    if (!kids.length) return { c: c, ref: null, line: { x: cr.left + 8, y: cr.top + 8, w: Math.max(24, cr.width - 16), h: 4 } };
     var best = null, bd = 1e12;
     kids.forEach(function (k) { var r = k.getBoundingClientRect(), dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0, dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0, d = dx * dx + dy * dy * 4; if (d < bd) { bd = d; best = { k: k, r: r }; } });
-    var r = best.r, half = r.width < cr.width * 0.7, inRow = y >= r.top && y <= r.bottom, before = half && inRow ? x < r.left + r.width / 2 : y < r.top + r.height / 2;
-    return { c: c, ref: before ? best.k : best.k.nextElementSibling, line: half && inRow ? { x: (before ? r.left - 9 : r.right + 5), y: r.top, w: 4, h: r.height } : { x: cr.left, y: before ? r.top - 11 : r.bottom + 7, w: cr.width, h: 4 } };
+    var r = best.r, side = c === mainC && r.width < cr.width * 0.7, inRow = y >= r.top && y <= r.bottom, before = side && inRow ? x < r.left + r.width / 2 : y < r.top + r.height / 2;
+    return { c: c, ref: before ? best.k : best.k.nextElementSibling, line: side && inRow ? { x: (before ? r.left - 9 : r.right + 5), y: r.top, w: 4, h: r.height } : { x: cr.left + 4, y: before ? r.top - 11 : r.bottom + 7, w: cr.width - 8, h: 4 } };
   }
-  function defaultSpot() {
-    var b = selBlock(), c = containerNow(); if (b && b.parentElement.hasAttribute('data-kc') && b.parentElement === c) return { c: c, ref: b.nextElementSibling };
+  function spotAt(x, y, ex) { var c = containerAt(x, y, ex); return c ? spotIn(c, x, y, ex) : null; }
+  /* where a block goes when you click it in the drawer instead of dragging it */
+  function defaultSpot(forDesign) {
+    var b = selBlock(), c = containerNow();
+    if (b) {
+      if (forDesign) { var top = b; while (top.parentElement && top.parentElement.classList.contains('kb-slot')) top = top.parentElement.closest('[data-kb]') || top; if (top.parentElement && top.parentElement.hasAttribute('data-kc')) return { c: top.parentElement, ref: top.nextElementSibling }; }
+      else {
+        if (b.classList.contains('kb-d')) { var slots = qa('.kb-slot[data-kc]', b).filter(function (s) { return s.closest('[data-kb]') === b; }), emp = slots.filter(function (s) { return !s.children.length; })[0] || slots[0]; if (emp) return { c: emp, ref: null }; }
+        var pc = b.parentElement; if (pc && pc.hasAttribute('data-kc') && acceptsBlocks(pc)) return { c: pc, ref: b.nextElementSibling };
+      }
+    }
     return c ? { c: c, ref: null } : null;
   }
-  function showLine(s) { if (!s) { hideLine(); return; } var l = ui.line; l.hidden = false; l.style.left = Math.round(s.line.x) + 'px'; l.style.top = Math.round(s.line.y) + 'px'; l.style.width = Math.round(s.line.w) + 'px'; l.style.height = Math.round(s.line.h) + 'px'; }
-  function hideLine() { if (ui.line) ui.line.hidden = true; }
+  function showLine(s) { if (!s) { hideLine(); return; } var l = ui.line; l.hidden = false; l.style.left = Math.round(s.line.x) + 'px'; l.style.top = Math.round(s.line.y) + 'px'; l.style.width = Math.round(s.line.w) + 'px'; l.style.height = Math.round(s.line.h) + 'px'; markOver(s.c); }
+  function hideLine() { if (ui.line) ui.line.hidden = true; markOver(null); }
+  function markOver(c) { qa('.kb-over').forEach(function (x) { if (x !== c) x.classList.remove('kb-over'); }); if (c && c.classList.contains('kb-slot')) c.classList.add('kb-over'); }
 
-  /* what is under the pointer that a dropped picture should fill? */
+  /* what is under the pointer that a dropped picture or file should fill? */
   function fillTarget(el) {
     if (!el || !el.closest || el.closest(UI_SEL)) return null;
     var d = el.closest('.kb-drop'); if (d) return { type: 'drop', el: d };
-    var g = el.closest('.kb-gallery'); if (g) return { type: 'gallery', el: g };
+    var g = el.closest('.kb-gallery, .kb-media .kb-grid'); if (g) return { type: 'gallery', el: g };
     var im = el.closest('img'); if (im && blockOf(im) && !im.closest('.kb-slides')) return { type: 'img', el: im };
     return null;
   }
-  function markDrop(t) { qa('.ed-drop').forEach(function (x) { x.classList.remove('ed-drop'); }); if (t) { var m = t.type === 'img' ? t.el : t.type === 'gallery' ? t.el : t.el; m.classList.add('ed-drop'); } }
+  function markDrop(t) { qa('.ed-drop').forEach(function (x) { x.classList.remove('ed-drop'); }); if (t) t.el.classList.add('ed-drop'); }
 
   function wireDrop() {
     var depth = 0;
     document.addEventListener('dragenter', function (e) { if (editing && !presenting && hasFiles(e.dataTransfer)) { depth++; ui.drop.hidden = false; } });
     document.addEventListener('dragleave', function (e) { if (hasFiles(e.dataTransfer)) { depth = Math.max(0, depth - 1); if (!depth) ui.drop.hidden = true; } });
-    document.addEventListener('dragstart', function (e) {
-      var g = e.target.closest && e.target.closest('.kbc-grip'); if (!g) return; dragEl = selBlock(); if (!dragEl) { e.preventDefault(); return; }
-      e.dataTransfer.setData('text/kb-move', '1'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setDragImage(dragEl, 24, 24); } catch (x) {} setTimeout(function () { if (dragEl) dragEl.classList.add('ed-dragging'); }, 0); closePop();
-    });
-    document.addEventListener('dragend', function () { if (dragEl) { dragEl.classList.remove('ed-dragging'); dragEl = null; } dragBlockId = null; hideLine(); markDrop(null); depth = 0; ui.drop.hidden = true; place(); });
+    document.addEventListener('dragend', function () { dragBlockId = null; dragKey = null; hideLine(); markDrop(null); depth = 0; ui.drop.hidden = true; });
     document.addEventListener('dragover', function (e) {
       if (!editing || presenting) return; var dt = e.dataTransfer; if (!dt) return;
-      var file = hasFiles(dt), blockDrag = !!dragBlockId || Array.prototype.indexOf.call(dt.types || [], 'text/kb-block') > -1;
-      if (!file && !blockDrag && !dragEl) return; if (e.target.closest && e.target.closest('#kbAdd,#kbTop,#kbModal')) return;
-      e.preventDefault(); dt.dropEffect = dragEl ? 'move' : 'copy';
-      var ft = file ? fillTarget(e.target) : null; markDrop(ft);
-      if (ft) { hideLine(); return; } showLine(spotAt(e.clientX, e.clientY));
+      var file = hasFiles(dt), blockDrag = !!dragBlockId || Array.prototype.indexOf.call(dt.types || [], 'text/kb-block') > -1, keyDrag = !!dragKey || Array.prototype.indexOf.call(dt.types || [], 'text/kb-key') > -1;
+      if (!file && !blockDrag && !keyDrag) return; if (e.target.closest && e.target.closest('#kbAdd,#kbTop,#kbModal')) return;
+      e.preventDefault(); dt.dropEffect = keyDrag ? 'move' : 'copy';
+      var ft = file ? fillTarget(e.target) : null; markDrop(ft); if (ft) { hideLine(); return; }
+      showLine(spotAt(e.clientX, e.clientY, keyDrag ? blockByKey(dragKey) : null));
     });
     document.addEventListener('drop', function (e) {
       if (!editing || presenting) return; var dt = e.dataTransfer; if (!dt) return;
-      var files = Array.prototype.slice.call(dt.files || []), bid = (dt.getData && dt.getData('text/kb-block')) || dragBlockId;
+      var files = Array.prototype.slice.call(dt.files || []), bid = (dt.getData && dt.getData('text/kb-block')) || dragBlockId, key = (dt.getData && dt.getData('text/kb-key')) || dragKey;
       if (e.target.closest && e.target.closest('#kbAdd,#kbTop,#kbModal')) { depth = 0; ui.drop.hidden = true; return; }
-      var ft = files.length ? fillTarget(e.target) : null; depth = 0; ui.drop.hidden = true; hideLine(); markDrop(null);
-      if (dragEl && !files.length) { e.preventDefault(); var s = spotAt(e.clientX, e.clientY); var el = dragEl; dragEl = null; el.classList.remove('ed-dragging'); if (s) { s.c.insertBefore(el, s.ref); recordOrder(s.c); commit(); select(el); } return; }
-      if (bid && !files.length) { e.preventDefault(); var s2 = spotAt(e.clientX, e.clientY); dragBlockId = null; addBlock(bid, s2); return; }
-      if (files.length) { e.preventDefault(); handleFiles(files, spotAt(e.clientX, e.clientY), ft); }
+      var ft = files.length ? fillTarget(e.target) : null; depth = 0; ui.drop.hidden = true; markDrop(null);
+      var movedEl = key ? blockByKey(key) : null, s = null;
+      if (!files.length) { s = spotAt(e.clientX, e.clientY, movedEl); } hideLine();
+      if (key && movedEl && !files.length) { e.preventDefault(); dragKey = null; if (s) { moveBlockTo(movedEl, s.c, s.ref); select(movedEl); } return; }
+      if (bid && !files.length) { e.preventDefault(); dragBlockId = null; addBlock(bid, s); return; }
+      if (files.length) { e.preventDefault(); handleFiles(files, spotAt(e.clientX, e.clientY, null), ft); }
     });
     document.addEventListener('paste', function (e) {
       if (!editing || presenting) return; var cd = e.clipboardData; if (!cd || !cd.files || !cd.files.length) return;
@@ -1152,7 +1359,7 @@
     });
     ui.modal.addEventListener('click', function (e) {
       var b = e.target.closest('[data-r]'); if (b) { closeModal(b.getAttribute('data-r')); return; }
-      var c = e.target.closest('[data-file] button'); if (c) { qa('button', c.parentElement).forEach(function (x) { x.setAttribute('aria-pressed', String(x === c)); }); return; }
+      var c = e.target.closest('[data-file] button'); if (c) { if (c.disabled) return; qa('button', c.parentElement).forEach(function (x) { x.setAttribute('aria-pressed', String(x === c)); }); return; }
       if (e.target === ui.modal) closeModal(null);
     });
   }
@@ -1167,42 +1374,29 @@
   }
   function closeModal(v) { ui.modal.hidden = true; document.body.classList.remove('kb-modal-open'); var r = modalResolve; modalResolve = null; if (r) r(v || null); }
 
-  /* ---------- adding blocks and layouts ---------- */
-  function insertDef(d, spot, over) {
-    var id = newId(); if (d.bh) blk(id).bh = d.bh;
-    return insertRecord(spot.c, { id: id, type: 'panel', cls: d.cls, html: (over && over.html) || d.html }, spot.ref);
-  }
+  /* ---------- adding design blocks, elements and whole layouts ---------- */
+  function insertDef(d, spot, over) { return insertTree(spot.c, { def: d, html: over && over.html }, spot.ref); }
   function addBlock(id, spot) {
-    var d = blockDef(id); if (!d) return; spot = spot || defaultSpot(); if (!spot) { toast('Blocks can be added on lesson pages. Open a lesson from the page menu at the top.'); return; }
-    if (d.ask === 'video') { askVideo(spot); return; }
-    if (d.ask === 'file') { pickFiles({ force: 'attach', spot: spot }); return; }
-    if (d.ask === 'pdf') { pickFiles({ force: 'preview', accept: '.pdf,application/pdf', spot: spot }); return; }
-    var el = insertDef(d, spot); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); toast('Added \u201C' + d.name + '\u201D. Click any words to change them.');
+    var d = blockDef(id); if (!d) return; spot = spot || defaultSpot(!!d.design);
+    if (!spot) { toast('Blocks can be added on lesson pages. Open a lesson from the page menu at the top.'); return; }
+    var el = insertDef(d, spot); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    toast(d.design ? 'Added \u201C' + d.name + '\u201D. Now drag Elements into it.' : 'Added \u201C' + d.name + '\u201D. Click any words to change them.');
   }
   function addTemplate(id) {
-    var t = TEMPLATES.filter(function (x) { return x.id === id; })[0]; if (!t) return; var spot = defaultSpot(); if (!spot) { toast('Open a page first.'); return; }
-    var first = null; t.parts.forEach(function (p) { var el = insertDef(p, spot); if (!first) first = el; });
+    var t = TEMPLATES.filter(function (x) { return x.id === id; })[0]; if (!t) return; var spot = defaultSpot(true); if (!spot) { toast('Open a lesson page first. Layouts are placed on lesson pages.'); return; }
+    var first = null; t.parts.forEach(function (p) { var el = insertTree(spot.c, p, spot.ref); if (!first) first = el; });
     commit(); select(first); first.scrollIntoView({ block: 'start', behavior: 'smooth' }); toast('Added the \u201C' + t.name + '\u201D layout.'); openAdd(false);
-  }
-  function ytId(u) { var m = /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/))([A-Za-z0-9_-]{6,15})/.exec(u || ''); return m && m[1]; }
-  function askVideo(spot) {
-    openModal({ title: 'Add a YouTube video', html: '<p>Paste the link to the video. It plays right on your page.</p><input type="url" id="kbVid" placeholder="https://www.youtube.com/watch?v=\u2026" aria-label="YouTube link"><p class="kbm-warn" id="kbVidErr" hidden>That does not look like a YouTube link.</p>', buttons: [{ id: 'no', label: 'Cancel' }, { id: 'ok', label: 'Add video', primary: true }] }).then(function (r) {
-      if (r !== 'ok') return; var v = q('#kbVid').value.trim(), id = ytId(v);
-      if (!id) { toast('That does not look like a YouTube link. Copy it from the address bar or the Share button.'); return; }
-      var vert = /shorts\//.test(v), d = blockDef('video'), html = '<figure><div class="kb-video' + (vert ? ' kb-video-v' : '') + '"><iframe src="https://www.youtube-nocookie.com/embed/' + id + '" title="Video" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><figcaption>Add a caption (optional)</figcaption></figure>';
-      var el = insertDef(d, spot, { html: html }); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    });
   }
 
   /* ---------- picking files with the file chooser ---------- */
   function pickFiles(o) {
     o = o || {}; ui.file.accept = o.accept || ''; ui.file.multiple = true;
-    ui.file.onchange = function () { var f = Array.prototype.slice.call(ui.file.files); ui.file.value = ''; if (f.length) handleFiles(f, o.spot || defaultSpot(), null, o.force); };
+    ui.file.onchange = function () { var f = Array.prototype.slice.call(ui.file.files); ui.file.value = ''; if (f.length) handleFiles(f, o.spot || defaultSpot(), o.ft || null, o.force); };
     ui.file.click();
   }
   function pickForDrop(d) {
-    var multi = d.getAttribute('data-drop') === 'gallery'; ui.file.accept = 'image/*'; ui.file.multiple = multi;
-    ui.file.onchange = function () { var f = Array.prototype.slice.call(ui.file.files).filter(isImage); ui.file.value = ''; if (f.length) handleFiles(f, null, { type: multi ? 'gallery' : 'drop', el: d }); };
+    var kind = d.getAttribute('data-drop'), multi = kind === 'gallery' || kind === 'media'; ui.file.accept = kind === 'media' ? '' : 'image/*'; ui.file.multiple = multi;
+    ui.file.onchange = function () { var f = Array.prototype.slice.call(ui.file.files); if (kind !== 'media') f = f.filter(isImage); ui.file.value = ''; if (f.length) handleFiles(f, null, { type: kind === 'gallery' ? 'gallery' : 'drop', el: d }); };
     ui.file.click();
   }
   function pickReplace(im) {
@@ -1211,44 +1405,102 @@
     ui.file.click();
   }
 
-  /* ---------- what to do with dropped files ---------- */
+  /* ---------- the Media element: whatever you give it becomes the right thing ---------- */
   function handleFiles(files, spot, ft, force) {
-    var imgs = files.filter(isImage), docs = files.filter(function (f) { return !isImage(f); });
+    var imgs = files.filter(isImage), vids = files.filter(isVideo), docs = files.filter(function (f) { return !isImage(f) && !isVideo(f); });
     spot = spot || defaultSpot(); if (!spot && !ft) { toast('Open a page first.'); return Promise.resolve(); }
-    var p = Promise.resolve();
-    if (imgs.length) p = p.then(function () { return placeImages(imgs, ft, spot); });
-    if (docs.length) p = p.then(function () { return placeDocs(docs, spot, force); });
+    var first = ft, p = Promise.resolve(); function use() { var f = first; first = null; return f; }
+    function relay(el) { if (el && el.parentElement && el.parentElement.hasAttribute('data-kc')) spot = { c: el.parentElement, ref: el.nextElementSibling }; }
+    if (imgs.length) p = p.then(function () { return placeImages(imgs, use(), spot).then(relay); });
+    vids.forEach(function (v) { p = p.then(function () { return placeVideo(v, use(), spot).then(relay); }); });
+    if (docs.length) p = p.then(function () { return placeDocs(docs, spot, force, use(), relay); });
     return p.catch(function (err) { toast((err && err.message) || 'Something went wrong adding that.'); });
   }
   function nextSpot(el) { return { c: el.parentElement, ref: el.nextElementSibling }; }
   function picEl(path, name) { var im = document.createElement('img'); im.setAttribute('data-path', path); im.src = urlCache[path] || path; im.alt = name || ''; return im; }
+  var ADDMORE = '<div class="kb-drop kb-drop-add" data-drop="gallery"><b>+ Add more</b></div>';
+  function figHtml(p) { return '<figure class="kb-m-img"><img src="' + esc(p.path) + '" alt="' + esc(p.name) + '"><figcaption></figcaption></figure>'; }
+  function gridHtml(pics) { return '<div class="kb-grid">' + pics.map(function (p) { return '<figure><img src="' + esc(p.path) + '" alt="' + esc(p.name) + '"><figcaption></figcaption></figure>'; }).join('') + ADDMORE + '</div>'; }
+  /* put finished media where it belongs: inside the Media block that was dropped on, or in a new Media block */
+  function sink(html, ft, spot) {
+    var d = ft && ft.type === 'drop' && ft.el.getAttribute('data-drop') === 'media' ? ft.el : null;
+    if (d) { var b = blockOf(d), tp = document.createElement('template'); tp.innerHTML = clean(html); d.replaceWith(tp.content); resolveAssets(b); decorate(b); saveAdded(b); commit(); select(b); return b; }
+    var el = insertDef(blockDef('media'), spot, { html: html }); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); return el;
+  }
+  function addToGrid(block, pics) {
+    var grid = q('.kb-grid', block); qa('.kb-drop', grid).forEach(function (d) { d.remove(); });
+    pics.forEach(function (p) { var f = document.createElement('figure'); f.appendChild(picEl(p.path, p.name)); f.appendChild(document.createElement('figcaption')); grid.appendChild(f); });
+    var tp = document.createElement('template'); tp.innerHTML = ADDMORE; grid.appendChild(tp.content); decorate(block); saveAdded(block);
+  }
   function placeImages(files, ft, spot) {
     toast('Adding ' + files.length + (files.length === 1 ? ' picture' : ' pictures') + '\u2026', 60000);
     return Promise.all(files.map(addPicture)).then(function (pics) {
       var done = 'Added ' + pics.length + (pics.length === 1 ? ' picture.' : ' pictures.');
-      if (ft && (ft.type === 'gallery')) { var gb = blockOf(ft.el); fillGallery(gb, pics); commit(); toast(done); return; }
-      if (ft && (ft.type === 'drop' || ft.type === 'img')) {
-        var first = pics.shift(), target = ft.el, b = blockOf(target);
-        if (ft.type === 'img') { target.setAttribute('data-path', first.path); target.src = urlCache[first.path]; persistImg(target); if (b && !b.hasAttribute('data-added')) blk(b.getAttribute('data-kb')).src = first.path; }
-        else { var im = picEl(first.path, first.name), kind = target.getAttribute('data-drop'); if (kind === 'hero') im.className = 'kb-herobg-img'; target.replaceWith(im); if (b && b.hasAttribute('data-added')) saveAdded(b); }
-        if (pics.length && spot) { var gal = insertDef(blockDef('gallery'), b ? nextSpot(b) : spot); fillGallery(gal, pics); }
-        commit(); if (b) select(b); toast(done); return;
+      if (ft && ft.type === 'gallery') { var gb = blockOf(ft.el); addToGrid(gb, pics); commit(); toast(done); return gb; }
+      if (ft && ft.type === 'img') {
+        var first = pics.shift(), target = ft.el, b = blockOf(target); target.setAttribute('data-path', first.path); target.src = urlCache[first.path]; persistImg(target); if (b && !b.hasAttribute('data-added')) blk(b.getAttribute('data-kb')).src = first.path;
+        var more = null; if (pics.length) { more = sink(gridHtml(pics), null, b ? nextSpot(b) : spot); } commit(); if (b) select(b); toast(done); return more || b;
       }
-      if (pics.length === 1) { var d = blockDef('image'), el = insertDef(d, spot), dz = q('.kb-drop', el); dz.replaceWith(picEl(pics[0].path, pics[0].name)); saveAdded(el); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); toast(done); return; }
-      var g = insertDef(blockDef('gallery'), spot); fillGallery(g, pics); commit(); select(g); g.scrollIntoView({ block: 'center', behavior: 'smooth' }); toast(done + ' They are in a gallery. Drop more on it to add to it.');
+      if (ft && ft.type === 'drop' && ft.el.getAttribute('data-drop') !== 'media') {
+        var f1 = pics.shift(), dz = ft.el, kind = dz.getAttribute('data-drop'), bb = blockOf(dz), im = picEl(f1.path, f1.name); if (kind === 'hero') im.className = 'kb-herobg-img'; dz.replaceWith(im); if (bb && bb.hasAttribute('data-added')) saveAdded(bb);
+        var extra = pics.length ? sink(gridHtml(pics), null, bb ? nextSpot(bb) : spot) : null; commit(); markEmptyDesigns(curRoot || document); if (bb) select(bb); toast(done); return extra || bb;
+      }
+      var el = sink(pics.length === 1 ? figHtml(pics[0]) : gridHtml(pics), ft, spot); toast(done + (pics.length > 1 ? ' They are in a gallery. Drop more on it to add to it.' : '')); return el;
     });
   }
-  function fillGallery(block, pics) {
-    var grid = q('.kb-grid', block); qa('.kb-drop', grid).forEach(function (d) { d.remove(); });
-    pics.forEach(function (p) { var f = document.createElement('figure'); f.appendChild(picEl(p.path, p.name)); var c = document.createElement('figcaption'); f.appendChild(c); grid.appendChild(f); });
-    var add = document.createElement('div'); add.className = 'kb-drop kb-drop-add'; add.setAttribute('data-drop', 'gallery'); add.innerHTML = '<b>+ Add more</b>'; grid.appendChild(add);
-    decorate(block); saveAdded(block);
+  function placeVideo(f, ft, spot) {
+    var big = f.size > 25 * 1048576; toast('Adding the video\u2026', 60000);
+    return saveAsset(f.name, extOf(f), f).then(function (path) {
+      var el = sink('<figure class="kb-m-vid"><video controls preload="metadata" src="' + esc(path) + '"></video><figcaption></figcaption></figure>', ft, spot);
+      toast(big ? 'Video added. It is over 25 MB, which GitHub\u2019s upload page will refuse. A YouTube link is a better choice for long videos.' : 'Video added.', big ? 9000 : 5000); return el;
+    });
+  }
+  /* pasted links */
+  function normUrl(u) { u = String(u || '').trim(); if (!u || /\s/.test(u)) return ''; u = /^[a-z][a-z0-9+.-]*:/i.test(u) ? u : 'https://' + u; try { var x = new URL(u); return /^https?:$/.test(x.protocol) && (/\./.test(x.hostname) || x.hostname === 'localhost') ? u : ''; } catch (e) { return ''; } }
+  function ytId(u) { var m = /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/))([A-Za-z0-9_-]{6,15})/.exec(u || ''); return m && m[1]; }
+  function linkHtml(u) {
+    var id = ytId(u);
+    if (id) return '<figure class="kb-m-vid"><div class="kb-video' + (/shorts\//.test(u) ? ' kb-video-v' : '') + '"><iframe src="https://www.youtube-nocookie.com/embed/' + id + '" title="Video" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><figcaption></figcaption></figure>';
+    if (/\.(jpe?g|png|gif|webp)(\?|#|$)/i.test(u)) return '<figure class="kb-m-img"><img src="' + esc(u) + '" alt=""><figcaption></figcaption></figure>';
+    if (/\.(mp4|webm|ogv)(\?|#|$)/i.test(u)) return '<figure class="kb-m-vid"><video controls preload="metadata" src="' + esc(u) + '"></video><figcaption></figcaption></figure>';
+    var host = ''; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch (e) {}
+    return '<a class="kb-linkcard" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="kb-fileico kb-k-link">LINK</span><span class="kb-filemeta"><b>' + esc(host || u) + '</b><small>' + esc(u.slice(0, 80)) + '</small></span><span class="kb-dl">Open</span></a>';
+  }
+  function askLink(ft, spot) {
+    spot = spot || defaultSpot();
+    return openModal({ title: 'Paste a link', html: '<p>A <b>YouTube</b> link becomes a video player. A link to a picture or video file shows it. Any other web address becomes a link card students can click.</p><input type="url" id="kbLinkIn" placeholder="https://\u2026" aria-label="Web address">', buttons: [{ id: 'no', label: 'Cancel' }, { id: 'ok', label: 'Add', primary: true }] }).then(function (r) {
+      if (r !== 'ok') return; var u = normUrl(q('#kbLinkIn').value); if (!u) { toast('That does not look like a web address. Copy it from the address bar of the page you want.'); return; }
+      var el = sink(linkHtml(u), ft, spot); toast(ytId(u) ? 'Video added.' : 'Link added.'); return el;
+    });
   }
 
+  /* ---------- PDF, PowerPoint, Word, Excel and other files ---------- */
   var KIND = { pdf: 'PDF', slides: 'PowerPoint', doc: 'Word', sheet: 'Excel', other: 'File' };
   function kindOf(f) { var n = (f.name || '').toLowerCase(); if (/\.pdf$/.test(n) || f.type === 'application/pdf') return 'pdf'; if (/\.(pptx?|odp|ppsx?)$/.test(n)) return 'slides'; if (/\.(docx?|odt|rtf)$/.test(n)) return 'doc'; if (/\.(xlsx?|ods|csv)$/.test(n)) return 'sheet'; return 'other'; }
   function extOf(f) { var m = /\.([A-Za-z0-9]{1,6})$/.exec(f.name || ''); return m ? m[1].toLowerCase() : 'bin'; }
-  function placeDocs(docs, spot, force) {
+  function fileCardHtml(path, name, k, size) {
+    var ext = extOf({ name: name });
+    return '<a class="kb-filecard" href="' + esc(path) + '" download="' + esc(name) + '"><span class="kb-fileico kb-k-' + k + '">' + esc((k === 'other' ? ext : KIND[k]).toUpperCase().slice(0, 4)) + '</span><span class="kb-filemeta"><b class="kb-filename">' + esc(name) + '</b><small>' + KIND[k] + ' \u00B7 ' + fmtSize(size) + '</small></span><span class="kb-dl">Download</span></a>';
+  }
+  function docHtml(it) {
+    if (it.choice !== 'preview') return saveAsset(it.f.name, extOf(it.f), it.f).then(function (path) { return fileCardHtml(path, it.f.name, it.k, it.f.size); });
+    if (it.k !== 'pdf') {
+      return Promise.all([saveAsset(it.f.name, extOf(it.f), it.f), saveAsset(it.f.name + '-preview', it.thumb.ext, it.thumb.blob)]).then(function (paths) {
+        return '<figure class="kb-m-img"><img src="' + esc(paths[1]) + '" alt="Preview of the first page of ' + esc(it.f.name) + '"><figcaption>Preview of ' + esc(it.f.name) + ' (first ' + (it.k === 'slides' ? 'slide' : 'page') + ')</figcaption></figure>' + fileCardHtml(paths[0], it.f.name, it.k, it.f.size);
+      });
+    }
+    var name = it.f.name.replace(/\.pdf$/i, ''); toast('Making pictures of the pages\u2026', 120000);
+    return renderPdf(it.f, function (i, n) { toast('Making pictures of page ' + i + ' of ' + n + '\u2026', 120000); }).then(function (r) {
+      return Promise.all(r.pages.map(function (p, i) { return saveAsset(name + '-page-' + (i + 1), 'jpg', p.blob); })).then(function (paths) {
+        return saveAsset(it.f.name, 'pdf', it.f).then(function (pdf) {
+          var imgs = paths.map(function (p, i) { return '<img src="' + esc(p) + '" alt="' + esc(name) + ', page ' + (i + 1) + '"' + (i ? ' hidden' : '') + '>'; }).join('');
+          toast('Added ' + paths.length + ' pages from \u201C' + it.f.name + '\u201D' + (r.total > paths.length ? ' (the first ' + paths.length + ' of ' + r.total + ')' : '') + '.');
+          return '<div class="kb-slides"><div class="kb-slides-stage">' + imgs + '</div><span class="kb-prev" role="button" tabindex="0" data-act="prev" aria-label="Previous page">\u2039</span><span class="kb-next" role="button" tabindex="0" data-act="next" aria-label="Next page">\u203A</span><div class="kb-slides-bar"><span class="kb-count">1 / ' + paths.length + '</span><a class="kb-dl-btn" href="' + esc(pdf) + '" download="' + esc(it.f.name) + '">Download ' + esc(it.f.name) + '</a></div></div>';
+        });
+      });
+    }).catch(function (err) { toast('I could not turn that PDF into pictures (' + ((err && err.message) || 'unknown error') + '). It was attached instead.', 9000); it.choice = 'attach'; return docHtml(it); });
+  }
+  function placeDocs(docs, spot, force, ft, relay) {
     return Promise.all(docs.map(function (f) { var k = kindOf(f); return (k === 'slides' || k === 'doc') && /\.(pptx|docx|ppsx)$/i.test(f.name) ? officeThumb(f).then(function (t) { return { f: f, k: k, thumb: t }; }) : Promise.resolve({ f: f, k: k, thumb: null }); })).then(function (items) {
       items.forEach(function (it) { it.canPreview = it.k === 'pdf' || !!it.thumb; });
       if (force) { items.forEach(function (it) { it.choice = force === 'attach' ? 'attach' : (it.canPreview ? 'preview' : 'attach'); }); return items; }
@@ -1264,41 +1516,12 @@
         if (r !== 'ok') return null; items.forEach(function (it, i) { var s = q('.kbm-card [data-file="' + i + '"] [aria-pressed="true"]'); it.choice = s ? s.getAttribute('data-v') : 'attach'; }); return items;
       });
     }).then(function (items) {
-      if (!items) return; var cur = spot, chain = Promise.resolve(), made = 0;
+      if (!items) return; var cur = spot, chain = Promise.resolve(), made = 0, target = ft;
       items.forEach(function (it) {
-        chain = chain.then(function () { return (it.choice === 'preview' ? (it.k === 'pdf' ? makeSlides(it, cur) : makeOfficePreview(it, cur)) : makeFileCard(it, cur)).then(function (el) { made++; if (el) cur = nextSpot(el); }); });
+        chain = chain.then(function () { return docHtml(it).then(function (html) { var t = target; target = null; var el = sink(html, t, cur); made++; if (el && el.parentElement) { cur = nextSpot(el); if (relay) relay(el); } }); });
       });
       return chain.then(function () { toast(made === 1 ? 'Added to your page.' : 'Added ' + made + ' items to your page.'); });
     });
-  }
-  function fileCardHtml(path, name, k, size) {
-    var ext = extOf({ name: name });
-    return '<a class="kb-filecard" href="' + esc(path) + '" download="' + esc(name) + '"><span class="kb-fileico kb-k-' + k + '">' + esc((k === 'other' ? ext : KIND[k]).toUpperCase().slice(0, 4)) + '</span><span class="kb-filemeta"><b class="kb-filename">' + esc(name) + '</b><small>' + KIND[k] + ' \u00B7 ' + fmtSize(size) + '</small></span><span class="kb-dl">Download</span></a>';
-  }
-  function makeFileCard(it, spot) {
-    return saveAsset(it.f.name, extOf(it.f), it.f).then(function (path) {
-      var el = insertDef(blockDef('file'), spot, { html: fileCardHtml(path, it.f.name, it.k, it.f.size) }); commit(); select(el); return el;
-    });
-  }
-  function makeOfficePreview(it, spot) {
-    return Promise.all([saveAsset(it.f.name, extOf(it.f), it.f), saveAsset(it.f.name + '-preview', it.thumb.ext, it.thumb.blob)]).then(function (paths) {
-      var html = '<figure><img data-path="' + esc(paths[1]) + '" src="' + esc(paths[1]) + '" alt="Preview of the first page of ' + esc(it.f.name) + '"><figcaption>Preview of ' + esc(it.f.name) + ' (first ' + (it.k === 'slides' ? 'slide' : 'page') + ')</figcaption></figure>' + fileCardHtml(paths[0], it.f.name, it.k, it.f.size);
-      var el = insertDef(blockDef('file'), spot, { html: html }); el.className = el.className.replace('kb-file', 'kb-file kb-filepreview'); var rec = recFor(el); if (rec) rec.cls = el.className.replace(/\bed-\S+/g, '').trim(); commit(); select(el); return el;
-    });
-  }
-  function makeSlides(it, spot) {
-    var name = it.f.name.replace(/\.pdf$/i, '');
-    toast('Making pictures of the pages\u2026', 120000);
-    return renderPdf(it.f, function (i, n) { toast('Making pictures of page ' + i + ' of ' + n + '\u2026', 120000); }).then(function (r) {
-      return Promise.all(r.pages.map(function (p, i) { return saveAsset(name + '-page-' + (i + 1), 'jpg', p.blob); })).then(function (paths) {
-        return saveAsset(it.f.name, 'pdf', it.f).then(function (pdf) {
-          var imgs = paths.map(function (p, i) { return '<img src="' + esc(p) + '" data-path="' + esc(p) + '" alt="' + esc(name) + ', page ' + (i + 1) + '"' + (i ? ' hidden' : '') + '>'; }).join('');
-          var html = '<div class="kb-slides-stage">' + imgs + '</div><span class="kb-prev" role="button" tabindex="0" data-act="prev" aria-label="Previous page">\u2039</span><span class="kb-next" role="button" tabindex="0" data-act="next" aria-label="Next page">\u203A</span><div class="kb-slides-bar"><span class="kb-count">1 / ' + paths.length + '</span><a class="kb-dl-btn" href="' + esc(pdf) + '" download="' + esc(it.f.name) + '">Download ' + esc(it.f.name) + '</a></div>';
-          var el = insertDef(blockDef('slides'), spot, { html: html }); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' });
-          toast('Added ' + paths.length + ' pages from \u201C' + it.f.name + '\u201D' + (r.total > paths.length ? ' (the first ' + paths.length + ' of ' + r.total + ')' : '') + '.'); return el;
-        });
-      });
-    }).catch(function (err) { toast('I could not turn that PDF into pictures (' + ((err && err.message) || 'unknown error') + '). You can still attach it.', 9000); return makeFileCard(it, spot); });
   }
 
   /* ---------- the slide viewer: this part runs for everyone, students included ---------- */
