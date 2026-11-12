@@ -174,6 +174,11 @@
     var fg = figTarget(el);
     if (!fg) { put('width', b.bw ? b.bw + 'px' : ''); put('max-width', b.bw ? '100%' : ''); put('min-height', b.bh ? b.bh + 'px' : ''); }
     if (b.al) { s.marginLeft = b.al === 'left' ? '0' : 'auto'; s.marginRight = b.al === 'right' ? '0' : 'auto'; } else if (!fg) { s.marginLeft = ''; s.marginRight = ''; }
+    /* "own row": a card on a row by itself, keeping a card's width (works in a grid or a wrapping flex row) */
+    var pcs = b.own && el.parentElement ? getComputedStyle(el.parentElement) : null;
+    if (pcs && /flex/.test(pcs.display)) { var w0 = b.bw || 340; s.flex = '0 0 auto'; s.width = w0 + 'px'; s.maxWidth = '100%'; s.marginLeft = b.own === 'center' ? 'max(0px, calc((100% - ' + w0 + 'px) / 2))' : '0'; s.marginRight = b.own === 'center' ? 'max(0px, calc((100% - ' + w0 + 'px) / 2))' : 'max(0px, calc(100% - ' + w0 + 'px))'; s.removeProperty('justify-self'); }
+    else if (pcs && pcs.display === 'grid') { s.gridColumn = '1 / -1'; s.justifySelf = b.own === 'center' ? 'center' : 'start'; s.alignSelf = 'start'; if (!b.bw && !fg) s.width = 'min(100%, 340px)'; }
+    else if (!b.own) { s.removeProperty('justify-self'); s.removeProperty('align-self'); s.removeProperty('flex'); }
     if (fg) {
       fg.style.width = b.w ? b.w + 'px' : ''; fg.style.maxWidth = b.w ? '100%' : '';
       fg.style.marginLeft = b.align === 'center' || b.align === 'right' ? 'auto' : (b.align === 'left' ? '0' : '');
@@ -210,7 +215,7 @@
     out.forEach(function (k) { c.appendChild(k); });
   }
   function recordOrder(c) { E.order[c.getAttribute('data-kc')] = blockKids(c).map(function (k) { return k.getAttribute('data-kb'); }); }
-  function findContainer(key, root) { if (!key) return null; return qa('[data-kc]', root || document).filter(function (c) { return c.getAttribute('data-kc') === key; })[0] || null; }
+  function findContainer(key, root) { if (!key) return null; if (root && root.getAttribute && root.getAttribute('data-kc') === key) return root; return qa('[data-kc]', root || document).filter(function (c) { return c.getAttribute('data-kc') === key; })[0] || null; }
   function applyAll(root) {
     var seen = [], rounds = 0;
     function pending() { var all = qa('[data-kc]', root); if (root.hasAttribute && root.hasAttribute('data-kc') && all.indexOf(root) < 0) all.push(root); return all.filter(function (c) { return seen.indexOf(c) < 0; }); }
@@ -307,7 +312,14 @@
   /* ---------- selection ---------- */
   function textOf(el) { return el && el.closest ? el.closest('[contenteditable="true"]') : null; }
   function blockOf(el) { return el && el.closest ? el.closest('[data-kb]') : null; }
+  var multi = [];
+  function setMulti(list) {
+    multi.forEach(function (b) { b.classList.remove('ed-multi'); }); multi = list.slice(); multi.forEach(function (b) { b.classList.add('ed-multi'); });
+    if (multi.length && sel) { sel.classList.remove('ed-sel'); sel = null; freeMode = false; closePop(); }
+    if (typeof renderMulti === 'function') renderMulti(); refresh();
+  }
   function select(el) {
+    if (multi.length) setMulti([]);
     var pb = selBlock();
     if (sel) sel.classList.remove('ed-sel');
     sel = el; if (sel) sel.classList.add('ed-sel');
@@ -425,14 +437,29 @@
     qa('[data-added]', block).forEach(function (x) { if (x !== block) delete E.block[x.getAttribute('data-kb')]; });
     qa('[data-slot]', block).forEach(function (s) { var k = s.getAttribute('data-kc'); delete E.add[k]; delete E.order[k]; });
   }
-  function deleteSel() {
-    var b = selBlock(); if (!b) return; var k = b.getAttribute('data-kb'), pc = b.parentElement;
+  /* takes one block off the page: added blocks are deleted, original page content is hidden from students */
+  function removeBlockCore(b) {
+    var k = b.getAttribute('data-kb'), pc = b.parentElement;
     if (b.hasAttribute('data-added')) {
       evictOriginals(b); dropTree(b);
       var ck = pc.getAttribute('data-kc'); E.add[ck] = (E.add[ck] || []).filter(function (r) { return r.id !== k; }); if (!E.add[ck].length) delete E.add[ck];
-      delete E.block[k]; deselect(); b.remove(); if (pc.hasAttribute('data-kc')) recordOrder(pc); markEmptyDesigns(curRoot || document); toast('Deleted. Press Undo to bring it back.');
-    } else { E.hide[k] = 1; b.classList.add('ed-hidden'); deselect(); toast('Hidden from students. Select it and press Restore to bring it back.'); }
-    commit(); place();
+      delete E.block[k]; b.remove(); if (pc.hasAttribute('data-kc')) recordOrder(pc); return 'deleted';
+    }
+    E.hide[k] = 1; b.classList.add('ed-hidden'); return 'hidden';
+  }
+  function deleteSel() {
+    var b = selBlock(); if (!b) return; deselect(); var r = removeBlockCore(b); markEmptyDesigns(curRoot || document);
+    toast(r === 'deleted' ? 'Deleted. Press Undo to bring it back.' : 'Hidden from students. Select it and press Restore to bring it back.'); commit(); place();
+  }
+  function deleteMulti() {
+    var list = multi.slice().filter(function (b) { return document.body.contains(b); }); if (!list.length) return;
+    list = list.filter(function (b) { return !list.some(function (o) { return o !== b && o.contains(b); }); });   /* a box and what is inside it: just the box */
+    setMulti([]); var del = 0, hid = 0; list.forEach(function (b) { if (!document.body.contains(b)) return; if (removeBlockCore(b) === 'deleted') del++; else hid++; });
+    markEmptyDesigns(curRoot || document); commit(); place();
+    toast((del ? 'Deleted ' + del + (del === 1 ? ' block' : ' blocks') : '') + (del && hid ? ' and hid ' : (hid ? 'Hid ' : '')) + (hid ? hid + (hid === 1 ? ' original block from students' : ' original blocks from students') : '') + '. Press Undo to bring ' + (del + hid === 1 ? 'it' : 'them') + ' back.', 6000);
+  }
+  function toggleMulti(b) {
+    var cur = multi.length ? multi.slice() : (selBlock() ? [selBlock()] : []), i = cur.indexOf(b); if (i >= 0) cur.splice(i, 1); else cur.push(b); setMulti(cur);
   }
   function restoreSel() { var b = selBlock(); if (!b) return; delete E.hide[b.getAttribute('data-kb')]; b.classList.remove('ed-hidden'); commit(); refresh(); }
   function insertRecord(c, rec, ref) {
@@ -751,7 +778,7 @@
     ui.drop = mk('div', 'kbDrop', '', '<div>' + ico('upload', 30) + '<b>Drop to add to your page</b><span>Several pictures become a gallery. PDF, Word and PowerPoint files ask what you want to do.</span></div>', { hidden: '' });
     ui.toast = mk('div', 'kbToast', '', '', { hidden: '', role: 'status', 'aria-live': 'polite' });
     ui.modal = mk('div', 'kbModal', '', '<div class="kbm-card" role="dialog" aria-modal="true"></div>', { hidden: '' });
-    ui.ghost = mk('div', 'kbGhost', '', '', { hidden: '' });
+    ui.ghost = mk('div', 'kbGhost', '', '', { hidden: '' }); ui.marq = mk('div', 'kbMarq', '', '', { hidden: '' }); ui.multi = mk('div', 'kbMulti', '', '', { hidden: '', role: 'status', 'aria-live': 'polite' });
     ui.back = mk('button', 'kbBack', '', ico('brush', 16) + '<span>Back to editing</span>', { type: 'button', hidden: '' });
     ui.file = document.createElement('input'); ui.file.type = 'file'; ui.file.multiple = true; ui.file.hidden = true; ui.file.id = 'kbFile'; ui.file.className = 'kb-ui'; document.body.appendChild(ui.file);
     ui.add = mk('aside', 'kbAdd', '', '', { 'aria-label': 'Add to your page', 'aria-hidden': 'true' });
@@ -782,6 +809,10 @@
     var rows = outlineRows(c, 0);
     return '<p class="kba-note">Every block on this page, in order. <b>Click</b> one to jump to it. <b>Drag</b> one onto the page to move it, even into a design block. The eye hides it from students.</p><div class="kbo">' + (rows || '<p class="kba-note">Nothing here yet.</p>') + '</div>';
   }
+  function renderMulti() {
+    if (!ui.multi) return; if (!multi.length || !editing || presenting) { ui.multi.hidden = true; return; }
+    ui.multi.innerHTML = '<b>' + multi.length + ' selected</b><button type="button" class="kbu-pri small danger" data-m="del">' + ico('trash', 16) + ' Delete</button><button type="button" class="kbu-txt" data-m="none">Clear</button>'; ui.multi.hidden = false;
+  }
   function scheduleOutline() { clearTimeout(outT); outT = setTimeout(function () { if (arrange) labelAll(); if (ui.add && addTab === 'page' && document.body.classList.contains('kb-add-open')) renderAdd(); }, 200); }
   function renderAdd() {
     qa('.kba-tabs [role=tab]', ui.add).forEach(function (t) { var on = t.getAttribute('data-tab') === addTab; t.setAttribute('aria-selected', on ? 'true' : 'false'); t.classList.toggle('on', on); });
@@ -793,8 +824,8 @@
       h += '<label class="kba-search"><span class="kb-sr">Search elements</span><input type="search" id="kbSearch" placeholder="Search elements" autocomplete="off"></label>';
       ['Text', 'Media', 'Lesson'].forEach(function (g) { h += '<h3 class="kba-g" data-g="' + g + '">' + g + '</h3><div class="kba-grid" data-g="' + g + '">' + ELEMENTS.filter(function (b) { return b.group === g; }).map(tileHtml).join('') + '</div>'; });
     } else if (addTab === 'layouts') {
-      h += '<p class="kba-note">Start a page from a ready-made design. Every word, picture and box can be changed afterwards.</p><div class="kba-lay">' + TEMPLATES.map(function (x) {
-        return '<button type="button" class="kba-card" data-tpl="' + x.id + '"><span class="kba-wire">' + x.wire.map(function (w) { return '<i class="w-' + w + '"></i>'; }).join('') + '</span><b>' + x.name + '</b><small>' + x.desc + '</small></button>';
+      h += '<p class="kba-note">Click a layout to add it after the selected block, or <b>drag it to exactly where you want it</b>. Every word, picture and box can be changed afterwards.</p><div class="kba-lay">' + TEMPLATES.map(function (x) {
+        return '<button type="button" class="kba-card" draggable="true" data-tpl="' + x.id + '"><span class="kba-wire">' + x.wire.map(function (w) { return '<i class="w-' + w + '"></i>'; }).join('') + '</span><b>' + x.name + '</b><small>' + x.desc + '</small></button>';
       }).join('') + '</div>';
     } else if (addTab === 'page') {
       h += outlineHtml();
@@ -946,8 +977,8 @@
         '<div class="kbp-foot"><button type="button" class="kbu-txt" data-a="resetstyle">Reset this block\u2019s style</button></div>';
     }
     if (kind === 'layout' && b) {
-      var c = b.parentElement, ck = c && c.getAttribute('data-kc'), cols = ck ? E.cols[ck] : '', grid = c && getComputedStyle(c).display === 'grid';
-      return sec('Width', pseg('span', [['', 'Auto'], ['1', 'Half'], ['full', 'Full width']], r.span == null ? '' : String(r.span))) + sec('Alignment', pseg('al', [['', 'Default'], ['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], r.al || '')) +
+      var c = b.parentElement, ck = c && c.getAttribute('data-kc'), cols = ck ? E.cols[ck] : '', cs0 = c ? getComputedStyle(c) : null, grid = !!cs0 && cs0.display === 'grid', rowable = !!cs0 && (grid || (/flex/.test(cs0.display) && cs0.flexWrap !== 'nowrap'));
+      return (rowable ? sec('Row', pseg('own', [['', 'Share the row'], ['start', 'Own row, left'], ['center', 'Own row, centre']], r.own || '') + '<p class="kbp-hint">"Own row" puts this card on a row by itself, keeping its size.</p>') : '') + sec('Width', pseg('span', [['', 'Auto'], ['1', 'Half'], ['full', 'Full width']], r.span == null ? '' : String(r.span))) + sec('Alignment', pseg('al', [['', 'Default'], ['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], r.al || '')) +
         sec('Size', '<p class="kbp-hint">Drag the round handle at the corner of the block to make it bigger or smaller.</p><button type="button" class="kbu-txt" data-a="resetsize">Reset size</button>') +
         sec('Order', '<div class="kbp-row"><button type="button" class="kbu-txt" data-a="up">' + ico('up', 16) + ' Earlier</button><button type="button" class="kbu-txt" data-a="down">' + ico('down', 16) + ' Later</button></div>') +
         (q('.kb-table', b) ? sec('Table', '<div class="kbp-row"><button type="button" class="kbu-txt" data-a="trow+">+ Row</button><button type="button" class="kbu-txt" data-a="trow-">\u2212 Row</button><button type="button" class="kbu-txt" data-a="tcol+">+ Column</button><button type="button" class="kbu-txt" data-a="tcol-">\u2212 Column</button></div><p class="kbp-hint">Click a cell first to add or remove next to it. Otherwise it works on the end of the table.</p>') : '') +
@@ -990,6 +1021,7 @@
       case 'pad': setBlock({ pad: +v }); repop(); break;
       case 'op': setBlock({ op: +v / 100 >= 1 ? null : +v / 100 }, false); q('output', ui.pop).textContent = v + '%'; break;
       case 'resetstyle': ['bg', 'bd', 'bdw', 'rad', 'sh', 'pad', 'op'].forEach(function (k) { var o = blk(b.getAttribute('data-kb')); delete o[k]; }); setBlock({}); repop(); break;
+      case 'own': setBlock({ own: v || null }); repop(); break;
       case 'span': setBlock({ span: v === '' ? null : (v === 'full' ? 'full' : +v) }); repop(); break;
       case 'al': setBlock({ al: v || null }); repop(); break;
       case 'resetsize': setBlock({ bw: null, bh: null }); repop(); break;
@@ -1135,14 +1167,16 @@
       qa('.kba-tile', ui.add).forEach(function (t) { t.hidden = !!v && t.getAttribute('data-s').indexOf(v) < 0; });
       qa('.kba-g', ui.add).forEach(function (g) { var grid = q('.kba-grid[data-g="' + g.getAttribute('data-g') + '"]', ui.add); var any = qa('.kba-tile', grid).some(function (t) { return !t.hidden; }); g.hidden = grid.hidden = !any; });
     });
-    ui.add.addEventListener('dragstart', function (e) { var t = e.target.closest && e.target.closest('[data-block]'); if (!t) return; e.dataTransfer.setData('text/kb-block', t.getAttribute('data-block')); e.dataTransfer.effectAllowed = 'copy'; dragBlockId = t.getAttribute('data-block'); });
-    ui.add.addEventListener('dragend', function () { dragBlockId = null; dragKey = null; hideLine(); });
+    ui.add.addEventListener('dragstart', function (e) { var tp = e.target.closest && e.target.closest('[data-tpl]'); if (tp) { e.dataTransfer.setData('text/kb-tpl', tp.getAttribute('data-tpl')); e.dataTransfer.effectAllowed = 'copy'; dragTplId = tp.getAttribute('data-tpl'); return; }
+      var t = e.target.closest && e.target.closest('[data-block]'); if (!t) return; e.dataTransfer.setData('text/kb-block', t.getAttribute('data-block')); e.dataTransfer.effectAllowed = 'copy'; dragBlockId = t.getAttribute('data-block'); });
+    ui.add.addEventListener('dragend', function () { dragBlockId = null; dragKey = null; dragTplId = null; hideLine(); });
 
     /* selecting things on the page */
     document.addEventListener('click', function (e) {
       if (!editing || presenting) return;
       if (suppressClick) { e.preventDefault(); e.stopPropagation(); return; }
       var t = e.target; if (!t.closest || t.closest(UI_SEL)) return;
+      if (e.shiftKey) { var sb = blockOf(t); if (sb) { e.preventDefault(); toggleMulti(sb); return; } }
       var a = t.closest('a'), href = a ? (a.getAttribute('href') || '') : '';
       if (a && /^#./.test(href) && (a.hasAttribute('data-kb') || !a.closest('[contenteditable="true"]'))) { e.preventDefault(); var ab = a.hasAttribute('data-kb') ? a : blockOf(a); if (ab) select(ab); else deselect(); return; }   /* a single click selects it; a double-click opens it */
       if (a && !t.closest('.kb-slides-bar')) e.preventDefault(); if (t.closest('summary')) e.preventDefault();
@@ -1157,7 +1191,8 @@
       var a = t.closest('a'), href = a ? (a.getAttribute('href') || '') : '';
       if (a && /^#./.test(href) && (a.hasAttribute('data-kb') || !a.closest('[contenteditable="true"]'))) { e.preventDefault(); location.hash = href; }
     });
-    document.addEventListener('focusin', function (e) { if (!editing || presenting) return; var t = e.target; if (t.closest && !t.closest(UI_SEL)) { var tx = textOf(t); if (tx && tx !== sel) select(tx); } });
+    var shiftDown = false; document.addEventListener('pointerdown', function (e) { shiftDown = e.shiftKey; }, true);
+    document.addEventListener('focusin', function (e) { if (!editing || presenting || shiftDown || multi.length) return; var t = e.target; if (t.closest && !t.closest(UI_SEL)) { var tx = textOf(t); if (tx && tx !== sel) select(tx); } });
     document.addEventListener('keyup', function (e) { if (editing && sel && selText() && /Arrow|Backspace|Delete|Enter/.test(e.key)) { renderBar(); place(); } });
     document.addEventListener('keydown', onKey);
     window.addEventListener('scroll', place, { passive: true }); window.addEventListener('resize', place);
@@ -1191,12 +1226,14 @@
     var inText = e.target.closest && e.target.closest('[contenteditable="true"],input,select,textarea'), mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
     if (e.key === 'Escape') {
       if (ui.modal && !ui.modal.hidden) { closeModal(); return; } if (popKind) { closePop(); return; } if (freeMode) { freeMode = false; document.body.classList.remove('kb-free'); return; }
+      if (multi.length) { setMulti([]); return; }
       if (document.body.classList.contains('kb-add-open') && !sel) { openAdd(false); return; } if (inText && document.activeElement && document.activeElement.blur) document.activeElement.blur(); if (sel) deselect(); return;
     }
     if (mod && !inText && k === 'z') { e.preventDefault(); e.shiftKey ? redoIt() : undo(); return; }
     if (mod && !inText && k === 'y') { e.preventDefault(); redoIt(); return; }
     if (inText) return;
     if (mod && k === 'd') { e.preventDefault(); duplicateSel(); return; }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && multi.length) { e.preventDefault(); deleteMulti(); return; }
     if ((e.key === 'Delete' || e.key === 'Backspace') && selBlock()) { e.preventDefault(); deleteSel(); }
   }
 
@@ -1209,7 +1246,8 @@
     if (!editing || presenting || freeMode || e.button > 0 || bd) return;
     var t = e.target, grip = t.closest && t.closest('.kbc-grip');
     if (!grip && t.closest && t.closest(UI_SEL)) return;
-    var b = grip ? selBlock() : blockOf(t); if (!b) return;
+    var b = grip ? selBlock() : blockOf(t);
+    if (!b) { if (!grip && !textOf(t) && !(t.closest && t.closest('dialog,a,button,input,select,textarea'))) marqStart(e); return; }
     if (!grip && t.closest && t.closest(INTERACTIVE) && !arrange) return;
     var inText = !grip && !arrange && !!textOf(t);
     bd = { b: b, x0: e.clientX, y0: e.clientY, inText: inText, hold: false, timer: null };
@@ -1250,6 +1288,51 @@
     }
   }
 
+  /* ---------- the selection box: press on empty space and drag across blocks ---------- */
+  var mq = null, mqPt = null, mqRaf = 0, mqV = 0;
+  function marqStart(e) {
+    mq = { x0: e.clientX, y0: e.clientY + window.scrollY, on: false, base: e.shiftKey ? multi.slice() : [] };
+    window.addEventListener('pointermove', marqMove, true); window.addEventListener('pointerup', marqUp, true); window.addEventListener('pointercancel', marqUp, true);
+  }
+  function marqHits(r) {
+    var out = [];
+    qa('[data-kb]', curRoot || document).forEach(function (b) {
+      if (b.classList.contains('ed-hidden')) return;
+      var br = b.getBoundingClientRect(); if (br.width < 4 || br.height < 4) return;
+      if (br.right < r.l || br.left > r.r || br.bottom < r.t || br.top > r.b) return;
+      if (b.querySelector('[data-kb]') && !(br.left >= r.l - 1 && br.right <= r.r + 1 && br.top >= r.t - 1 && br.bottom <= r.b + 1)) return;   /* a box that holds other blocks is picked only when the whole box is inside */
+      out.push(b);
+    });
+    return out.filter(function (b) { return !out.some(function (o) { return o !== b && o.contains(b); }); });
+  }
+  function marqDraw() {
+    if (!mq || !mq.on || !mqPt) return;
+    var y0 = mq.y0 - window.scrollY, r = { l: Math.min(mq.x0, mqPt.x), t: Math.min(y0, mqPt.y), r: Math.max(mq.x0, mqPt.x), b: Math.max(y0, mqPt.y) };
+    ui.marq.hidden = false; ui.marq.style.left = r.l + 'px'; ui.marq.style.top = r.t + 'px'; ui.marq.style.width = (r.r - r.l) + 'px'; ui.marq.style.height = (r.b - r.t) + 'px';
+    var hits = marqHits(r), all = mq.base.slice(); hits.forEach(function (b) { if (all.indexOf(b) < 0) all.push(b); });
+    if (all.length !== multi.length || all.some(function (b, i) { return multi[i] !== b; })) setMulti(all);
+  }
+  function marqLoop() { if (!mq || !mq.on) return; if (mqV) { window.scrollBy(0, mqV); marqDraw(); } mqRaf = requestAnimationFrame(marqLoop); }
+  function marqMove(e) {
+    if (!mq) return; mqPt = { x: e.clientX, y: e.clientY };
+    if (!mq.on) {
+      if (Math.hypot(e.clientX - mq.x0, e.clientY - (mq.y0 - window.scrollY)) < 5) return;
+      mq.on = true; closePop(); document.body.classList.add('kb-marquee'); var s = window.getSelection && window.getSelection(); if (s) s.removeAllRanges();
+      if (document.activeElement && document.activeElement !== document.body && document.activeElement.blur) document.activeElement.blur(); if (sel) deselect(); marqLoop();
+    }
+    mqV = e.clientY < 80 ? -Math.ceil((80 - e.clientY) / 5) : e.clientY > window.innerHeight - 80 ? Math.ceil((e.clientY - (window.innerHeight - 80)) / 5) : 0;
+    marqDraw();
+  }
+  function marqUp() {
+    var was = mq && mq.on; window.removeEventListener('pointermove', marqMove, true); window.removeEventListener('pointerup', marqUp, true); window.removeEventListener('pointercancel', marqUp, true);
+    cancelAnimationFrame(mqRaf); mqV = 0; mq = null; mqPt = null; ui.marq.hidden = true; document.body.classList.remove('kb-marquee');
+    if (was) { suppressClick = true; setTimeout(function () { suppressClick = false; }, 80); }
+  }
+  function wireMulti() {
+    ui.multi.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    ui.multi.addEventListener('click', function (e) { var b = e.target.closest('[data-m]'); if (!b) return; if (b.getAttribute('data-m') === 'del') deleteMulti(); else setMulti([]); });
+  }
+
   /* ---------- Arrange: every block shrinks to a card so the whole page fits on one screen ---------- */
   function labelAll() { qa('[data-kb]', curRoot || document).forEach(function (b) { var s = snippet(b); b.setAttribute('data-label', blockLabel(b) + (s ? '  \u00B7  ' + s : '')); if (b.querySelector('[data-kb]')) b.setAttribute('data-nest', '1'); else b.removeAttribute('data-nest'); });
     qa('[data-kc]', curRoot || document).forEach(function (c) { var kids = blockKids(c); if (kids.length >= 4 && kids.every(function (k) { return !k.hasAttribute('data-nest') && !k.classList.contains('kb-d'); })) c.setAttribute('data-cards', '1'); else c.removeAttribute('data-cards'); });
@@ -1281,7 +1364,7 @@
   }
 
   function wireDrag() {
-    document.addEventListener('pointerdown', bdDown, true);
+    document.addEventListener('pointerdown', bdDown, true); wireMulti();
     q('#kbArrange').addEventListener('click', function () { setArrange(!arrange); });
     ui.add.addEventListener('dragstart', function (e) {
       var o = e.target.closest && e.target.closest('[data-key]'); if (!o) return;
@@ -1292,21 +1375,25 @@
   /* =====================================================================
      SNAPPING THINGS INTO PLACE: blocks, elements, pictures, files, links
      ===================================================================== */
-  var dragBlockId = null, dragKey = null;
+  var dragBlockId = null, dragKey = null, dragTplId = null;
   function hasFiles(dt) { return !!dt && Array.prototype.indexOf.call(dt.types || [], 'Files') > -1; }
   function isImage(f) { return (/^image\//.test(f.type || '') && !/svg/.test(f.type || '')) || /\.(jpe?g|png|gif|webp|bmp)$/i.test(f.name || ''); }
   function isVideo(f) { return /^video\/(mp4|webm|ogg)/.test(f.type || '') || /\.(mp4|webm|ogv|m4v)$/i.test(f.name || ''); }
   function containerNow() { return mainC && document.body.contains(mainC) ? mainC : null; }
   function blockByKey(k) { return qa('[data-kb]').filter(function (b) { return b.getAttribute('data-kb') === k; })[0] || null; }
   /* blocks can be dropped on the page itself or inside a design block's slot (never inside themselves) */
+  function firstClass(el) { return String(el.className || '').split(/\s+/)[0]; }
   function acceptsBlocks(c, ex) {
     if (!c) return false; if (ex && ex.contains(c)) return false;
-    return c === mainC || c.classList.contains('kb-slot') || !!(ex && c === ex.parentElement);
+    if (c === mainC || c.classList.contains('kb-slot') || !!(ex && c === ex.parentElement)) return true;
+    return !!(ex && blockKids(c).some(function (k) { return k !== ex && k.tagName === ex.tagName && firstClass(k) === firstClass(ex); }));   /* a row of cards accepts another card of the same kind */
   }
   function containerAt(x, y, ex) {
     var el = document.elementFromPoint(x, y), c = el && el.closest ? el.closest('[data-kc]') : null;
     while (c && !acceptsBlocks(c, ex)) c = c.parentElement ? c.parentElement.closest('[data-kc]') : null;
-    return c || (ex && ex.parentElement && ex.parentElement.hasAttribute('data-kc') ? ex.parentElement : containerNow());
+    if (c) return c;
+    var m = containerNow(); if (m) { var mr = m.getBoundingClientRect(); if (y >= mr.top - 30) return m; }   /* empty space below or beside the content drops into the page itself */
+    return ex && ex.parentElement && ex.parentElement.hasAttribute('data-kc') ? ex.parentElement : m;
   }
   function spotIn(c, x, y, ex) {
     var kids = blockKids(c).filter(function (k) { return k !== ex; }), cr = c.getBoundingClientRect();
@@ -1347,10 +1434,10 @@
     var depth = 0;
     document.addEventListener('dragenter', function (e) { if (editing && !presenting && hasFiles(e.dataTransfer)) { depth++; ui.drop.hidden = false; } });
     document.addEventListener('dragleave', function (e) { if (hasFiles(e.dataTransfer)) { depth = Math.max(0, depth - 1); if (!depth) ui.drop.hidden = true; } });
-    document.addEventListener('dragend', function () { dragBlockId = null; dragKey = null; hideLine(); markDrop(null); depth = 0; ui.drop.hidden = true; });
+    document.addEventListener('dragend', function () { dragBlockId = null; dragKey = null; dragTplId = null; hideLine(); markDrop(null); depth = 0; ui.drop.hidden = true; });
     document.addEventListener('dragover', function (e) {
       if (!editing || presenting) return; var dt = e.dataTransfer; if (!dt) return;
-      var file = hasFiles(dt), blockDrag = !!dragBlockId || Array.prototype.indexOf.call(dt.types || [], 'text/kb-block') > -1, keyDrag = !!dragKey || Array.prototype.indexOf.call(dt.types || [], 'text/kb-key') > -1;
+      var file = hasFiles(dt), blockDrag = !!dragBlockId || !!dragTplId || Array.prototype.indexOf.call(dt.types || [], 'text/kb-block') > -1 || Array.prototype.indexOf.call(dt.types || [], 'text/kb-tpl') > -1, keyDrag = !!dragKey || Array.prototype.indexOf.call(dt.types || [], 'text/kb-key') > -1;
       if (!file && !blockDrag && !keyDrag) return; if (e.target.closest && e.target.closest('#kbAdd,#kbTop,#kbModal')) return;
       e.preventDefault(); dt.dropEffect = keyDrag ? 'move' : 'copy';
       var ft = file ? fillTarget(e.target) : null; markDrop(ft); if (ft) { hideLine(); return; }
@@ -1364,6 +1451,8 @@
       var movedEl = key ? blockByKey(key) : null, s = null;
       if (!files.length) { s = spotAt(e.clientX, e.clientY, movedEl); } hideLine();
       if (key && movedEl && !files.length) { e.preventDefault(); dragKey = null; if (s) { moveBlockTo(movedEl, s.c, s.ref); select(movedEl); } return; }
+      var tid = (dt.getData && dt.getData('text/kb-tpl')) || dragTplId;
+      if (tid && !files.length) { e.preventDefault(); dragTplId = null; addTemplate(tid, s, true); return; }
       if (bid && !files.length) { e.preventDefault(); dragBlockId = null; addBlock(bid, s); return; }
       if (files.length) { e.preventDefault(); handleFiles(files, spotAt(e.clientX, e.clientY, null), ft); }
     });
@@ -1393,13 +1482,14 @@
   function addBlock(id, spot) {
     var d = blockDef(id); if (!d) return; spot = spot || defaultSpot(!!d.design);
     if (!spot) { toast('Blocks can be added on lesson pages. Open a lesson from the page menu at the top.'); return; }
-    var el = insertDef(d, spot); commit(); select(el); el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    var el = insertDef(d, spot); commit(); select(el); reveal(el);
     toast(d.design ? 'Added \u201C' + d.name + '\u201D. Now drag Elements into it.' : 'Added \u201C' + d.name + '\u201D. Click any words to change them.');
   }
-  function addTemplate(id) {
-    var t = TEMPLATES.filter(function (x) { return x.id === id; })[0]; if (!t) return; var spot = defaultSpot(true); if (!spot) { toast('Open a lesson page first. Layouts are placed on lesson pages.'); return; }
+  function reveal(el) { var r = el.getBoundingClientRect(); if (r.top < 70 || r.top > window.innerHeight - 140) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  function addTemplate(id, where, dropped) {
+    var t = TEMPLATES.filter(function (x) { return x.id === id; })[0]; if (!t) return; var spot = where || defaultSpot(true); if (!spot) { toast('Open a lesson page first. Layouts are placed on lesson pages.'); return; }
     var first = null; t.parts.forEach(function (p) { var el = insertTree(spot.c, p, spot.ref); if (!first) first = el; });
-    commit(); select(first); first.scrollIntoView({ block: 'start', behavior: 'smooth' }); toast('Added the \u201C' + t.name + '\u201D layout.'); openAdd(false);
+    commit(); select(first); reveal(first); toast('Added the \u201C' + t.name + '\u201D layout.'); if (!dropped) openAdd(false);
   }
 
   /* ---------- picking files with the file chooser ---------- */
