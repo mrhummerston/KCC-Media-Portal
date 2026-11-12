@@ -105,6 +105,7 @@
     var im = el.matches('.fig') ? el.querySelector('img[data-img]') : null;
     if (im) return 'fig:' + im.getAttribute('data-img');
     if (el.matches('.tile')) return 'tile:' + (el.getAttribute('href') || '').replace('#unit/', '');
+    if (!el.matches(BLOCK_SEL)) { if (el.id) return '#' + el.id; var c0 = String(el.className || '').split(/\s+/)[0]; if (c0) return '.' + c0.replace(/[^\w-]/g, ''); }
     var h = el.querySelector('h1,h2,h3');
     if (el.matches('.panel,.kb')) return 'panel:' + slug((h && h.textContent) || el.textContent.slice(0, 30));
     return el.tagName.toLowerCase() + ':' + slug(el.textContent.slice(0, 40));
@@ -114,12 +115,13 @@
     qa('[data-kb],[data-kt],[data-kc]').forEach(function (n) { ['data-kb', 'data-kt', 'data-kc'].forEach(function (a) { var v = n.getAttribute(a); if (v) u[v] = 1; }); });
     return u;
   }
-  function tagAll(root, vk, blocks, container) {
+  function tagAll(root, vk, blocks, container, extraSel, containerEl) {
     var u = usedKeys();
     function mk(base) { var k = base, n = 1; while (u[k]) { n++; k = base + '~' + n; } u[k] = 1; return k; }
     if (blocks) {
-      qa(BLOCK_SEL, root).forEach(function (el) {
-        if (el.hasAttribute('data-kb') || el.closest(SKIP)) return;
+      qa(BLOCK_SEL + (extraSel ? ',' + extraSel : ''), root).forEach(function (el) {
+        if (el.hasAttribute('data-kb') || el.closest(SKIP) || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE|BR|HR|META|SVG|PATH)$/i.test(el.tagName)) return;
+        if (extraSel && !el.matches(BLOCK_SEL) && !el.children.length && !el.textContent.trim() && !/^(IMG|VIDEO|IFRAME|CANVAS)$/.test(el.tagName)) return;
         el.setAttribute('data-kb', mk(vk + '|b|' + blockBase(el)));
       });
       qa('[data-kb]', root).forEach(function (el) {
@@ -127,8 +129,8 @@
         var anc = p.closest('[data-kb]');
         p.setAttribute('data-kc', mk(vk + '|c|' + (p.id || (p.className && String(p.className).split(' ')[0]) || p.tagName.toLowerCase()) + '|' + (anc ? anc.getAttribute('data-kb') : '-')));
       });
-      if (container) {
-        var m = root.matches && root.matches(container) ? root : q(container, root);
+      if (container || containerEl) {
+        var m = containerEl || (root.matches && root.matches(container) ? root : q(container, root));
         if (m && !m.hasAttribute('data-kc')) m.setAttribute('data-kc', mk(vk + '|c|' + (m.id || 'main') + '|-'));
         mainC = m || mainC;
       }
@@ -249,13 +251,16 @@
   function after(viewKey, root, opts) {
     var blocks = !(opts && opts.blocks === false);
     curView = viewKey; curRoot = root; mainC = null; deselect();
-    tagAll(root, viewKey, blocks, opts && opts.container);
+    tagAll(root, viewKey, blocks, opts && opts.container, opts && opts.blockSel, opts && opts.containerEl);
     applyAll(root); markEmptyDesigns(root); if (document.body.classList.contains('kb-arrange') && typeof labelAll === 'function') labelAll();
     if (teacher) resolveAssets(root);
     if (editing) decorate(root); else undecorate(root);
     if (editing) place();
   }
-  function focusView(viewKey, root) { curView = viewKey; curRoot = root; deselect(); if (editing) decorate(root); else undecorate(root); }
+  function focusView(viewKey, root, opts) {
+    curView = viewKey; curRoot = root; mainC = null;
+    if (opts && opts.container) { var m = root.matches && root.matches(opts.container) ? root : q(opts.container, root); if (m && m.hasAttribute('data-kc')) mainC = m; }
+    deselect(); if (editing) decorate(root); else undecorate(root); }
   function undecorate(root) { qa('[contenteditable]', root).forEach(function (n) { n.removeAttribute('contenteditable'); n.removeAttribute('spellcheck'); }); }
   function decorate(root) {
     qa('[data-kt]', root).forEach(function (el) { el.setAttribute('contenteditable', 'true'); el.setAttribute('spellcheck', 'false'); });
@@ -284,7 +289,7 @@
   function commit() { if (JSON.stringify(E) === JSON.stringify(hist[hist.length - 1])) { dirty(); return; } hist.push(snap(E)); if (hist.length > 60) hist.shift(); redo = []; dirty(); histBtns(); }
   function rerender() {
     deselect();
-    if (curView === 'folio') { saveDraft(); location.reload(); return; }
+    if (curView === 'folio' || !window.route) { saveDraft(); location.reload(); return; }
     var y = window.scrollY; if (window.route) window.route(); window.scrollTo(0, y); applyGlobal(); status(); histBtns();
   }
   function undo() { commit(); if (hist.length < 2) return; redo.push(hist.pop()); E = norm(snap(hist[hist.length - 1])); dirty(); applyGlobal(); rerender(); }
@@ -431,6 +436,7 @@
   }
   function restoreSel() { var b = selBlock(); if (!b) return; delete E.hide[b.getAttribute('data-kb')]; b.classList.remove('ed-hidden'); commit(); refresh(); }
   function insertRecord(c, rec, ref) {
+    if (!ref && c === document.body) ref = q('body > footer, body > .foot') || null;
     var ck = c.getAttribute('data-kc'); E.add[ck] = (E.add[ck] || []).concat(rec);
     var el = buildAdded(rec); c.insertBefore(el, ref || null); applyBlock(el, E.block[rec.id]); decorate(c); resolveAssets(el); recordOrder(c); return el;
   }
@@ -825,8 +831,9 @@
     if (!ui.chip) return; var b = selBlock();
     if (!editing || presenting || !b) { ui.chip.hidden = true; return; }
     var k = b.getAttribute('data-kb'), hid = !!E.hide[k], h = '<span class="kbc-grip" title="Press and drag to move" aria-label="Press and drag to move this block">' + ico('grip', 16) + '</span><span class="kbc-name">' + esc(blockLabel(b)) + '</span>';
+    var isLink = b.tagName === 'A' && /^#./.test(b.getAttribute('href') || '');
     if (hid) h += cbtn('restore', 'eye', 'Restore');
-    else h += cbtn('style', 'brush', 'Style', ' aria-haspopup="dialog" aria-expanded="' + (popKind === 'style') + '"') + cbtn('layout', 'layout', 'Layout', ' aria-haspopup="dialog" aria-expanded="' + (popKind === 'layout') + '"') + cbtn('dup', 'copy', 'Duplicate') + cbtn('del', 'trash', b.hasAttribute('data-added') ? 'Delete' : 'Hide');
+    else h += (isLink ? cbtn('open', 'play', 'Open') : '') + cbtn('style', 'brush', 'Style', ' aria-haspopup="dialog" aria-expanded="' + (popKind === 'style') + '"') + cbtn('layout', 'layout', 'Layout', ' aria-haspopup="dialog" aria-expanded="' + (popKind === 'layout') + '"') + cbtn('dup', 'copy', 'Duplicate') + cbtn('del', 'trash', b.hasAttribute('data-added') ? 'Delete' : 'Hide');
     ui.chip.innerHTML = h; ui.chip.hidden = false;
   }
 
@@ -1036,7 +1043,7 @@
   function chipAct(act, el) {
     if (act === 'style' || act === 'layout') { openPop(act, el); return; }
     closePop();
-    if (act === 'dup') duplicateSel(); else if (act === 'del') deleteSel(); else if (act === 'restore') restoreSel();
+    if (act === 'dup') duplicateSel(); else if (act === 'del') deleteSel(); else if (act === 'restore') restoreSel(); else if (act === 'open') { var ob = selBlock(); if (ob && ob.getAttribute('href')) location.hash = ob.getAttribute('href'); }
   }
 
   /* ---------- top bar and page level actions ---------- */
@@ -1096,7 +1103,7 @@
     $id('kbPresent').addEventListener('click', function () { present(true); });
     $id('kbExit').addEventListener('click', exit); ui.back.addEventListener('click', function () { setEditing(true); });
     ui.fab.addEventListener('click', function () { openAdd(true); });
-    $id('kbPage').addEventListener('change', function (e) { var v = e.target.value; if (v) location.hash = v; });
+    $id('kbPage').addEventListener('change', function (e) { var v = e.target.value; if (!v) return; if (v.charAt(0) === '#') location.hash = v; else location.href = v; });
     [ui.bar, ui.chip, ui.top].forEach(function (el) { el.addEventListener('mousedown', function (e) { if (!e.target.closest('input,select,textarea')) e.preventDefault(); }); });
     ui.bar.addEventListener('click', function (e) { var b = e.target.closest('[data-act]'); if (b) barAct(b.getAttribute('data-act'), b); });
     ui.chip.addEventListener('click', function (e) { var b = e.target.closest('[data-act]'); if (b) chipAct(b.getAttribute('data-act'), b); });
@@ -1137,7 +1144,7 @@
       if (suppressClick) { e.preventDefault(); e.stopPropagation(); return; }
       var t = e.target; if (!t.closest || t.closest(UI_SEL)) return;
       var a = t.closest('a'), href = a ? (a.getAttribute('href') || '') : '';
-      if (a && /^#./.test(href) && (a.hasAttribute('data-kb') || !a.closest('[contenteditable="true"]'))) return;   /* lessons, tiles and tabs open as normal */
+      if (a && /^#./.test(href) && (a.hasAttribute('data-kb') || !a.closest('[contenteditable="true"]'))) { e.preventDefault(); var ab = a.hasAttribute('data-kb') ? a : blockOf(a); if (ab) select(ab); else deselect(); return; }   /* a single click selects it; a double-click opens it */
       if (a && !t.closest('.kb-slides-bar')) e.preventDefault(); if (t.closest('summary')) e.preventDefault();
       var drop = t.closest('.kb-drop'); if (drop) { var mb = t.closest('[data-mact]'); if (mb && mb.getAttribute('data-mact') === 'link') askLink({ type: 'drop', el: drop }); else pickForDrop(drop); return; }
       var im = t.closest('img'); if (im && blockOf(im) && !im.closest('.kb-slides')) { select(im); return; }
@@ -1145,6 +1152,11 @@
       var bl = blockOf(t); if (bl) { select(bl); return; }
       if (t.closest('main,#main,.wrap')) deselect();
     }, true);
+    document.addEventListener('dblclick', function (e) {
+      if (!editing || presenting) return; var t = e.target; if (!t.closest || t.closest(UI_SEL)) return;
+      var a = t.closest('a'), href = a ? (a.getAttribute('href') || '') : '';
+      if (a && /^#./.test(href) && (a.hasAttribute('data-kb') || !a.closest('[contenteditable="true"]'))) { e.preventDefault(); location.hash = href; }
+    });
     document.addEventListener('focusin', function (e) { if (!editing || presenting) return; var t = e.target; if (t.closest && !t.closest(UI_SEL)) { var tx = textOf(t); if (tx && tx !== sel) select(tx); } });
     document.addEventListener('keyup', function (e) { if (editing && sel && selText() && /Arrow|Backspace|Delete|Enter/.test(e.key)) { renderBar(); place(); } });
     document.addEventListener('keydown', onKey);
@@ -1239,12 +1251,14 @@
   }
 
   /* ---------- Arrange: every block shrinks to a card so the whole page fits on one screen ---------- */
-  function labelAll() { qa('[data-kb]', curRoot || document).forEach(function (b) { var s = snippet(b); b.setAttribute('data-label', blockLabel(b) + (s ? '  \u00B7  ' + s : '')); }); }
+  function labelAll() { qa('[data-kb]', curRoot || document).forEach(function (b) { var s = snippet(b); b.setAttribute('data-label', blockLabel(b) + (s ? '  \u00B7  ' + s : '')); if (b.querySelector('[data-kb]')) b.setAttribute('data-nest', '1'); else b.removeAttribute('data-nest'); });
+    qa('[data-kc]', curRoot || document).forEach(function (c) { var kids = blockKids(c); if (kids.length >= 4 && kids.every(function (k) { return !k.hasAttribute('data-nest') && !k.classList.contains('kb-d'); })) c.setAttribute('data-cards', '1'); else c.removeAttribute('data-cards'); });
+  }
   function setArrange(on) {
     arrange = !!on; document.body.classList.toggle('kb-arrange', arrange); var bt = q('#kbArrange'); if (bt) bt.setAttribute('aria-pressed', String(arrange));
     closePop(); deselect();
     if (arrange) { labelAll(); toast('Arrange: press and drag any card to a new place, even into a box. Press Arrange again when you are done.', 5000); }
-    else qa('[data-label]').forEach(function (n) { n.removeAttribute('data-label'); });
+    else qa('[data-label]').forEach(function (n) { n.removeAttribute('data-label'); n.removeAttribute('data-nest'); }); qa('[data-cards]').forEach(function (n) { n.removeAttribute('data-cards'); });
     place();
   }
 
@@ -1299,7 +1313,7 @@
     if (!kids.length) return { c: c, ref: null, line: { x: cr.left + 8, y: cr.top + 8, w: Math.max(24, cr.width - 16), h: 4 } };
     var best = null, bd = 1e12;
     kids.forEach(function (k) { var r = k.getBoundingClientRect(), dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0, dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0, d = dx * dx + dy * dy * 4; if (d < bd) { bd = d; best = { k: k, r: r }; } });
-    var r = best.r, side = c === mainC && r.width < cr.width * 0.7, inRow = y >= r.top && y <= r.bottom, before = side && inRow ? x < r.left + r.width / 2 : y < r.top + r.height / 2;
+    var r = best.r, side = r.width < cr.width * 0.7, inRow = y >= r.top && y <= r.bottom, before = side && inRow ? x < r.left + r.width / 2 : y < r.top + r.height / 2;
     return { c: c, ref: before ? best.k : best.k.nextElementSibling, line: side && inRow ? { x: (before ? r.left - 9 : r.right + 5), y: r.top, w: 4, h: r.height } : { x: cr.left + 4, y: before ? r.top - 11 : r.bottom + 7, w: cr.width - 8, h: 4 } };
   }
   function spotAt(x, y, ex) { var c = containerAt(x, y, ex); return c ? spotIn(c, x, y, ex) : null; }
@@ -1598,15 +1612,49 @@
   function showHint() {
     var seen = false; try { seen = localStorage.getItem('kcc-editor-hint-v2') === '1'; } catch (e) {} if (seen || q('#kbHint')) return;
     var h = document.createElement('div'); h.id = 'kbHint'; h.className = 'kb-ui';
-    h.innerHTML = '<b>Welcome to the editor</b><ul><li><b>Click</b> any words or picture to change it.</li><li><b>Drag</b> pictures, PDFs, Word or PowerPoint files straight onto the page.</li><li>Press <b>Add</b> on the left for blocks and ready-made layouts.</li></ul><button type="button" class="kbu-pri small">Got it</button>';
+    h.innerHTML = '<b>Welcome to the editor</b><ul><li><b>Click</b> any words or picture to change it. <b>Press and drag</b> any block to move it.</li><li><b>Double-click</b> a lesson or link to open it.</li><li><b>Drag</b> pictures, PDFs, Word or PowerPoint files straight onto the page.</li><li>Press <b>Add</b> on the left for blocks and ready-made layouts.</li></ul><button type="button" class="kbu-pri small">Got it</button>';
     document.body.appendChild(h); q('button', h).addEventListener('click', function () { h.remove(); try { localStorage.setItem('kcc-editor-hint-v2', '1'); } catch (e) {} });
   }
   function ready() {
     var s = q('#teachLink'); if (s) s.addEventListener('click', function (e) { e.preventDefault(); login(); });
     if (!teacher) return;
-    build(); var sel2 = q('#kbPage'); sel2.innerHTML = pageOptions().map(function (o) { return '<option value="' + esc(o.v) + '">' + esc(o.t) + '</option>'; }).join('');
+    build(); var sel2 = q('#kbPage'), opt = function (o) { return '<option value="' + esc(o.v) + '">' + esc(o.t) + '</option>'; }, links = CFG.links || [];
+    sel2.innerHTML = pageOptions().map(opt).join('') + (links.length ? '<optgroup label="Other pages">' + links.map(opt).join('') + '</optgroup>' : '');
     window.addEventListener('hashchange', syncPage); syncPage(); setEditing(editing); histBtns(); if (editing) showHint();
   }
+
+  /* ---------- ANY page: with CFG.auto the editor switches itself on, so no page code is needed ---------- */
+  var autoRoot = null, AUTO_SEL = ':scope > *, :scope > * > *, :scope > * > * > *';
+  function ensureTeachLink() {
+    if (q('#teachLink')) return; var a = document.createElement('a'); a.id = 'teachLink'; a.href = '#'; a.textContent = 'Teacher'; var f = q('footer, .foot');
+    if (f) { f.appendChild(document.createTextNode(' \u00B7 ')); f.appendChild(a); }
+    else { a.style.cssText = 'position:fixed;right:10px;bottom:6px;z-index:50;font:12px system-ui,sans-serif;opacity:.55;color:inherit'; document.body.appendChild(a); }
+  }
+  function autoPass() {
+    if (!autoRoot) return; var ae = document.activeElement; if (editing && ae && ae.closest && ae.closest('[contenteditable="true"]')) return;
+    var main = CFG.container ? q(CFG.container) : (q('main', autoRoot) || autoRoot);
+    var fname = (location.pathname.split('/').pop() || 'index').replace(/\.html?$/i, '') || 'index';
+    after('page:' + fname.replace(/[^\w.-]/g, ''), autoRoot, { containerEl: main || autoRoot, blockSel: CFG.blockSel || AUTO_SEL });
+  }
+  function autoWatch() {
+    var t = null, sel = CFG.blockSel || AUTO_SEL;
+    new MutationObserver(function (muts) {
+      var real = muts.some(function (m) { var n = m.target; return !(n.closest && (n.closest(UI_SEL) || n.closest('[contenteditable="true"]'))); }); if (!real) return;
+      clearTimeout(t); t = setTimeout(function () {
+        var fresh = qa(sel + ',' + BLOCK_SEL + ',' + TEXT_SEL, autoRoot).some(function (el) { return !el.hasAttribute('data-kb') && !el.hasAttribute('data-kt') && !el.closest(SKIP) && !el.closest('[data-added]') && !el.closest('[contenteditable="true"]') && (el.matches(BLOCK_SEL) || (el.matches(TEXT_SEL) && el.textContent.trim())); });
+        if (fresh) autoPass();
+      }, 450);
+    }).observe(autoRoot, { childList: true, subtree: true });
+  }
+  function autoBoot() {
+    if (!CFG.auto) return;
+    var go = function () {
+      autoRoot = (CFG.root && q(CFG.root)) || document.body; ensureTeachLink(); if (!CFG.pages) CFG.pages = [{ v: '', t: document.title || 'This page' }];
+      autoPass(); ready(); autoWatch(); window.addEventListener('hashchange', autoPass); [350, 1000, 2500, 5000].forEach(function (ms) { setTimeout(autoPass, ms); });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+  }
+  autoBoot();
 
   window.KCCEdit = { after: after, focus: focusView, ready: ready, editing: function () { return editing; }, isTeacher: function () { return teacher; },
     _t: { get E() { return E; }, set E(v) { E = v; }, select: select, selBlock: selBlock, addBlock: addBlock, addTemplate: addTemplate, handleFiles: handleFiles, defaultSpot: defaultSpot, spotAt: spotAt, undo: undo, redoIt: redoIt, pruned: pruned, getAsset: getAsset, usedAssets: usedAssets,
